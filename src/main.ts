@@ -3,6 +3,8 @@ import { Game, AUTO } from 'phaser';
 
 import GameScene from "./scenes/game"
 import PreloaderScene from "./scenes/preloader"
+import DebugScenePlugin from './plugins/DebugScenePlugin';
+import { PluginKeys, PluginNames } from './enums/pluginNames';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: AUTO,
@@ -19,6 +21,13 @@ const config: Phaser.Types.Core.GameConfig = {
     PreloaderScene,
     GameScene
   ],
+  plugins: {
+    scene: [{
+      key: PluginNames.DebugPlugin,
+      plugin: DebugScenePlugin,
+      mapping: PluginKeys.DebugPlugin
+    }]
+  },
   pixelArt: true
 }
 

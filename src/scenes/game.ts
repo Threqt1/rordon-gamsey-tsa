@@ -1,6 +1,7 @@
 import { Scene } from "phaser"
-import { SceneNames } from "../sceneNames"
-import { LoadTilemap } from "../util/util"
+import { SceneNames } from "../enums/sceneNames"
+import { LoadTilemap } from "../util/tilemaps"
+import DebugScenePlugin from "../plugins/DebugScenePlugin"
 
 enum Direction {
     FRONT,
@@ -10,10 +11,10 @@ enum Direction {
 }
 
 export default class Game extends Scene {
+    debug!: DebugScenePlugin
     private cursorKeys!: Phaser.Types.Input.Keyboard.CursorKeys
     private character!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
     private direction: Direction = Direction.FRONT
-    private debugGraphics!: Phaser.GameObjects.Graphics
     private map!: Phaser.Tilemaps.Tilemap
     private collisions!: Phaser.Tilemaps.TilemapLayer
 
@@ -30,7 +31,8 @@ export default class Game extends Scene {
 
         this.map = map;
         this.collisions = collisions
-        this.debugGraphics = this.add.graphics()
+
+        this.debug.create(this.collisions)
 
         this.character = this.physics.add.sprite(30, 130, "character")
         this.character.setDepth(playerDepth)
@@ -88,8 +90,6 @@ export default class Game extends Scene {
     update(t: number, dt: number): void {
         if (!this.character || !this.cursorKeys) return
 
-        //this.drawDebug()
-
         const speed = 50;
         let velX = 0;
         let velY = 0;
@@ -145,20 +145,5 @@ export default class Game extends Scene {
                 }
                 break;
         }
-    }
-
-    drawDebug() {
-        const tileColor = new Phaser.Display.Color(105, 210, 231, 200)
-        const colldingTileColor = new Phaser.Display.Color(243, 134, 48, 200)
-        const faceColor = new Phaser.Display.Color(40, 39, 37, 255)
-
-        this.debugGraphics.clear();
-
-        // Pass in null for any of the style options to disable drawing that component
-        this.collisions.renderDebug(this.debugGraphics, {
-            tileColor: tileColor, // Non-colliding tiles
-            collidingTileColor: colldingTileColor, // Colliding tiles
-            faceColor: faceColor // Interesting faces, i.e. colliding edges
-        });
     }
 }
