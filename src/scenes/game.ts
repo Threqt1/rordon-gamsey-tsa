@@ -1,7 +1,6 @@
 import { Scene } from "phaser"
 import { SceneNames } from "../enums/sceneNames"
 import { LoadTilemap } from "../util/tilemaps"
-import DebugScenePlugin from "../plugins/DebugScenePlugin"
 
 enum Direction {
     FRONT,
@@ -11,7 +10,6 @@ enum Direction {
 }
 
 export default class Game extends Scene {
-    debug!: DebugScenePlugin
     private cursorKeys!: Phaser.Types.Input.Keyboard.CursorKeys
     private character!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
     private direction: Direction = Direction.FRONT
