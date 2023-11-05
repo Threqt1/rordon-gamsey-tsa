@@ -1,9 +1,8 @@
 import './style.css'
 import { Game, AUTO } from 'phaser';
 
-import GameScene from "./scenes/game"
-import PreloaderScene from "./scenes/preloader"
-import DebugScenePlugin from './plugins/DebugScenePlugin';
+import { GameScene, PreloaderScene, MenuScene } from './scenes';
+import { DebugPlugin } from './plugins';
 import { PluginKeys, PluginNames } from './enums/pluginNames';
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -19,12 +18,13 @@ const config: Phaser.Types.Core.GameConfig = {
     },
     scene: [
         PreloaderScene,
+        MenuScene,
         GameScene
     ],
     plugins: {
         scene: [{
             key: PluginNames.DebugPlugin,
-            plugin: DebugScenePlugin,
+            plugin: DebugPlugin,
             mapping: PluginKeys.DebugPlugin
         }]
     },

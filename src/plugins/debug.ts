@@ -1,6 +1,6 @@
 import { PluginNames } from "../enums/pluginNames";
 
-export default class DebugScenePlugin extends Phaser.Plugins.ScenePlugin {
+export default class DebugPlugin extends Phaser.Plugins.ScenePlugin {
     private debugGraphics: Phaser.GameObjects.Graphics | undefined;
     private debugLayer: Phaser.Tilemaps.TilemapLayer | undefined;
 

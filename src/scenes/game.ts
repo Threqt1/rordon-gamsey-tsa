@@ -9,7 +9,7 @@ enum Direction {
     LEFT
 }
 
-export default class Game extends Scene {
+export default class GameScene extends Scene {
     private cursorKeys!: Phaser.Types.Input.Keyboard.CursorKeys
     private character!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
     private direction: Direction = Direction.FRONT
@@ -85,7 +85,7 @@ export default class Game extends Scene {
         })
     }
 
-    update(t: number, dt: number): void {
+    update() {
         if (!this.character || !this.cursorKeys) return
 
         const speed = 50;
