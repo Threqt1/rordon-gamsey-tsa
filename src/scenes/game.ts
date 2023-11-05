@@ -30,7 +30,7 @@ export default class GameScene extends Scene {
         this.map = map;
         this.collisions = collisions
 
-        this.debug.create(this.collisions)
+        // this.debug.create(this.collisions)
 
         this.character = this.physics.add.sprite(30, 130, "character")
         this.character.setDepth(playerDepth)
