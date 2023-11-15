@@ -2,6 +2,8 @@ import { Scene } from "phaser";
 import { SceneNames } from "../enums/sceneNames";
 import { PreloadTilemap } from "../util/tilemaps";
 import { pct } from "../util/sizes";
+import MainCharacter from "../sprites/characters/mainCharacter/sprite";
+import { MainCharacterTextures } from "../sprites/characters/mainCharacter/textures";
 
 export default class PreloaderScene extends Scene {
     constructor() {
@@ -20,7 +22,7 @@ export default class PreloaderScene extends Scene {
 
         PreloadTilemap(this as Scene, "test", "map.tmj", "spritesheet.png")
 
-        this.load.atlas("character", "/animations/animations.png", "/animations/animations.json")
+        this.load.atlas(MainCharacterTextures.Key, "/animations/animations.png", "/animations/animations.json")
         this.load.atlas("button", "/animations/buttons.png", "/animations/buttons.json");
 
         this.load.on("progress", (value: number) => {
@@ -36,6 +38,6 @@ export default class PreloaderScene extends Scene {
     }
 
     create() {
-        this.scene.start(SceneNames.Menu)
+        this.scene.start(SceneNames.Game)
     }
 }

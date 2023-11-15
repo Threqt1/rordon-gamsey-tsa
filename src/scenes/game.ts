@@ -1,6 +1,9 @@
-import { Scene } from "phaser"
+import { Physics, Scene } from "phaser"
 import { SceneNames } from "../enums/sceneNames"
 import { LoadTilemap } from "../util/tilemaps"
+import MainCharacter from "../sprites/characters/mainCharacter/sprite"
+import { MainCharacterTextures } from "../sprites/characters/mainCharacter/textures"
+import { Interactable } from "../extensions"
 
 enum Direction {
     FRONT,
@@ -15,6 +18,7 @@ export default class GameScene extends Scene {
     private direction: Direction = Direction.FRONT
     private map!: Phaser.Tilemaps.Tilemap
     private collisions!: Phaser.Tilemaps.TilemapLayer
+    private others!: Phaser.Physics.Arcade.StaticGroup
 
     constructor() {
         super(SceneNames.Game)
@@ -25,15 +29,24 @@ export default class GameScene extends Scene {
     }
 
     create() {
+        MainCharacter.loadAnimations(this.anims)
+
         let { collisions, map, playerDepth } = LoadTilemap(this as Scene, "test")
 
         this.map = map;
         this.collisions = collisions
+        this.others = this.physics.add.staticGroup()
 
-        // this.debug.create(this.collisions)
+        this.others.add(this.add.mainCharacter(100, 150))
+        this.others.add(this.add.mainCharacter(160, 150))
+        this.others.add(this.add.mainCharacter(160, 200))
+        this.others.add(this.add.mainCharacter(100, 200))
 
-        this.character = this.physics.add.sprite(30, 130, "character")
+        //this.debug.create(this.collisions)
+
+        this.character = this.physics.add.sprite(30, 130, MainCharacterTextures.Key)
         this.character.setDepth(playerDepth)
+        this.others.setDepth(playerDepth)
 
         let camera = this.cameras.main;
         camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
@@ -41,51 +54,34 @@ export default class GameScene extends Scene {
         camera.setZoom(5)
 
         this.physics.add.collider(this.character, this.collisions!)
-
-        this.anims.create({
-            key: "character_idle_front",
-            frames: this.anims.generateFrameNames("character", { start: 0, end: 5, prefix: "player_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 5
-        })
-
-        this.anims.create({
-            key: "character_idle_side",
-            frames: this.anims.generateFrameNames("character", { start: 6, end: 11, prefix: "player_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 5
-        })
-
-        this.anims.create({
-            key: "character_idle_back",
-            frames: this.anims.generateFrameNames("character", { start: 12, end: 17, prefix: "player_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 5
-        })
-
-        this.anims.create({
-            key: "character_walk_front",
-            frames: this.anims.generateFrameNames("character", { start: 18, end: 23, prefix: "player_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 10
-        })
-
-        this.anims.create({
-            key: "character_walk_side",
-            frames: this.anims.generateFrameNames("character", { start: 24, end: 29, prefix: "player_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 10
-        })
-
-        this.anims.create({
-            key: "character_walk_back",
-            frames: this.anims.generateFrameNames("character", { start: 30, end: 35, prefix: "player_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 10
-        })
+        this.physics.add.collider(this.character, this.others)
     }
 
+    lastInteractViewed: Interactable | null = null;
+
     update() {
+        let closest = this.physics.closest(this.character, this.others.getChildren()) as Phaser.Types.Physics.Arcade.SpriteWithStaticBody & Interactable | null
+        if (closest != null) {
+            if (this.lastInteractViewed != null) this.lastInteractViewed.setInteractableButton(false)
+            if (Phaser.Math.Distance.Between(this.character.x, this.character.y, closest.x, closest.y) < 40) {
+                closest.setInteractableButton(true)
+                this.lastInteractViewed = closest
+            } else {
+                this.lastInteractViewed = null
+            }
+        }
+        // if (closest != this.lastInteractViewed && this.lastInteractViewed != null) {
+        //     this.lastInteractViewed.setInteractableButton(false)
+        // }
+        // if (closest != null) {
+        //     if (Phaser.Math.Distance.Between(this.character.x, this.character.y, closest.x, closest.y) < 40) {
+        //         closest.setInteractableButton(true)
+        //         this.lastInteractViewed = closest;
+        //     } else {
+        //         this.lastInteractViewed = null;
+        //     }
+        // }
+
         if (!this.character || !this.cursorKeys) return
 
         const speed = 50;
@@ -114,32 +110,32 @@ export default class GameScene extends Scene {
         switch (this.direction) {
             case Direction.FRONT:
                 if (velX == 0 && velY == 0) {
-                    this.character.anims.play("character_idle_front", true)
+                    this.character.anims.play(MainCharacterTextures.IdleFront, true)
                 } else {
-                    this.character.anims.play("character_walk_front", true)
+                    this.character.anims.play(MainCharacterTextures.WalkFront, true)
                 }
                 break;
             case Direction.BACK:
                 if (velX == 0 && velY == 0) {
-                    this.character.anims.play("character_idle_back", true)
+                    this.character.anims.play(MainCharacterTextures.IdleBack, true)
                 } else {
-                    this.character.anims.play("character_walk_back", true)
+                    this.character.anims.play(MainCharacterTextures.WalkBack, true)
                 }
                 break;
             case Direction.RIGHT:
                 this.character.setFlipX(false);
                 if (velX == 0 && velY == 0) {
-                    this.character.anims.play("character_idle_side", true)
+                    this.character.anims.play(MainCharacterTextures.IdleSide, true)
                 } else {
-                    this.character.anims.play("character_walk_side", true)
+                    this.character.anims.play(MainCharacterTextures.WalkSide, true)
                 }
                 break;
             case Direction.LEFT:
                 this.character.setFlipX(true);
                 if (velX == 0 && velY == 0) {
-                    this.character.anims.play("character_idle_side", true)
+                    this.character.anims.play(MainCharacterTextures.IdleSide, true)
                 } else {
-                    this.character.anims.play("character_walk_side", true)
+                    this.character.anims.play(MainCharacterTextures.WalkSide, true)
                 }
                 break;
         }
