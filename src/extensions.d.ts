@@ -4,16 +4,18 @@ declare module "phaser" {
     export interface Scene {
         debug: DebugScenePlugin
     }
-
-    export namespace GameObjects {
-        export interface GameObjectFactory {
-            mainCharacter(x: number, y: number): Phaser.Types.Physics.Arcade.SpriteWithStaticBody
-        }
-    }
 }
 
-interface Interactable {
-    isInteractable(): boolean
-    setInteractableButton(visible: boolean): void
-    interact(): void
+type Keybind = {
+    keyCode: number,
+    repeat: boolean
+}
+
+type Keybinds = {
+    [key: number]: Keybind
+}
+
+interface Controllable {
+    public isCurrentlyControllable(): boolean
+    public control(input: Phaser.Input.InputPlugin): void
 }

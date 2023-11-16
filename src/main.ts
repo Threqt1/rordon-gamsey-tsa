@@ -31,4 +31,11 @@ const config: Phaser.Types.Core.GameConfig = {
     pixelArt: true
 }
 
+/*
+sprites - register animations, enums for all animations to play, textures
+controllers - logic for the character, moving, interacting, etc
+    - Controllable Interface - can be moved and controlled
+    - Interactable Interface - can be interacted with
+*/
+
 new Game(config);
