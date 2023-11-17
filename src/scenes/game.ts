@@ -3,16 +3,11 @@ import { SceneNames } from "../enums/sceneNames"
 import { LoadTilemap } from "../util/tilemaps"
 import Player from "../sprites/player/sprite"
 import TestNPC from "../sprites/testNPC/sprite"
-import { Interactable } from "../extensions"
 
 export default class GameScene extends Scene {
     private player!: Player
     private map!: Phaser.Tilemaps.Tilemap
     private collisions!: Phaser.Tilemaps.TilemapLayer
-    // private interactables!: Interactable[]
-    // private npcSprites!: Phaser.Physics.Arcade.StaticGroup
-    // private interactionZones!: Phaser.Physics.Arcade.Group
-
     constructor() {
         super(SceneNames.Game)
     }
@@ -23,21 +18,8 @@ export default class GameScene extends Scene {
         this.map = map;
         this.collisions = collisions
         this.interaction.use()
-        // this.npcSprites = this.physics.add.staticGroup()
-        // this.interactionZones = this.physics.add.group()
-        // this.interactables = []
 
-        let npc = new TestNPC(this, 100, 150)
-        this.interaction.add(npc)
-        // this.interactables.push(npc)
-        // this.npcSprites.add(npc)
-        // this.interactionZones.add(npc.getInteractableZone())
-
-        let npc2 = new TestNPC(this, 150, 150)
-        this.interaction.add(npc2)
-        // this.interactables.push(npc2)
-        // this.npcSprites.add(npc2)
-        // this.interactionZones.add(npc2.getInteractableZone())
+        this.interaction.add(new TestNPC(this, 100, 150), new TestNPC(this, 150, 150))
 
         this.player = new Player(this, 30, 130)
         this.player.setDepth(playerDepth)

@@ -26,10 +26,10 @@ export default class InteractionScenePlugin extends Phaser.Plugins.ScenePlugin {
         this.interactionZones = this.scene!.physics.add.group()
     }
 
-    add(interactable: Phaser.Physics.Arcade.Sprite & Interactable) {
-        this.interactables.push(interactable)
-        this.interactableSprites.add(interactable)
-        this.interactionZones.add(interactable.getInteractableZone())
+    add(...interactables: (Phaser.Physics.Arcade.Sprite & Interactable)[]) {
+        this.interactables.push(...interactables)
+        this.interactableSprites.addMultiple(interactables)
+        this.interactionZones.addMultiple(interactables.map(r => r.getInteractableZone()))
     }
 
     getSprites() {
