@@ -2,12 +2,12 @@ export namespace PlayerTextures {
     export const TextureKey = "mainCharacter"
 
     export enum Animations {
-        IdleFront = "mainCharacter-idle-front",
-        IdleSide = "mainCharacter-idle-side",
-        IdleBack = "mainCharacter-idle-back",
-        WalkFront = "mainCharacter-walk-front",
-        WalkSide = "mainCharacter-walk-side",
-        WalkBack = "mainCharacter-walk-back"
+        IdleFront = TextureKey + "-idle-front",
+        IdleSide = TextureKey + "-idle-side",
+        IdleBack = TextureKey + "-idle-back",
+        WalkFront = TextureKey + "-walk-front",
+        WalkSide = TextureKey + "-walk-side",
+        WalkBack = TextureKey + "-walk-back"
     }
 
     export function makeAnimations(anims: Phaser.Animations.AnimationManager) {

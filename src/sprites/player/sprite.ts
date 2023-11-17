@@ -1,7 +1,7 @@
 import { Controllable, Keybind, Keybinds } from "../../extensions"
 import { PlayerTextures } from "./textures"
 
-export enum Direction {
+export enum Interaction {
     UP,
     DOWN,
     LEFT,
@@ -11,19 +11,19 @@ export enum Direction {
 export default class Player extends Phaser.Physics.Arcade.Sprite implements Controllable {
     private _controllable: boolean
     private static _keyBinds: Keybinds = {
-        [Direction.UP]: {
+        [Interaction.UP]: {
             keyCode: Phaser.Input.Keyboard.KeyCodes.W,
             repeat: true
         },
-        [Direction.DOWN]: {
+        [Interaction.DOWN]: {
             keyCode: Phaser.Input.Keyboard.KeyCodes.S,
             repeat: true
         },
-        [Direction.LEFT]: {
+        [Interaction.LEFT]: {
             keyCode: Phaser.Input.Keyboard.KeyCodes.A,
             repeat: true
         },
-        [Direction.RIGHT]: {
+        [Interaction.RIGHT]: {
             keyCode: Phaser.Input.Keyboard.KeyCodes.D,
             repeat: true
         },
@@ -51,46 +51,46 @@ export default class Player extends Phaser.Physics.Arcade.Sprite implements Cont
     }
 
     private _speed = 50;
-    private _direction: Direction = Direction.DOWN
+    private _direction: Interaction = Interaction.DOWN
 
     private move(input: Phaser.Input.Keyboard.KeyboardPlugin) {
         let velX = 0
         let velY = 0
 
-        if (this.checkDown(input, Player._keyBinds[Direction.UP])) {
+        if (this.checkDown(input, Player._keyBinds[Interaction.UP])) {
             velY = -1
-            this._direction = Direction.UP
-        } else if (this.checkDown(input, Player._keyBinds[Direction.DOWN])) {
+            this._direction = Interaction.UP
+        } else if (this.checkDown(input, Player._keyBinds[Interaction.DOWN])) {
             velY = 1
-            this._direction = Direction.DOWN
+            this._direction = Interaction.DOWN
         }
 
-        if (this.checkDown(input, Player._keyBinds[Direction.RIGHT])) {
+        if (this.checkDown(input, Player._keyBinds[Interaction.RIGHT])) {
             velX = 1
-            this._direction = Direction.RIGHT
-        } else if (this.checkDown(input, Player._keyBinds[Direction.LEFT])) {
+            this._direction = Interaction.RIGHT
+        } else if (this.checkDown(input, Player._keyBinds[Interaction.LEFT])) {
             velX = -1
-            this._direction = Direction.LEFT
+            this._direction = Interaction.LEFT
         }
 
         this.setVelocity(velX * this._speed, velY * this._speed)
 
         switch (this._direction) {
-            case Direction.UP:
+            case Interaction.UP:
                 if (velX === 0 && velY === 0) {
                     this.anims.play(PlayerTextures.Animations.IdleBack, true)
                 } else {
                     this.anims.play(PlayerTextures.Animations.WalkBack, true)
                 }
                 break;
-            case Direction.DOWN:
+            case Interaction.DOWN:
                 if (velX === 0 && velY === 0) {
                     this.anims.play(PlayerTextures.Animations.IdleFront, true)
                 } else {
                     this.anims.play(PlayerTextures.Animations.WalkFront, true)
                 }
                 break;
-            case Direction.LEFT:
+            case Interaction.LEFT:
                 this.setFlipX(true)
                 if (velX === 0 && velY === 0) {
                     this.anims.play(PlayerTextures.Animations.IdleSide, true)
@@ -98,7 +98,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite implements Cont
                     this.anims.play(PlayerTextures.Animations.WalkSide, true)
                 }
                 break;
-            case Direction.RIGHT:
+            case Interaction.RIGHT:
                 this.setFlipX(false)
                 if (velX === 0 && velY === 0) {
                     this.anims.play(PlayerTextures.Animations.IdleSide, true)
@@ -109,15 +109,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite implements Cont
         }
     }
 
-    public set controllable(controllable: boolean) {
+    public setControllable(controllable: boolean) {
         this._controllable = controllable
     }
 
-    public isCurrentlyControllable(): boolean {
-        return this.controllable;
+    public isControllable(): boolean {
+        return this._controllable;
     }
 
     public control(input: Phaser.Input.InputPlugin): void {
+        if (!this._controllable) return
         this.move(input.keyboard!)
     }
 }
