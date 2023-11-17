@@ -2,7 +2,7 @@ import './style.css'
 import { Game, AUTO } from 'phaser';
 
 import { GameScene, PreloaderScene, MenuScene } from './scenes';
-import { DebugPlugin } from './plugins';
+import { DebugScenePlugin, InteractionScenePlugin } from './plugins';
 import { PluginKeys, PluginNames } from './enums/pluginNames';
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -24,8 +24,13 @@ const config: Phaser.Types.Core.GameConfig = {
     plugins: {
         scene: [{
             key: PluginNames.DebugPlugin,
-            plugin: DebugPlugin,
+            plugin: DebugScenePlugin,
             mapping: PluginKeys.DebugPlugin
+        },
+        {
+            key: PluginNames.InteractionPlugin,
+            plugin: InteractionScenePlugin,
+            mapping: PluginKeys.InteractionPlugin
         }]
     },
     pixelArt: true

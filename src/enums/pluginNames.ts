@@ -1,7 +1,9 @@
 export enum PluginNames {
-    DebugPlugin = "DebugPlugin"
+    DebugPlugin = "DebugPlugin",
+    InteractionPlugin = "InteractionPlugin",
 }
 
 export enum PluginKeys {
-    DebugPlugin = "debug"
+    DebugPlugin = "debug",
+    InteractionPlugin = "interaction"
 }

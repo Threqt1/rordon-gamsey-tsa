@@ -9,6 +9,9 @@ export default class DebugPlugin extends Phaser.Plugins.ScenePlugin {
     }
 
     boot() {
+    }
+
+    use() {
         var eventEmitter = this.systems!.events
 
         eventEmitter.on("update", () => this.update())

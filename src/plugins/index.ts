@@ -1,3 +1,4 @@
-import DebugPlugin from "./debug";
+import DebugScenePlugin from "./debug";
+import InteractionScenePlugin from "./interaction";
 
-export { DebugPlugin }
+export { DebugScenePlugin, InteractionScenePlugin }

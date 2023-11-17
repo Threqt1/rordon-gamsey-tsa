@@ -1,4 +1,5 @@
 import { Controllable, Keybind, Keybinds } from "../../extensions"
+import BaseSprite from "../base"
 import { PlayerTextures } from "./textures"
 
 export enum Interaction {
@@ -8,39 +9,36 @@ export enum Interaction {
     RIGHT
 }
 
-export default class Player extends Phaser.Physics.Arcade.Sprite implements Controllable {
-    private _controllable: boolean
-    private static _keyBinds: Keybinds = {
-        [Interaction.UP]: {
-            keyCode: Phaser.Input.Keyboard.KeyCodes.W,
-            repeat: true
-        },
-        [Interaction.DOWN]: {
-            keyCode: Phaser.Input.Keyboard.KeyCodes.S,
-            repeat: true
-        },
-        [Interaction.LEFT]: {
-            keyCode: Phaser.Input.Keyboard.KeyCodes.A,
-            repeat: true
-        },
-        [Interaction.RIGHT]: {
-            keyCode: Phaser.Input.Keyboard.KeyCodes.D,
-            repeat: true
-        },
+export default class Player extends BaseSprite implements Controllable {
+    protected getKeybinds(): Keybinds {
+        return {
+            [Interaction.UP]: {
+                keyCode: Phaser.Input.Keyboard.KeyCodes.W,
+                repeat: true
+            },
+            [Interaction.DOWN]: {
+                keyCode: Phaser.Input.Keyboard.KeyCodes.S,
+                repeat: true
+            },
+            [Interaction.LEFT]: {
+                keyCode: Phaser.Input.Keyboard.KeyCodes.A,
+                repeat: true
+            },
+            [Interaction.RIGHT]: {
+                keyCode: Phaser.Input.Keyboard.KeyCodes.D,
+                repeat: true
+            },
+        }
     }
-    private _keyCodeKeyBindings: { [key: number]: Phaser.Input.Keyboard.Key } = {}
+    private _controllable: boolean
+    private static _animationsMade: boolean
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, PlayerTextures.TextureKey)
 
-        PlayerTextures.makeAnimations(scene.anims)
-
-        scene.sys.displayList.add(this)
-        scene.sys.updateList.add(this)
-        scene.physics.world.enableBody(this, Phaser.Physics.Arcade.DYNAMIC_BODY)
-
-        for (let keyBind of Object.values(Player._keyBinds)) {
-            this._keyCodeKeyBindings[keyBind.keyCode] = scene.input.keyboard!.addKey(keyBind.keyCode, true, keyBind.repeat)
+        if (!Player._animationsMade) {
+            PlayerTextures.makeAnimations(scene.anims)
+            Player._animationsMade = true
         }
 
         this._controllable = true
@@ -54,21 +52,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite implements Cont
     private _direction: Interaction = Interaction.DOWN
 
     private move(input: Phaser.Input.Keyboard.KeyboardPlugin) {
+        let keybinds = this.getKeybinds()
         let velX = 0
         let velY = 0
 
-        if (this.checkDown(input, Player._keyBinds[Interaction.UP])) {
+        if (this.checkDown(input, keybinds[Interaction.UP])) {
             velY = -1
             this._direction = Interaction.UP
-        } else if (this.checkDown(input, Player._keyBinds[Interaction.DOWN])) {
+        } else if (this.checkDown(input, keybinds[Interaction.DOWN])) {
             velY = 1
             this._direction = Interaction.DOWN
         }
 
-        if (this.checkDown(input, Player._keyBinds[Interaction.RIGHT])) {
+        if (this.checkDown(input, keybinds[Interaction.RIGHT])) {
             velX = 1
             this._direction = Interaction.RIGHT
-        } else if (this.checkDown(input, Player._keyBinds[Interaction.LEFT])) {
+        } else if (this.checkDown(input, keybinds[Interaction.LEFT])) {
             velX = -1
             this._direction = Interaction.LEFT
         }
