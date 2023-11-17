@@ -1,4 +1,4 @@
-import { Controllable, Keybind, Keybinds } from "../../extensions"
+import { Controllable, Keybinds } from "../../extensions"
 import BaseSprite from "../base"
 import { PlayerTextures } from "./textures"
 
@@ -12,22 +12,14 @@ export enum Interaction {
 export default class Player extends BaseSprite implements Controllable {
     protected getKeybinds(): Keybinds {
         return {
-            [Interaction.UP]: {
-                keyCode: Phaser.Input.Keyboard.KeyCodes.W,
-                repeat: true
-            },
-            [Interaction.DOWN]: {
-                keyCode: Phaser.Input.Keyboard.KeyCodes.S,
-                repeat: true
-            },
-            [Interaction.LEFT]: {
-                keyCode: Phaser.Input.Keyboard.KeyCodes.A,
-                repeat: true
-            },
-            [Interaction.RIGHT]: {
-                keyCode: Phaser.Input.Keyboard.KeyCodes.D,
-                repeat: true
-            },
+            [Interaction.UP]:
+                Phaser.Input.Keyboard.KeyCodes.W,
+            [Interaction.DOWN]:
+                Phaser.Input.Keyboard.KeyCodes.S,
+            [Interaction.LEFT]:
+                Phaser.Input.Keyboard.KeyCodes.A,
+            [Interaction.RIGHT]:
+                Phaser.Input.Keyboard.KeyCodes.D,
         }
     }
     private _controllable: boolean
@@ -42,10 +34,6 @@ export default class Player extends BaseSprite implements Controllable {
         }
 
         this._controllable = true
-    }
-
-    private checkDown(input: Phaser.Input.Keyboard.KeyboardPlugin, keybind: Keybind) {
-        return input.checkDown(this._keyCodeKeyBindings[keybind.keyCode])
     }
 
     private _speed = 50;

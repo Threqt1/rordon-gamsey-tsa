@@ -13,8 +13,12 @@ export default abstract class BaseSprite extends Phaser.Physics.Arcade.Sprite {
         this.scene.physics.world.enableBody(this, Phaser.Physics.Arcade.DYNAMIC_BODY)
 
         for (let keyBind of Object.values(this.getKeybinds())) {
-            this._keyCodeKeyBindings[keyBind.keyCode] = scene.input.keyboard!.addKey(keyBind.keyCode, true, keyBind.repeat)
+            this._keyCodeKeyBindings[keyBind] = scene.input.keyboard!.addKey(keyBind)
         }
+    }
+
+    protected checkDown(input: Phaser.Input.Keyboard.KeyboardPlugin, keybind: number) {
+        return input.checkDown(this._keyCodeKeyBindings[keybind])
     }
 
     protected abstract getKeybinds(): Keybinds

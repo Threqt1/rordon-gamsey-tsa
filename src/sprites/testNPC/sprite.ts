@@ -9,10 +9,8 @@ enum Interaction {
 export default class TestNPC extends BaseSprite implements Interactable {
     protected getKeybinds(): Keybinds {
         return {
-            [Interaction.INTERACT]: {
-                keyCode: Phaser.Input.Keyboard.KeyCodes.E,
-                repeat: false
-            },
+            [Interaction.INTERACT]:
+                Phaser.Input.Keyboard.KeyCodes.E,
         }
     }
     private _interactable: boolean
@@ -50,14 +48,17 @@ export default class TestNPC extends BaseSprite implements Interactable {
     }
 
     public isInteractable(): boolean {
-        return this._interactable
+        return this._interactable ? this._interactionPrompt.visible : this._interactable
     }
 
     public setInteractable(interactable: boolean): void {
+        if (!interactable) {
+            this._interactionPrompt.setVisible(false)
+        }
         this._interactable = interactable
     }
 
-    public interact(input: Phaser.Input.InputPlugin): void {
+    public pollZoned() {
         let touching = (this._zone.body as Phaser.Physics.Arcade.Body).touching.none
         let wasTouching = (this._zone.body as Phaser.Physics.Arcade.Body).wasTouching.none
         let embedded = (this._zone.body as Phaser.Physics.Arcade.Body).embedded
@@ -71,6 +72,15 @@ export default class TestNPC extends BaseSprite implements Interactable {
         }
         else if (!touching && wasTouching) {
             this.setInteractionPrompt(true)
+        }
+    }
+
+    public interact(input: Phaser.Input.InputPlugin): void {
+        if (!this._interactable) return
+        this.pollZoned()
+        if (this.isInteractable() && this.checkDown(input.keyboard!, this.getKeybinds()[Interaction.INTERACT])) {
+            this.setInteractable(false)
+            console.log("Hi")
         }
     }
 }

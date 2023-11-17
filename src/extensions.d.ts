@@ -8,13 +8,8 @@ declare module "phaser" {
     }
 }
 
-type Keybind = {
-    keyCode: number,
-    repeat: boolean
-}
-
 type Keybinds = {
-    [key: number]: Keybind
+    [key: number]: number
 }
 
 interface Controllable {
