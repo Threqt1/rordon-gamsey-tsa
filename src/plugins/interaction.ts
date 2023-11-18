@@ -1,9 +1,11 @@
 import { PluginNames } from "../enums/pluginNames";
-import { Interactable } from "../extensions";
+import { Controllable, Interactable } from "../extensions";
 
 export default class InteractionScenePlugin extends Phaser.Plugins.ScenePlugin {
+    private controllables!: Controllable[]
     private interactables!: Interactable[]
-    private interactableSprites!: Phaser.Physics.Arcade.Group
+    private controllableSprites!: Phaser.Physics.Arcade.Group
+    private sprites!: Phaser.Physics.Arcade.Group
     private interactionZones!: Phaser.Physics.Arcade.Group
 
     constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager) {
@@ -22,18 +24,32 @@ export default class InteractionScenePlugin extends Phaser.Plugins.ScenePlugin {
         eventEmitter.once("destroy", () => eventEmitter.off("update", this.update))
 
         this.interactables = []
-        this.interactableSprites = this.scene!.physics.add.group()
+        this.controllables = []
+        this.controllableSprites = this.scene!.physics.add.group()
+        this.sprites = this.scene!.physics.add.group()
         this.interactionZones = this.scene!.physics.add.group()
     }
 
-    add(...interactables: (Phaser.Physics.Arcade.Sprite & Interactable)[]) {
+    addInteractables(...interactables: (Phaser.Physics.Arcade.Sprite & Interactable)[]) {
         this.interactables.push(...interactables)
-        this.interactableSprites.addMultiple(interactables)
+        this.sprites.addMultiple(interactables)
         this.interactionZones.addMultiple(interactables.map(r => r.getInteractableZone()))
     }
 
+    addControllables(...controllables: (Phaser.Physics.Arcade.Sprite & Controllable)[]) {
+        this.controllables.push(...controllables)
+        this.controllableSprites.addMultiple(controllables)
+        this.sprites.addMultiple(controllables)
+    }
+
+    makeCollisions(layer: Phaser.Tilemaps.TilemapLayer) {
+        this.scene!.physics.add.collider(this.sprites, this.sprites);
+        this.scene!.physics.add.collider(this.sprites, layer);
+        this.scene!.physics.add.overlap(this.controllableSprites, this.interactionZones)
+    }
+
     getSprites() {
-        return this.interactableSprites
+        return this.sprites
     }
 
     getZones() {
@@ -43,6 +59,9 @@ export default class InteractionScenePlugin extends Phaser.Plugins.ScenePlugin {
     update() {
         for (let interactable of this.interactables) {
             interactable.interact(this.scene!.input)
+        }
+        for (let controllable of this.controllables) {
+            controllable.control(this.scene!.input);
         }
     }
 }

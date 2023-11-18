@@ -24,6 +24,7 @@ export default class Player extends BaseSprite implements Controllable {
     }
     private _controllable: boolean
     private static _animationsMade: boolean
+    private _speed = 80;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, PlayerTextures.TextureKey)
@@ -36,7 +37,6 @@ export default class Player extends BaseSprite implements Controllable {
         this._controllable = true
     }
 
-    private _speed = 50;
     private _direction: Interaction = Interaction.DOWN
 
     private move(input: Phaser.Input.Keyboard.KeyboardPlugin) {
@@ -60,7 +60,14 @@ export default class Player extends BaseSprite implements Controllable {
             this._direction = Interaction.LEFT
         }
 
-        this.setVelocity(velX * this._speed, velY * this._speed)
+        let movementVector = new Phaser.Math.Vector2(velX, velY).normalize()
+        if (velX != 0 && velY != 0) {
+            movementVector = movementVector.scale(this._speed * 1.2)
+        } else {
+            movementVector = movementVector.scale(this._speed)
+        }
+
+        this.setVelocity(movementVector.x, movementVector.y)
 
         switch (this._direction) {
             case Interaction.UP:

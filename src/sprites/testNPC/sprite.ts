@@ -29,7 +29,8 @@ export default class TestNPC extends BaseSprite implements Interactable {
         this.setPushable(false)
 
         this._interactable = true
-        this._interactionPrompt = this.scene.add.sprite(this.x + this.displayOriginX, this.y + this.displayOriginY, "button", "credits_0.png").setDepth(100).setVisible(false)
+        this._interactionPrompt = this.scene.add.sprite(this.x, this.y + this.displayOriginY, "wkey").setDepth(100).setVisible(false).setScale(0.3)
+        this._interactionPrompt.setY(this._interactionPrompt.y + this._interactionPrompt.displayHeight / 2)
 
         this._zone = this.scene.add.zone(this.x, this.y, 50, 50)
         this.scene.physics.world.enable(this._zone, Phaser.Physics.Arcade.DYNAMIC_BODY);

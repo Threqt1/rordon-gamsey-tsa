@@ -25,6 +25,7 @@ export default class PreloaderScene extends Scene {
         this.load.atlas(PlayerTextures.TextureKey, "/animations/animations.png", "/animations/animations.json")
         this.load.atlas(TestNPCTextures.TextureKey, "/animations/animations.png", "/animations/animations.json")
         this.load.atlas("button", "/animations/buttons.png", "/animations/buttons.json");
+        this.load.image("wkey", "/img/wKey.png")
 
         this.load.on("progress", (value: number) => {
             progressBar.clear()
