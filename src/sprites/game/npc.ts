@@ -1,12 +1,13 @@
+import { CollisionCategory } from "../../enums/collisionCategories";
 import { Interactable, Keybinds } from "../../extensions";
-import BaseSprite from "../base";
-import { TestNPCTextures } from "./textures";
+import { PlayerTexture } from "../../textures/player";
+import { BaseSpriteWithInput } from "../base";
 
 enum Interaction {
     INTERACT
 }
 
-export default class TestNPC extends BaseSprite implements Interactable {
+export default class GameNPC extends BaseSpriteWithInput implements Interactable {
     protected getKeybinds(): Keybinds {
         return {
             [Interaction.INTERACT]:
@@ -16,16 +17,11 @@ export default class TestNPC extends BaseSprite implements Interactable {
     private _interactable: boolean
     private _interactionPrompt: Phaser.GameObjects.Sprite
     private _zone: Phaser.GameObjects.Zone
-    private static _animationsMade: boolean = false;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, TestNPCTextures.TextureKey)
+        super(scene, x, y, PlayerTexture.TextureKey)
 
-        if (!TestNPC._animationsMade) {
-            TestNPCTextures.makeAnimations(scene.anims)
-            TestNPC._animationsMade = true
-        }
-
+        this.scene.sprites.makeCollisionsFor(CollisionCategory.INTERACTABLE, this.body as Phaser.Physics.Arcade.Body)
         this.setPushable(false)
 
         this._interactable = true
@@ -35,9 +31,11 @@ export default class TestNPC extends BaseSprite implements Interactable {
         this._zone = this.scene.add.zone(this.x, this.y, 50, 50)
         this.scene.physics.world.enable(this._zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
 
-        (this._zone.body as Phaser.Physics.Arcade.Body).moves = false
+        let body: Phaser.Physics.Arcade.Body = this._zone.body as Phaser.Physics.Arcade.Body
+        this.scene.sprites.makeCollisionsFor(CollisionCategory.INTERACTION_ZONE, body)
+        body.moves = false
 
-        this.anims.play(TestNPCTextures.Animations.Idle)
+        this.anims.play(PlayerTexture.Animations.IdleFront)
     }
 
     public getInteractableZone(): Phaser.GameObjects.Zone {

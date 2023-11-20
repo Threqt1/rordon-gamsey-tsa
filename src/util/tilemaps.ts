@@ -1,12 +1,12 @@
-let PRELOADED_MAPS: { [key: string]: boolean } = {}
-const MAPS_PATH = "/maps"
+import { CollisionCategory } from "../enums/collisionCategories"
+
+const MAPS_PATH = "/maps/tilemaps"
+const TILESETS_PATH = "/maps/tilesets"
 
 export function PreloadTilemap(scene: Phaser.Scene, name: string, mapPath: string, tilesheetPath: string): void {
-    if (PRELOADED_MAPS[name]) return
-    scene.load.image(`${name}_tileset`, `${MAPS_PATH}/${name}/${tilesheetPath}`)
-    scene.load.tilemapTiledJSON(`${name}_map`, `${MAPS_PATH}/${name}/${mapPath}`)
-    scene.load.json(`${name}_raw`, `${MAPS_PATH}/${name}/${mapPath}`)
-    PRELOADED_MAPS[name] = true
+    scene.load.image(`${name}_tileset`, `${TILESETS_PATH}/${tilesheetPath}`)
+    scene.load.tilemapTiledJSON(`${name}_map`, `${MAPS_PATH}/${mapPath}`)
+    scene.load.json(`${name}_raw`, `${MAPS_PATH}/${mapPath}`)
 }
 
 type TilemapJSON = {
@@ -37,6 +37,7 @@ export function LoadTilemap(scene: Phaser.Scene, name: string): LoadedTilemap {
 
     const collisions = map.createLayer(collisionsLayerName.name, tilesetName)!
     collisions.setDepth(0)
+    collisions.setCollisionCategory(CollisionCategory.MAP)
     map.setCollisionBetween(1, map.tiles.length, true, undefined, collisions)
 
     let depth = 0;

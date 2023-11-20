@@ -1,14 +1,11 @@
-import { PluginNames } from "../enums/pluginNames";
+import { PluginName } from "../enums/pluginNames";
 
 export default class DebugPlugin extends Phaser.Plugins.ScenePlugin {
     private _debugGraphics: Phaser.GameObjects.Graphics | undefined;
     private _debugLayer: Phaser.Tilemaps.TilemapLayer | undefined;
 
     constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager) {
-        super(scene, pluginManager, PluginNames.DebugPlugin);
-    }
-
-    boot() {
+        super(scene, pluginManager, PluginName.DebugPlugin);
     }
 
     use() {

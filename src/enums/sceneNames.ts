@@ -1,5 +1,6 @@
-export enum SceneNames {
+export enum SceneName {
     Preloader = "preloader",
     Menu = "menu",
-    Game = "game"
+    Game = "game",
+    Minigame = "minigame"
 }

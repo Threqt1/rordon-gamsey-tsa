@@ -1,6 +1,7 @@
+import { CollisionCategory } from "../../enums/collisionCategories"
 import { Controllable, Keybinds } from "../../extensions"
-import BaseSprite from "../base"
-import { PlayerTextures } from "./textures"
+import { PlayerTexture } from "../../textures/player"
+import { BaseSpriteWithInput } from "../base"
 
 export enum Interaction {
     UP,
@@ -9,7 +10,7 @@ export enum Interaction {
     RIGHT
 }
 
-export default class Player extends BaseSprite implements Controllable {
+export default class GamePlayer extends BaseSpriteWithInput implements Controllable {
     protected getKeybinds(): Keybinds {
         return {
             [Interaction.UP]:
@@ -23,16 +24,12 @@ export default class Player extends BaseSprite implements Controllable {
         }
     }
     private _controllable: boolean
-    private static _animationsMade: boolean
     private _speed = 80;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, PlayerTextures.TextureKey)
+        super(scene, x, y, PlayerTexture.TextureKey)
 
-        if (!Player._animationsMade) {
-            PlayerTextures.makeAnimations(scene.anims)
-            Player._animationsMade = true
-        }
+        this.scene.sprites.makeCollisionsFor(CollisionCategory.CONTROLLABLE, this.body as Phaser.Physics.Arcade.Body)
 
         this._controllable = true
     }
@@ -72,32 +69,32 @@ export default class Player extends BaseSprite implements Controllable {
         switch (this._direction) {
             case Interaction.UP:
                 if (velX === 0 && velY === 0) {
-                    this.anims.play(PlayerTextures.Animations.IdleBack, true)
+                    this.anims.play(PlayerTexture.Animations.IdleBack, true)
                 } else {
-                    this.anims.play(PlayerTextures.Animations.WalkBack, true)
+                    this.anims.play(PlayerTexture.Animations.WalkBack, true)
                 }
                 break;
             case Interaction.DOWN:
                 if (velX === 0 && velY === 0) {
-                    this.anims.play(PlayerTextures.Animations.IdleFront, true)
+                    this.anims.play(PlayerTexture.Animations.IdleFront, true)
                 } else {
-                    this.anims.play(PlayerTextures.Animations.WalkFront, true)
+                    this.anims.play(PlayerTexture.Animations.WalkFront, true)
                 }
                 break;
             case Interaction.LEFT:
                 this.setFlipX(true)
                 if (velX === 0 && velY === 0) {
-                    this.anims.play(PlayerTextures.Animations.IdleSide, true)
+                    this.anims.play(PlayerTexture.Animations.IdleSide, true)
                 } else {
-                    this.anims.play(PlayerTextures.Animations.WalkSide, true)
+                    this.anims.play(PlayerTexture.Animations.WalkSide, true)
                 }
                 break;
             case Interaction.RIGHT:
                 this.setFlipX(false)
                 if (velX === 0 && velY === 0) {
-                    this.anims.play(PlayerTextures.Animations.IdleSide, true)
+                    this.anims.play(PlayerTexture.Animations.IdleSide, true)
                 } else {
-                    this.anims.play(PlayerTextures.Animations.WalkSide, true)
+                    this.anims.play(PlayerTexture.Animations.WalkSide, true)
                 }
                 break;
         }

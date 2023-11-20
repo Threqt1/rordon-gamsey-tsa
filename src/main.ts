@@ -1,39 +1,40 @@
 import './style.css'
 import { Game, AUTO } from 'phaser';
 
-import { GameScene, PreloaderScene, MenuScene } from './scenes';
-import { DebugScenePlugin, InteractionScenePlugin } from './plugins';
-import { PluginKeys, PluginNames } from './enums/pluginNames';
+import { GameScene, PreloaderScene, MenuScene, MinigameScene } from './scenes';
+import { DebugScenePlugin, SpritesScenePlugin } from './plugins';
+import { PluginKey, PluginName } from './enums/pluginNames';
 
 const config: Phaser.Types.Core.GameConfig = {
-    type: AUTO,
+    type: Phaser.WEBGL,
     width: window.innerWidth,
     height: window.innerHeight,
     physics: {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            //debug: true
+            debug: true
         }
     },
     scene: [
         PreloaderScene,
         MenuScene,
-        GameScene
+        GameScene,
+        MinigameScene
     ],
     plugins: {
         scene: [{
-            key: PluginNames.DebugPlugin,
+            key: PluginName.DebugPlugin,
             plugin: DebugScenePlugin,
-            mapping: PluginKeys.DebugPlugin
+            mapping: PluginKey.DebugPlugin
         },
         {
-            key: PluginNames.InteractionPlugin,
-            plugin: InteractionScenePlugin,
-            mapping: PluginKeys.InteractionPlugin
+            key: PluginName.SpritePlugin,
+            plugin: SpritesScenePlugin,
+            mapping: PluginKey.SpritePlugin
         }]
     },
-    pixelArt: true
+    pixelArt: true,
 }
 
 /*

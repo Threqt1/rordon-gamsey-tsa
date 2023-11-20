@@ -1,13 +1,13 @@
 import { Scene } from "phaser";
-import { SceneNames } from "../enums/sceneNames";
+import { SceneName } from "../enums/sceneNames";
 import { PreloadTilemap } from "../util/tilemaps";
 import { pct } from "../util/sizes";
-import { PlayerTextures } from "../sprites/player/textures"
-import { TestNPCTextures } from "../sprites/testNPC/textures";
+import { PlayerTexture } from "../textures/player";
+import { ItemsTexture } from "../textures/items";
 
 export default class PreloaderScene extends Scene {
     constructor() {
-        super(SceneNames.Preloader)
+        super(SceneName.Preloader)
     }
 
     preload() {
@@ -20,11 +20,13 @@ export default class PreloaderScene extends Scene {
         progressBox.fillStyle(0x222222, 0.8);
         progressBox.fillRect(pct(cameraWidth, 10), pct(cameraHeight, 50), pct(cameraWidth, 80), pct(cameraHeight, 10))
 
-        PreloadTilemap(this as Scene, "test", "map.tmj", "spritesheet.png")
+        PreloadTilemap(this, "test", "map.tmj", "spritesheet.png")
+        PreloadTilemap(this, "test2", "map2.tmj", "spritesheet.png")
 
-        this.load.atlas(PlayerTextures.TextureKey, "/animations/animations.png", "/animations/animations.json")
-        this.load.atlas(TestNPCTextures.TextureKey, "/animations/animations.png", "/animations/animations.json")
-        this.load.atlas("button", "/animations/buttons.png", "/animations/buttons.json");
+        PlayerTexture.preload(this)
+        ItemsTexture.preload(this)
+
+        this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
         this.load.image("wkey", "/img/wKey.png")
 
         this.load.on("progress", (value: number) => {
@@ -40,6 +42,8 @@ export default class PreloaderScene extends Scene {
     }
 
     create() {
-        this.scene.start(SceneNames.Game)
+        PlayerTexture.load(this)
+        ItemsTexture.load(this)
+        this.scene.start(SceneName.Minigame)
     }
 }

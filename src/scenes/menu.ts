@@ -1,9 +1,10 @@
 import { Scene } from "phaser";
-import { SceneNames } from "../enums/sceneNames";
+import { SceneName } from "../enums/sceneNames";
+import { switchScenesFadeOut } from "../util/fades";
 
 export default class MenuScene extends Scene {
     constructor() {
-        super(SceneNames.Menu)
+        super(SceneName.Menu)
     }
 
     create() {
@@ -43,7 +44,7 @@ export default class MenuScene extends Scene {
         })
 
         startSprite.on("pointerup", () => {
-            this.scene.start(SceneNames.Game)
+            switchScenesFadeOut(this, SceneName.Minigame)
         })
 
         creditsSprite.on("pointerover", () => {
