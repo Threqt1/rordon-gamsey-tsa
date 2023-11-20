@@ -30,10 +30,20 @@ export abstract class BaseSpriteWithInput extends BaseSprite {
     protected abstract getKeybinds(): Keybinds
 }
 
-export type BaseTextures = {
-    TextureKey: string
-    Animations: {
-        [key: string]: string
+export abstract class BaseInput {
+    protected _keyCodeKeyBindings: { [key: number]: Phaser.Input.Keyboard.Key }
+
+    constructor(scene: Phaser.Scene) {
+        this._keyCodeKeyBindings = {}
+
+        for (let keyBind of Object.values(this.getKeybinds())) {
+            this._keyCodeKeyBindings[keyBind] = scene.input.keyboard!.addKey(keyBind)
+        }
     }
-    makeAnimations: (anims: Phaser.Animations.AnimationManager) => void
+
+    protected checkDown(input: Phaser.Input.Keyboard.KeyboardPlugin, keybind: number) {
+        return input.checkDown(this._keyCodeKeyBindings[keybind])
+    }
+
+    protected abstract getKeybinds(): Keybinds
 }

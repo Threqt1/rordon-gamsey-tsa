@@ -3,7 +3,7 @@ import { Controllable, Keybinds } from "../../extensions"
 import { PlayerTexture } from "../../textures/player"
 import { BaseSpriteWithInput } from "../base"
 
-export enum Interaction {
+enum Interaction {
     UP,
     DOWN,
     LEFT,

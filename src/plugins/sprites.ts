@@ -25,19 +25,31 @@ export default class SpritesScenePlugin extends Phaser.Plugins.ScenePlugin {
         this.zones = this.scene!.physics.add.group()
     }
 
-    addInteractables(...interactables: (Phaser.Physics.Arcade.Sprite & Interactable)[]) {
+    addInteractables(...interactables: Interactable[]) {
         this.interactables.push(...interactables)
-        this.bodies.addMultiple(interactables)
         this.zones.addMultiple(interactables.map(r => r.getInteractableZone()))
     }
 
-    addControllables(...controllables: (Phaser.Physics.Arcade.Sprite & Controllable)[]) {
-        this.controllables.push(...controllables)
-        this.bodies.addMultiple(controllables)
+    removeInteractables(...interactables: Interactable[]) {
+        this.interactables = this.interactables.filter(r => interactables.indexOf(r) === -1);
     }
 
-    addStatics(...statics: Phaser.Physics.Arcade.Sprite[]) {
+    addControllables(...controllables: Controllable[]) {
+        this.controllables.push(...controllables)
+    }
+
+    removeControllables(...controllables: Controllable[]) {
+        this.controllables = this.controllables.filter(r => controllables.indexOf(r) === -1);
+    }
+
+    addSprites(...statics: Phaser.Physics.Arcade.Sprite[]) {
         this.bodies.addMultiple(statics)
+    }
+
+    removeSprites(...sprites: Phaser.Physics.Arcade.Sprite[]) {
+        for (let sprite of sprites) {
+            this.bodies.remove(sprite)
+        }
     }
 
     makeCollisionsFor(category: CollisionCategory, body: Phaser.Physics.Arcade.Body) {
@@ -55,8 +67,12 @@ export default class SpritesScenePlugin extends Phaser.Plugins.ScenePlugin {
         this.scene!.physics.add.overlap(this.bodies, this.zones);
     }
 
-    getBodies() {
+    getBodyGroup() {
         return this.bodies
+    }
+
+    getBodies(): Phaser.Physics.Arcade.Sprite[] {
+        return this.bodies.getChildren() as Phaser.Physics.Arcade.Sprite[]
     }
 
     getZones() {

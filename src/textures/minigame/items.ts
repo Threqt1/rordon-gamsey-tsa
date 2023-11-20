@@ -1,5 +1,5 @@
 export namespace ItemsTexture {
-    export const TextureKey = "item"
+    export const TextureKey = "items"
     export const Items = {
         Pumpkin: "Pumpkin",
         Apple: "Apple"

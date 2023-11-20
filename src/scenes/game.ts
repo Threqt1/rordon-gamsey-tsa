@@ -19,7 +19,7 @@ export default class GameScene extends Scene {
 
         let player = new GamePlayer(this, 30, 130)
         this.sprites.addControllables(player)
-        this.sprites.getBodies().setDepth(playerDepth)
+        this.sprites.getBodyGroup().setDepth(playerDepth)
 
         let camera = this.cameras.main;
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels)

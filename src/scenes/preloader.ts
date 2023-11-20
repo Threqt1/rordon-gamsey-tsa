@@ -3,7 +3,8 @@ import { SceneName } from "../enums/sceneNames";
 import { PreloadTilemap } from "../util/tilemaps";
 import { pct } from "../util/sizes";
 import { PlayerTexture } from "../textures/player";
-import { ItemsTexture } from "../textures/items";
+import { ItemsTexture } from "../textures/minigame/items";
+import { KeyboardTexture } from "../textures/keyboard";
 
 export default class PreloaderScene extends Scene {
     constructor() {
@@ -25,6 +26,7 @@ export default class PreloaderScene extends Scene {
 
         PlayerTexture.preload(this)
         ItemsTexture.preload(this)
+        KeyboardTexture.preload(this)
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
         this.load.image("wkey", "/img/wKey.png")
@@ -44,6 +46,7 @@ export default class PreloaderScene extends Scene {
     create() {
         PlayerTexture.load(this)
         ItemsTexture.load(this)
-        this.scene.start(SceneName.Minigame)
+        KeyboardTexture.load(this)
+        this.scene.start(SceneName.Menu)
     }
 }
