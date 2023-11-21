@@ -19,12 +19,14 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
     ]
 
     private _scene: Phaser.Scene;
-    private _sprites: BaseSprite[]
+    private _mainBody: BaseSprite
     private _tweens: Phaser.Tweens.Tween[]
     private _currentPatternLocation: number;
     private _controllable: boolean
     private _interactionPrompt: Phaser.GameObjects.Sprite
     private _eventEmitter: Phaser.Events.EventEmitter
+    private _sprites: BaseSprite[]
+    private _colorMatrix: Phaser.FX.ColorMatrix
 
     protected getKeybinds(): Keybinds {
         return {
@@ -38,18 +40,18 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
     constructor(scene: Phaser.Scene, x: number, y: number, info: ItemInformation) {
         super(scene)
         this._scene = scene
-        this._sprites = [
-            new BaseSprite(scene, x, y, ItemsTexture.TextureKey, ItemsTexture.Items.Apple + "_1").setDepth(info.depth).setVisible(false),
-            new BaseSprite(scene, x, y, ItemsTexture.TextureKey, ItemsTexture.Items.Apple + "_1").setDepth(info.depth).setVisible(false)
-        ]
+        this._mainBody = new BaseSprite(scene, x, y, ItemsTexture.TextureKey, ItemsTexture.Items.Apple + "_1").setDepth(info.depth).setVisible(false)
+        this._colorMatrix = this._mainBody.postFX!.addColorMatrix()
 
         this._eventEmitter = new Phaser.Events.EventEmitter()
 
         this._interactionPrompt = scene.add.sprite(x, y, KeyboardTexture.TextureKey)
         this._interactionPrompt.setDepth(100).setScale(0.3).setY(this._interactionPrompt.y + this._interactionPrompt.displayHeight + 5).setVisible(false)
 
+        this._sprites = [this._mainBody]
+
         let movementTween = scene.tweens.add({
-            targets: [...this._sprites, this._interactionPrompt],
+            targets: [this._mainBody, this._interactionPrompt],
             x: info.targetX,
             duration: info.duration,
             onComplete: () => {
@@ -60,7 +62,7 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
         })
         let rotationTween = scene.tweens.add({
             targets: this._sprites,
-            rotation: Phaser.Math.DegToRad(720),
+            rotation: Phaser.Math.DegToRad(360),
             loop: -1,
             duration: 1000,
             paused: true
@@ -83,13 +85,14 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
     private progressPattern() {
         this._interactionPrompt.setFrame(KeyboardTexture.KeyPictures[this.getKeybinds()[MinigameApple.pattern[this._currentPatternLocation]]])
         let newTextures = MinigameApple.patternTextures[this._currentPatternLocation]
-        this._sprites[0].setFrame(newTextures[0])
-        this._sprites[1].setFrame(newTextures[1])
+        this._mainBody.setFrame(newTextures[1])
         if (this._currentPatternLocation > 0) {
+            let newChunk = new BaseSprite(this._scene, this._mainBody.x, this._mainBody.y, ItemsTexture.TextureKey, newTextures[0]).setDepth(this._mainBody.depth)
+            newChunk.postFX!.addColorMatrix().grayscale(0.6)
+            this._sprites.push(newChunk)
             let vector = new Phaser.Math.Vector2(0, 0)
-            Phaser.Math.RandomXY(vector, 5)
-            this._sprites[0].setVelocity(vector.x, vector.y)
-            this._sprites[1].setVelocity(-vector.x, -vector.y)
+            Phaser.Math.RandomXY(vector, 30)
+            newChunk.setVelocity(vector.x, vector.y)
         }
     }
 
@@ -101,12 +104,12 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
         return this._eventEmitter
     }
 
-    public getSprites() {
-        return this._sprites
+    public getColorMatrix() {
+        return this._colorMatrix
     }
 
     public start() {
-        for (let sprite of this._sprites) sprite.setVisible(true)
+        this._mainBody.setVisible(true)
         for (let tween of this._tweens) tween.resume()
     }
 
@@ -123,7 +126,7 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
         this._scene.tweens.add({
             targets: this._sprites,
             alpha: 0,
-            duration: 1000,
+            duration: 500,
             onComplete: () => {
                 for (let sprite of this._sprites) sprite.destroy()
                 for (let tween of this._tweens) {

@@ -1,5 +1,5 @@
 import './style.css'
-import { Game, AUTO } from 'phaser';
+import { Game } from 'phaser';
 
 import { GameScene, PreloaderScene, MenuScene, MinigameScene } from './scenes';
 import { DebugScenePlugin, SpritesScenePlugin } from './plugins';
@@ -13,7 +13,7 @@ const config: Phaser.Types.Core.GameConfig = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            debug: true
+            //debug: true
         }
     },
     scene: [

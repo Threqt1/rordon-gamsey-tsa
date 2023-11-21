@@ -1,6 +1,10 @@
-import { Tweens } from "phaser";
+/**
+ * PRIORITY:
+ * OBJECT POOLING, REXAMINE TWEENS IF POSSIBLE
+ * FIX THE BAD DESIGN
+ */
+
 import { SceneName } from "../enums/sceneNames";
-import { MinigameItem } from "../sprites/minigame/items/base";
 import { MinigameApple } from "../sprites/minigame/items/item1";
 import MinigameNPC from "../sprites/minigame/npc";
 import MinigamePlayer from "../sprites/minigame/player";
@@ -52,68 +56,12 @@ export default class MinigameScene extends Phaser.Scene {
             this._constantColorMatrices.push(sprite.postFX!.addColorMatrix())
         }
 
-        // this.input.on('pointerdown', () => {
-
-        //     if (this.te) {
-        //         this.tweens.addMultiple(
-        //             [
-        //                 {
-        //                     targets: this._tweens,
-        //                     timeScale: 0.4,
-        //                     duration: 1000
-        //                 },
-        //                 {
-        //                     targets: this.anims,
-        //                     globalTimeScale: 0.4,
-        //                     duration: 1000
-        //                 },
-        //                 {
-        //                     targets: dummy,
-        //                     value: 0.6,
-        //                     onUpdate: (_, __, ___, curr, ____) => {
-        //                         for (let colorMatrix of this._colorMatrices) {
-        //                             colorMatrix.grayscale(curr)
-        //                         }
-        //                     },
-        //                     duration: 1000
-        //                 }
-        //             ]
-        //         )
-        //     } else {
-        //         this.tweens.addMultiple(
-        //             [{
-        //                 targets: this._tweens,
-        //                 timeScale: 1,
-        //                 duration: 1000
-        //             },
-        //             {
-        //                 targets: this.anims,
-        //                 globalTimeScale: 1,
-        //                 duration: 1000
-        //             },
-        //             {
-        //                 targets: dummy,
-        //                 value: 0,
-        //                 onUpdate: (_, __, ___, curr, ____) => {
-        //                     for (let colorMatrix of this._colorMatrices) {
-        //                         colorMatrix.grayscale(curr)
-        //                     }
-        //                 },
-        //                 duration: 1000
-        //             }]
-        //         )
-        //     }
-        //     this.te = !this.te
-
-        // });
-
         if (data !== undefined) {
             if (data.fade) switchSceneFadeIn(this)
         }
-        // this.time.timeScale = 0.5;
-        //this.physics.world.timeScale = 2;
-        // this.tweens.timeScale = 0.5;
     }
+
+    private _duration = 500
 
     private timeTransition(way: boolean, tweens: Phaser.Tweens.Tween[], colorMatrices: Phaser.FX.ColorMatrix[], onDone?: () => void) {
         if (!way) {
@@ -121,19 +69,14 @@ export default class MinigameScene extends Phaser.Scene {
                 [
                     {
                         targets: tweens,
-                        timeScale: 0.4,
-                        duration: 800,
+                        timeScale: 0.8,
+                        duration: this._duration,
                         onComplete: onDone
                     },
                     {
                         targets: this.anims,
                         globalTimeScale: 0.4,
-                        duration: 800
-                    },
-                    {
-                        targets: this.physics.world,
-                        timeScale: 2,
-                        duration: 800
+                        duration: this._duration
                     },
                     {
                         targets: { value: 0 },
@@ -143,7 +86,7 @@ export default class MinigameScene extends Phaser.Scene {
                                 colorMatrix.grayscale(curr)
                             }
                         },
-                        duration: 800
+                        duration: this._duration
                     }
                 ]
             )
@@ -153,18 +96,13 @@ export default class MinigameScene extends Phaser.Scene {
                     {
                         targets: tweens,
                         timeScale: 1,
-                        duration: 800,
+                        duration: this._duration,
                         onComplete: onDone
                     },
                     {
                         targets: this.anims,
                         globalTimeScale: 1,
-                        duration: 800
-                    },
-                    {
-                        targets: this.physics.world,
-                        timeScale: 1,
-                        duration: 800
+                        duration: this._duration
                     },
                     {
                         targets: { value: 0.6 },
@@ -174,7 +112,7 @@ export default class MinigameScene extends Phaser.Scene {
                                 colorMatrix.grayscale(curr)
                             }
                         },
-                        duration: 800
+                        duration: this._duration
                     }
                 ]
             )
@@ -201,9 +139,16 @@ export default class MinigameScene extends Phaser.Scene {
                         duration: 5000
                     })
                     tweens.push(...apple.getTweens())
-                    colorMatrices.push(...apple.getSprites().map(r => r.postFX!.addColorMatrix()))
+                    colorMatrices.push(apple.getColorMatrix())
                     items.push(apple)
                     apple.getEventEmitter().on("itemComplete", () => {
+                        if (i + 1 < items.length) {
+                            items[i + 1].activate()
+                        } else {
+                            localEmitter.emit("done")
+                        }
+                    })
+                    apple.getEventEmitter().on("itemFailed", () => {
                         if (i + 1 < items.length) {
                             items[i + 1].activate()
                         } else {
