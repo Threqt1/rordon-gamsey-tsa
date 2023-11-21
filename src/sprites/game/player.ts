@@ -11,17 +11,19 @@ enum Interaction {
 }
 
 export default class GamePlayer extends BaseSpriteWithInput implements Controllable {
+    private static _keybinds: Keybinds = {
+        [Interaction.UP]:
+            Phaser.Input.Keyboard.KeyCodes.W,
+        [Interaction.DOWN]:
+            Phaser.Input.Keyboard.KeyCodes.S,
+        [Interaction.LEFT]:
+            Phaser.Input.Keyboard.KeyCodes.A,
+        [Interaction.RIGHT]:
+            Phaser.Input.Keyboard.KeyCodes.D,
+    }
+
     protected getKeybinds(): Keybinds {
-        return {
-            [Interaction.UP]:
-                Phaser.Input.Keyboard.KeyCodes.W,
-            [Interaction.DOWN]:
-                Phaser.Input.Keyboard.KeyCodes.S,
-            [Interaction.LEFT]:
-                Phaser.Input.Keyboard.KeyCodes.A,
-            [Interaction.RIGHT]:
-                Phaser.Input.Keyboard.KeyCodes.D,
-        }
+        return GamePlayer._keybinds
     }
     private _controllable: boolean
     private _speed = 80;

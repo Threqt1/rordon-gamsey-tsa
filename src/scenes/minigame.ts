@@ -5,7 +5,8 @@
  */
 
 import { SceneName } from "../enums/sceneNames";
-import { MinigameApple } from "../sprites/minigame/items/item1";
+import { MinigameApple } from "../sprites/minigame/items/apple";
+import { MinigameItem } from "../sprites/minigame/items/base";
 import MinigameNPC from "../sprites/minigame/npc";
 import MinigamePlayer from "../sprites/minigame/player";
 import { switchSceneFadeIn } from "../util/fades";
@@ -20,16 +21,37 @@ const LEVELS: Item[][] = [
     [Item.APPLE, Item.APPLE],
 ]
 
+const MINIGAME_FADE_DURATION = 500
+const MINIGAME_DURATION = 5000
+const MINIGAME_LEVEL_COOLDOWN = 2000
+const MINIGAME_INITIAL_DELAY = 400
+const MINIGAME_CONSECUTIVE_DELAY = 400
+const MINIGAME_FADE_DELAY = 400
+
+const START_X = 40
+const END_X = 430
+const MIN_Y = 30
+const MAX_Y = 110
+
+const TWEENS_TIME_DELAY = 0.8
+const ANIMS_TIME_DELAY = 0.4
+const GRAYSCALE = 0.6
+
 export default class MinigameScene extends Phaser.Scene {
     private _levelActive: boolean
     private _currentLevel: number
+
+    private _colorMatrices: Phaser.FX.ColorMatrix[] = []
     private _playerDepth!: number
-    private _constantColorMatrices: Phaser.FX.ColorMatrix[] = []
+
+    private _eventEmitter: MinigameEventEmitter
 
     constructor() {
         super(SceneName.Minigame)
+
         this._levelActive = false
         this._currentLevel = 0;
+        this._eventEmitter = new MinigameEventEmitter()
     }
 
     create(data: { fade: boolean }) {
@@ -38,10 +60,6 @@ export default class MinigameScene extends Phaser.Scene {
         let { map, playerDepth } = LoadTilemap(this, "test2")
 
         this._playerDepth = playerDepth
-
-        for (let layer of map.layers) {
-            if (layer.tilemapLayer != null) this._constantColorMatrices.push(layer.tilemapLayer.postFX?.addColorMatrix())
-        }
 
         let camera = this.cameras.main;
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
@@ -52,8 +70,12 @@ export default class MinigameScene extends Phaser.Scene {
 
         this.sprites.addSprites(player, npc)
         this.sprites.getBodyGroup().setDepth(playerDepth)
+
         for (let sprite of this.sprites.getBodies()) {
-            this._constantColorMatrices.push(sprite.postFX!.addColorMatrix())
+            this._colorMatrices.push(sprite.postFX!.addColorMatrix())
+        }
+        for (let layer of map.layers) {
+            if (layer.tilemapLayer != null) this._colorMatrices.push(layer.tilemapLayer.postFX!.addColorMatrix())
         }
 
         if (data !== undefined) {
@@ -61,117 +83,88 @@ export default class MinigameScene extends Phaser.Scene {
         }
     }
 
-    private _duration = 500
-
-    private timeTransition(way: boolean, tweens: Phaser.Tweens.Tween[], colorMatrices: Phaser.FX.ColorMatrix[], onDone?: () => void) {
-        if (!way) {
-            this.tweens.addMultiple(
-                [
-                    {
-                        targets: tweens,
-                        timeScale: 0.8,
-                        duration: this._duration,
-                        onComplete: onDone
-                    },
-                    {
-                        targets: this.anims,
-                        globalTimeScale: 0.4,
-                        duration: this._duration
-                    },
-                    {
-                        targets: { value: 0 },
-                        value: 0.6,
-                        onUpdate: (_, __, ___, curr) => {
-                            for (let colorMatrix of colorMatrices) {
-                                colorMatrix.grayscale(curr)
-                            }
-                        },
-                        duration: this._duration
-                    }
-                ]
-            )
-        } else {
-            this.tweens.addMultiple(
-                [
-                    {
-                        targets: tweens,
-                        timeScale: 1,
-                        duration: this._duration,
-                        onComplete: onDone
-                    },
-                    {
-                        targets: this.anims,
-                        globalTimeScale: 1,
-                        duration: this._duration
-                    },
-                    {
-                        targets: { value: 0.6 },
-                        value: 0,
-                        onUpdate: (_, __, ___, curr) => {
-                            for (let colorMatrix of colorMatrices) {
-                                colorMatrix.grayscale(curr)
-                            }
-                        },
-                        duration: this._duration
-                    }
-                ]
-            )
+    private timeTransition(on: boolean, tweens: Phaser.Tweens.Tween[], colorMatrices: Phaser.FX.ColorMatrix[], callback?: () => void) {
+        const tweenTimeDelayTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+            targets: tweens,
+            timeScale: on ? TWEENS_TIME_DELAY : 1,
+            duration: MINIGAME_FADE_DURATION,
+            onComplete: callback
         }
+        const animationTimeDelayTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+            targets: this.anims,
+            globalTimeScale: on ? ANIMS_TIME_DELAY : 1,
+            duration: MINIGAME_FADE_DURATION
+        }
+        const grayscaleTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+            targets: { value: on ? 0 : GRAYSCALE },
+            value: on ? GRAYSCALE : 0,
+            duration: MINIGAME_FADE_DURATION,
+            onUpdate: (_, __, ___, current) => {
+                for (let colorMatrix of colorMatrices) {
+                    colorMatrix.grayscale(current)
+                }
+            }
+        }
+        this.tweens.addMultiple([tweenTimeDelayTween, animationTimeDelayTween, grayscaleTween])
     }
 
     private activateLevel() {
-        //add timer delay
         this._levelActive = true;
-        let localEmitter = new Phaser.Events.EventEmitter()
+
         let levelData = LEVELS[this._currentLevel]
-        // 110-30
-        let yInc = 80 / levelData.length
-        let y = 30
         let tweens: Phaser.Tweens.Tween[] = []
-        let colorMatrices = [...this._constantColorMatrices]
-        let items: MinigameApple[] = []
+        let colorMatrices = [...this._colorMatrices]
+        let items: MinigameItem[] = []
+
+        const progressItems = (i: number) => {
+            if (i + 1 < items.length) {
+                items[i + 1].start()
+            } else {
+                this._eventEmitter.emit("done")
+            }
+        }
+
+        let yIncrement = (MAX_Y - MIN_Y) / levelData.length
         for (let i = 0; i < levelData.length; i++) {
+            let item: MinigameItem | null = null
             switch (levelData[i]) {
                 case Item.APPLE:
-                    let apple = new MinigameApple(this, 50, y + yInc * (i + 1), {
-                        depth: this._playerDepth,
-                        targetX: 450,
-                        duration: 5000
-                    })
-                    tweens.push(...apple.getTweens())
-                    colorMatrices.push(apple.getColorMatrix())
-                    items.push(apple)
-                    apple.getEventEmitter().on("itemComplete", () => {
-                        if (i + 1 < items.length) {
-                            items[i + 1].activate()
-                        } else {
-                            localEmitter.emit("done")
-                        }
-                    })
-                    apple.getEventEmitter().on("itemFailed", () => {
-                        if (i + 1 < items.length) {
-                            items[i + 1].activate()
-                        } else {
-                            localEmitter.emit("done")
-                        }
+                    item = new MinigameApple(this, START_X, MIN_Y + yIncrement * (i + 1), {
+                        spriteDepth: this._playerDepth,
+                        endX: END_X,
+                        duration: MINIGAME_DURATION
                     })
                     break;
             }
+            if (item === null) continue
+
+            item.getEventEmitter().once("success", () => {
+                progressItems(i)
+            })
+            item.getEventEmitter().once("fail", () => {
+                progressItems(i)
+            })
+            tweens.push(...item.getTweens())
+            colorMatrices.push(item.getColorMatrix())
+            items.push(item)
         }
+
         for (let i = 0; i < items.length; i++) {
-            this.time.delayedCall(400 + (400 * i), () => {
-                items[i].start()
-                if (i == 0) items[i].activate()
+            this.time.delayedCall(MINIGAME_INITIAL_DELAY + (MINIGAME_CONSECUTIVE_DELAY * i), () => {
+                items[i].ready()
+                if (i == 0) items[i].start()
             })
         }
-        this.time.delayedCall(600, () => this.timeTransition(false, tweens, colorMatrices))
-        localEmitter.on("done", () => {
+
+        this.time.delayedCall(MINIGAME_FADE_DELAY, () => this.timeTransition(true, tweens, colorMatrices))
+
+        this._eventEmitter.once("done", () => {
+            items = []
             for (let tween of tweens) {
                 tween.destroy()
             }
-            items = []
-            this.timeTransition(true, [], this._constantColorMatrices, () => {
-                this.time.delayedCall(2000, () => {
+            this.timeTransition(false, [], this._colorMatrices, () => {
+                this.time.delayedCall(MINIGAME_LEVEL_COOLDOWN, () => {
                     this._levelActive = false
                 })
             })
@@ -182,5 +175,29 @@ export default class MinigameScene extends Phaser.Scene {
         if (!this._levelActive) {
             this.activateLevel()
         }
+    }
+}
+
+type MinigameEvents = {
+    done: []
+}
+
+class MinigameEventEmitter extends Phaser.Events.EventEmitter {
+    constructor() {
+        super()
+    }
+
+    public override emit<K extends keyof MinigameEvents>(
+        eventName: K,
+        ...args: MinigameEvents[K]
+    ): boolean {
+        return super.emit(eventName, ...args)
+    }
+
+    public override once<K extends keyof MinigameEvents>(
+        eventName: K,
+        listener: (...args: MinigameEvents[K]) => void
+    ): this {
+        return super.once(eventName, listener)
     }
 }

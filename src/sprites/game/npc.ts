@@ -8,11 +8,13 @@ enum Interaction {
 }
 
 export default class GameNPC extends BaseSpriteWithInput implements Interactable {
+    private static _keybinds: Keybinds = {
+        [Interaction.INTERACT]:
+            Phaser.Input.Keyboard.KeyCodes.E,
+    }
+
     protected getKeybinds(): Keybinds {
-        return {
-            [Interaction.INTERACT]:
-                Phaser.Input.Keyboard.KeyCodes.E,
-        }
+        return GameNPC._keybinds
     }
     private _interactable: boolean
     private _interactionPrompt: Phaser.GameObjects.Sprite
