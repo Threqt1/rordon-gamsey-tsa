@@ -12,7 +12,7 @@ import MinigameMegaPumpkin from "../sprites/minigame/items/mega_pumpkin";
 import MinigamePumpkin from "../sprites/minigame/items/pumpkin";
 import MinigameNPC from "../sprites/minigame/npc";
 import MinigamePlayer from "../sprites/minigame/player";
-import { switchSceneFadeIn } from "../util/fades";
+import { switchSceneFadeIn, switchScenesFadeOut } from "../util/fades";
 import { LoadTilemap } from "../util/tilemaps";
 
 enum Item {

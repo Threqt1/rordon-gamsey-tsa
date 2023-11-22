@@ -4,12 +4,12 @@ import { BaseMinigameItem, ItemInformation, MinigameItemInteraction } from "./ba
 export default class MinigameMegaApple extends BaseMinigameItem {
     private static pattern = [
         MinigameItemInteraction.SliceUp,
-        MinigameItemInteraction.SliceUp,
         MinigameItemInteraction.SliceDown,
         MinigameItemInteraction.SliceLeft,
-        MinigameItemInteraction.SliceRight,
+        MinigameItemInteraction.SliceUp,
         MinigameItemInteraction.SliceRight,
         MinigameItemInteraction.SliceDown,
+        MinigameItemInteraction.SliceUp,
         MinigameItemInteraction.SliceLeft
     ]
     private static patternTextures: [string, string][] = [
