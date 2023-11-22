@@ -24,7 +24,7 @@ const LEVELS: Item[][] = [
     [Item.APPLE],
     [Item.PUMPKIN, Item.APPLE],
     [Item.APPLE, Item.PUMPKIN, Item.APPLE],
-    [Item.APPLE, Item.PUMPKIN, Item.MEGA_PUMPKIN],
+    [Item.PUMPKIN, Item.APPLE, Item.PUMPKIN],
     [Item.MEGA_PUMPKIN],
     [Item.APPLE, Item.PUMPKIN, Item.APPLE, Item.PUMPKIN, Item.MEGA_PUMPKIN],
     [Item.PUMPKIN, Item.MEGA_PUMPKIN, Item.APPLE, Item.MEGA_PUMPKIN, Item.PUMPKIN]
