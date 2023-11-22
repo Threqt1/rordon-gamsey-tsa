@@ -1,6 +1,19 @@
 import { CollisionCategory } from "../enums/collisionCategories";
 import { PluginName } from "../enums/pluginNames";
-import { Controllable, Interactable } from "../extensions";
+
+export interface Controllable {
+    isControllable(): boolean
+    setControllable(controllable: boolean): void
+    control(input: Phaser.Input.InputPlugin): void
+}
+
+export interface Interactable {
+    isInteractable(): boolean
+    setInteractable(interactable: boolean): void
+    setInteractionPrompt(show: boolean): void
+    getInteractableZone(): Phaser.GameObjects.Zone
+    interact(input: Phaser.Input.InputPlugin): void
+}
 
 export default class SpritesScenePlugin extends Phaser.Plugins.ScenePlugin {
     private controllables!: Controllable[]

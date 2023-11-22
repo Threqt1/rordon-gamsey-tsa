@@ -1,7 +1,7 @@
 import { CollisionCategory } from "../../enums/collisionCategories"
-import { Controllable, Keybinds } from "../../extensions"
+import { Controllable } from "../../plugins/sprites"
 import { PlayerTexture } from "../../textures/player"
-import { BaseSpriteWithInput } from "../base"
+import { BaseSpriteWithInput, Keybinds } from "../base"
 
 enum Interaction {
     UP,
@@ -13,13 +13,13 @@ enum Interaction {
 export default class GamePlayer extends BaseSpriteWithInput implements Controllable {
     private static _keybinds: Keybinds = {
         [Interaction.UP]:
-            Phaser.Input.Keyboard.KeyCodes.W,
+            "W",
         [Interaction.DOWN]:
-            Phaser.Input.Keyboard.KeyCodes.S,
+            "S",
         [Interaction.LEFT]:
-            Phaser.Input.Keyboard.KeyCodes.A,
+            "A",
         [Interaction.RIGHT]:
-            Phaser.Input.Keyboard.KeyCodes.D,
+            "D",
     }
 
     protected getKeybinds(): Keybinds {
@@ -43,18 +43,18 @@ export default class GamePlayer extends BaseSpriteWithInput implements Controlla
         let velX = 0
         let velY = 0
 
-        if (this.checkDown(input, keybinds[Interaction.UP])) {
+        if (this.checkDown(input, Interaction.UP)) {
             velY = -1
             this._direction = Interaction.UP
-        } else if (this.checkDown(input, keybinds[Interaction.DOWN])) {
+        } else if (this.checkDown(input, Interaction.DOWN)) {
             velY = 1
             this._direction = Interaction.DOWN
         }
 
-        if (this.checkDown(input, keybinds[Interaction.RIGHT])) {
+        if (this.checkDown(input, Interaction.RIGHT)) {
             velX = 1
             this._direction = Interaction.RIGHT
-        } else if (this.checkDown(input, keybinds[Interaction.LEFT])) {
+        } else if (this.checkDown(input, Interaction.LEFT)) {
             velX = -1
             this._direction = Interaction.LEFT
         }

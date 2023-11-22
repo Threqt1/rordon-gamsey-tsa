@@ -10,5 +10,6 @@ export namespace ItemsTexture {
     }
 
     export function load(scene: Phaser.Scene) {
+        scene;
     }
 }

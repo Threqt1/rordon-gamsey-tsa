@@ -1,10 +1,13 @@
-import { Keybinds } from "../../../extensions"
+//create baseitem class
+
+import { Keybinds } from "../../base"
 
 export interface MinigameItem {
     ready(): void
     start(): void
     getEventEmitter(): MinigameItemEventEmitter
     getTweens(): Phaser.Tweens.Tween[]
+    getReady(): boolean
     getColorMatrix(): Phaser.FX.ColorMatrix
 }
 
@@ -47,8 +50,8 @@ export enum MinigameItemInteraction {
 }
 
 export const MinigameInteractionKeybinds: Keybinds = {
-    [MinigameItemInteraction.SliceUp]: Phaser.Input.Keyboard.KeyCodes.W,
-    [MinigameItemInteraction.SliceDown]: Phaser.Input.Keyboard.KeyCodes.S,
-    [MinigameItemInteraction.SliceLeft]: Phaser.Input.Keyboard.KeyCodes.A,
-    [MinigameItemInteraction.SliceRight]: Phaser.Input.Keyboard.KeyCodes.D,
+    [MinigameItemInteraction.SliceUp]: "W",
+    [MinigameItemInteraction.SliceDown]: "S",
+    [MinigameItemInteraction.SliceLeft]: "A",
+    [MinigameItemInteraction.SliceRight]: "D",
 }

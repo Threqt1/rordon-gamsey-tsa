@@ -1,8 +1,8 @@
 export namespace KeyboardTexture {
     export const TextureKey = "keyboard"
-    export const KeyPictures: { [key: number]: string } = {
-        [Phaser.Input.Keyboard.KeyCodes.W]: TextureKey + "_14",
-        [Phaser.Input.Keyboard.KeyCodes.S]: TextureKey + "_24"
+    export const KeyPictures: { [key: string]: string } = {
+        "W": TextureKey + "_14",
+        "S": TextureKey + "_24"
     }
 
     export function preload(scene: Phaser.Scene) {
@@ -10,5 +10,6 @@ export namespace KeyboardTexture {
     }
 
     export function load(scene: Phaser.Scene) {
+        scene;
     }
 }

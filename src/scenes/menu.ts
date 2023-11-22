@@ -43,8 +43,12 @@ export default class MenuScene extends Scene {
             startSprite.setFrame(this.anims.get("startButton_animate").frames[0].textureFrame)
         })
 
+        let switching = false
         startSprite.on("pointerup", () => {
-            switchScenesFadeOut(this, SceneName.Minigame)
+            if (!switching) {
+                switching = true
+                switchScenesFadeOut(this, SceneName.Game)
+            }
         })
 
         creditsSprite.on("pointerover", () => {

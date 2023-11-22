@@ -1,4 +1,6 @@
-import { Keybinds } from "../extensions";
+export type Keybinds = {
+    [key: number]: keyof typeof Phaser.Input.Keyboard.KeyCodes
+}
 
 export class BaseSprite extends Phaser.Physics.Arcade.Sprite {
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string) {
@@ -11,7 +13,7 @@ export class BaseSprite extends Phaser.Physics.Arcade.Sprite {
 }
 
 export abstract class BaseSpriteWithInput extends BaseSprite {
-    protected _keyCodeKeyBindings: { [key: number]: Phaser.Input.Keyboard.Key }
+    protected _keyCodeKeyBindings: { [key: string]: Phaser.Input.Keyboard.Key }
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string) {
         super(scene, x, y, texture, frame)
@@ -23,15 +25,19 @@ export abstract class BaseSpriteWithInput extends BaseSprite {
         }
     }
 
-    protected checkDown(input: Phaser.Input.Keyboard.KeyboardPlugin, keybind: number) {
-        return input.checkDown(this._keyCodeKeyBindings[keybind])
+    protected getKeyFor(interaction: number) {
+        return this._keyCodeKeyBindings[this.getKeybinds()[interaction]]
+    }
+
+    protected checkDown(input: Phaser.Input.Keyboard.KeyboardPlugin, interaction: number) {
+        return input.checkDown(this.getKeyFor(interaction))
     }
 
     protected abstract getKeybinds(): Keybinds
 }
 
 export abstract class BaseInput {
-    protected _keyCodeKeyBindings: { [key: number]: Phaser.Input.Keyboard.Key }
+    protected _keyCodeKeyBindings: { [key: string]: Phaser.Input.Keyboard.Key }
 
     constructor(scene: Phaser.Scene) {
         this._keyCodeKeyBindings = {}
@@ -41,8 +47,12 @@ export abstract class BaseInput {
         }
     }
 
-    protected checkDown(input: Phaser.Input.Keyboard.KeyboardPlugin, keybind: number) {
-        return input.checkDown(this._keyCodeKeyBindings[keybind])
+    protected getKeyFor(interaction: number) {
+        return this._keyCodeKeyBindings[this.getKeybinds()[interaction]]
+    }
+
+    protected checkDown(input: Phaser.Input.Keyboard.KeyboardPlugin, interaction: number) {
+        return input.checkDown(this.getKeyFor(interaction))
     }
 
     protected abstract getKeybinds(): Keybinds

@@ -1,7 +1,7 @@
 import { CollisionCategory } from "../../enums/collisionCategories";
-import { Interactable, Keybinds } from "../../extensions";
+import { Interactable } from "../../plugins/sprites";
 import { PlayerTexture } from "../../textures/player";
-import { BaseSpriteWithInput } from "../base";
+import { BaseSpriteWithInput, Keybinds } from "../base";
 
 enum Interaction {
     INTERACT
@@ -10,7 +10,7 @@ enum Interaction {
 export default class GameNPC extends BaseSpriteWithInput implements Interactable {
     private static _keybinds: Keybinds = {
         [Interaction.INTERACT]:
-            Phaser.Input.Keyboard.KeyCodes.E,
+            "E",
     }
 
     protected getKeybinds(): Keybinds {
@@ -79,7 +79,7 @@ export default class GameNPC extends BaseSpriteWithInput implements Interactable
     public interact(input: Phaser.Input.InputPlugin): void {
         if (!this._interactable) return
         this.pollZoned()
-        if (this.isInteractable() && this.checkDown(input.keyboard!, this.getKeybinds()[Interaction.INTERACT])) {
+        if (this.isInteractable() && this.checkDown(input.keyboard!, Interaction.INTERACT)) {
             this.setInteractable(false)
             console.log("Hi")
         }

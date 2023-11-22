@@ -1,11 +1,16 @@
-import { Input } from "phaser";
-import { Controllable, Keybinds } from "../../../extensions";
 import { ItemsTexture } from "../../../textures/minigame/items";
-import { BaseInput, BaseSprite } from "../../base";
+import { BaseInput, BaseSprite, Keybinds } from "../../base";
 import { ItemInformation, MinigameInteractionKeybinds, MinigameItem, MinigameItemEventEmitter, MinigameItemInteraction } from "./base";
 import { KeyboardTexture } from "../../../textures/keyboard";
+import { Controllable } from "../../../plugins/sprites";
 
 const END_FADE_DURATION = 500;
+
+const rotationTweenInfo = {
+    rotation: Phaser.Math.DegToRad(360),
+    loop: -1,
+    duration: 1000,
+}
 
 export class MinigameApple extends BaseInput implements MinigameItem, Controllable {
     private static pattern = [MinigameItemInteraction.SliceUp, MinigameItemInteraction.SliceDown]
@@ -16,6 +21,8 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
     ]
     private _currentPatternLocation: number;
 
+    private _ready: boolean;
+
     private _scene: Phaser.Scene;
     private _controllable: boolean
 
@@ -24,6 +31,7 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
     private _tweens: Phaser.Tweens.Tween[]
 
     private _interactionPrompt: Phaser.GameObjects.Sprite
+    private _startInputTimestamp: number
 
     private _eventEmitter: MinigameItemEventEmitter
 
@@ -32,6 +40,7 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
         this._scene = scene
 
         this._controllable = false;
+        this._ready = false;
 
         let mainSprite = new BaseSprite(scene, x, y, ItemsTexture.TextureKey, ItemsTexture.Items.Apple + "_1").setDepth(info.spriteDepth).setVisible(false)
         this._colorMatrix = mainSprite.postFX!.addColorMatrix()
@@ -43,6 +52,7 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
         this._interactionPrompt.setDepth(100).setScale(0.3).setY(this._interactionPrompt.y + this._interactionPrompt.displayHeight + 5).setVisible(false)
 
         this._currentPatternLocation = 0;
+        this._startInputTimestamp = 0;
 
         let movementTween = scene.tweens.add({
             targets: [mainSprite, this._interactionPrompt],
@@ -52,10 +62,8 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
             paused: true
         })
         let rotationTween = scene.tweens.add({
-            targets: this._sprites,
-            rotation: Phaser.Math.DegToRad(360),
-            loop: -1,
-            duration: 1000,
+            targets: mainSprite,
+            ...rotationTweenInfo,
             paused: true
         })
 
@@ -79,15 +87,20 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
         let newTextures = MinigameApple.patternTextures[this._currentPatternLocation]
         mainSprite.setFrame(newTextures[0])
 
+        this._startInputTimestamp = this._scene.time.now
+
         if (this._currentPatternLocation > 0) {
             let newChunk = new BaseSprite(this._scene, mainSprite.x, mainSprite.y, ItemsTexture.TextureKey, newTextures[1]).setDepth(mainSprite.depth)
-
             newChunk.postFX!.addColorMatrix().grayscale(0.6)
 
-            let vector = new Phaser.Math.Vector2(0, 0)
-            Phaser.Math.RandomXY(vector, 30)
+            let vector = new Phaser.Math.Vector2(0, 1).rotate(mainSprite.rotation - Phaser.Math.DegToRad(90)).scale(30)
             newChunk.setVelocity(vector.x, vector.y)
 
+            let rotationTween = this._scene.tweens.add({
+                targets: newChunk,
+                ...rotationTweenInfo
+            })
+            this._tweens.push(rotationTween)
             this._sprites.push(newChunk)
         }
     }
@@ -95,6 +108,7 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
     public ready() {
         this._sprites[0].setVisible(true)
         for (let tween of this._tweens) tween.resume()
+        this._ready = true;
     }
 
     public start() {
@@ -121,8 +135,9 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
         })
     }
 
-    private slice(input: Phaser.Input.Keyboard.KeyboardPlugin) {
-        if (this.checkDown(input, this.getKeybinds()[MinigameApple.pattern[this._currentPatternLocation]])) {
+    private slice() {
+        let key = this.getKeyFor(MinigameApple.pattern[this._currentPatternLocation])
+        if (key.isDown && key.timeDown > this._startInputTimestamp) {
             this._currentPatternLocation++;
             this.progressPattern()
             if (this._currentPatternLocation >= MinigameApple.pattern.length) {
@@ -131,9 +146,9 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
         }
     }
 
-    public control(input: Input.InputPlugin): void {
-        if (!this._controllable) return
-        this.slice(input.keyboard!)
+    public control(): void {
+        if (!this.isControllable()) return
+        this.slice()
     }
 
     protected getKeybinds(): Keybinds {
@@ -150,6 +165,10 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
 
     public getTweens() {
         return this._tweens
+    }
+
+    public getReady() {
+        return this._ready
     }
 
     public getEventEmitter() {

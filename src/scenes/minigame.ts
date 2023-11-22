@@ -18,17 +18,15 @@ enum Item {
 }
 
 const LEVELS: Item[][] = [
-    [Item.APPLE, Item.APPLE],
+    [Item.APPLE, Item.APPLE, Item.APPLE, Item.APPLE],
 ]
 
 const MINIGAME_FADE_DURATION = 500
-const MINIGAME_DURATION = 5000
+const MINIGAME_TOTAL_DURATION = 5000
+const MINIGAME_START_TIME = MINIGAME_TOTAL_DURATION / 2
 const MINIGAME_LEVEL_COOLDOWN = 2000
-const MINIGAME_INITIAL_DELAY = 400
-const MINIGAME_CONSECUTIVE_DELAY = 400
-const MINIGAME_FADE_DELAY = 400
 
-const START_X = 40
+const START_X = 60
 const END_X = 430
 const MIN_Y = 30
 const MAX_Y = 110
@@ -132,7 +130,7 @@ export default class MinigameScene extends Phaser.Scene {
                     item = new MinigameApple(this, START_X, MIN_Y + yIncrement * (i + 1), {
                         spriteDepth: this._playerDepth,
                         endX: END_X,
-                        duration: MINIGAME_DURATION
+                        duration: MINIGAME_TOTAL_DURATION
                     })
                     break;
             }
@@ -144,19 +142,20 @@ export default class MinigameScene extends Phaser.Scene {
             item.getEventEmitter().once("fail", () => {
                 progressItems(i)
             })
+
             tweens.push(...item.getTweens())
             colorMatrices.push(item.getColorMatrix())
             items.push(item)
         }
 
+        let delayInterval = (MINIGAME_START_TIME - 30) / items.length
         for (let i = 0; i < items.length; i++) {
-            this.time.delayedCall(MINIGAME_INITIAL_DELAY + (MINIGAME_CONSECUTIVE_DELAY * i), () => {
+            this.time.delayedCall(delayInterval * i, () => {
                 items[i].ready()
-                if (i == 0) items[i].start()
             })
         }
 
-        this.time.delayedCall(MINIGAME_FADE_DELAY, () => this.timeTransition(true, tweens, colorMatrices))
+        this.time.delayedCall(MINIGAME_START_TIME - MINIGAME_FADE_DURATION, () => this.timeTransition(true, tweens, colorMatrices, () => { items[0].start() }))
 
         this._eventEmitter.once("done", () => {
             items = []

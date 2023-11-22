@@ -29,7 +29,6 @@ export default class PreloaderScene extends Scene {
         KeyboardTexture.preload(this)
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
-        this.load.image("wkey", "/img/wKey.png")
 
         this.load.on("progress", (value: number) => {
             progressBar.clear()
@@ -47,6 +46,6 @@ export default class PreloaderScene extends Scene {
         PlayerTexture.load(this)
         ItemsTexture.load(this)
         KeyboardTexture.load(this)
-        this.scene.start(SceneName.Menu)
+        this.scene.start(SceneName.Minigame)
     }
 }
