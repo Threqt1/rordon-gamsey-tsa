@@ -5,6 +5,7 @@ import { KeyboardTexture } from "../../../textures/keyboard";
 import { Controllable } from "../../../plugins/sprites";
 
 const END_FADE_DURATION = 500;
+const HIT_COOLDOWN = 10;
 
 const rotationTweenInfo = {
     rotation: Phaser.Math.DegToRad(360),
@@ -87,8 +88,6 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
         let newTextures = MinigameApple.patternTextures[this._currentPatternLocation]
         mainSprite.setFrame(newTextures[0])
 
-        this._startInputTimestamp = this._scene.time.now
-
         if (this._currentPatternLocation > 0) {
             let newChunk = new BaseSprite(this._scene, mainSprite.x, mainSprite.y, ItemsTexture.TextureKey, newTextures[1]).setDepth(mainSprite.depth)
             newChunk.postFX!.addColorMatrix().grayscale(0.6)
@@ -114,6 +113,7 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
     public start() {
         this.progressPattern()
         this._interactionPrompt.setVisible(true)
+        this._startInputTimestamp = this._scene.time.now
         this._scene.sprites.addControllables(this)
         this.setControllable(true)
     }
@@ -138,10 +138,16 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
     private slice() {
         let key = this.getKeyFor(MinigameApple.pattern[this._currentPatternLocation])
         if (key.isDown && key.timeDown > this._startInputTimestamp) {
+            this.setControllable(false)
             this._currentPatternLocation++;
             this.progressPattern()
             if (this._currentPatternLocation >= MinigameApple.pattern.length) {
                 this.onItemSuccess()
+            } else {
+                this._scene.time.delayedCall(HIT_COOLDOWN, () => {
+                    this.setControllable(true)
+                    this._startInputTimestamp = this._scene.time.now
+                })
             }
         }
     }

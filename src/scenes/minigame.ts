@@ -25,6 +25,7 @@ const MINIGAME_FADE_DURATION = 500
 const MINIGAME_TOTAL_DURATION = 5000
 const MINIGAME_START_TIME = MINIGAME_TOTAL_DURATION / 2
 const MINIGAME_LEVEL_COOLDOWN = 2000
+const MINIGAME_SWITCH_COOLDOWN = 30
 
 const START_X = 60
 const END_X = 430
@@ -116,7 +117,7 @@ export default class MinigameScene extends Phaser.Scene {
 
         const progressItems = (i: number) => {
             if (i + 1 < items.length) {
-                items[i + 1].start()
+                this.time.delayedCall(MINIGAME_SWITCH_COOLDOWN, () => { items[i + 1].start() })
             } else {
                 this._eventEmitter.emit("done")
             }

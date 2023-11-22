@@ -1,5 +1,3 @@
-//create baseitem class
-
 import { Keybinds } from "../../base"
 
 export interface MinigameItem {
@@ -55,3 +53,10 @@ export const MinigameInteractionKeybinds: Keybinds = {
     [MinigameItemInteraction.SliceLeft]: "A",
     [MinigameItemInteraction.SliceRight]: "D",
 }
+
+// export class BaseItem implements MinigameItem {
+//     private static pattern: MinigameItemInteraction[]
+//     private static patternTextures: [string, string][]
+
+//     constructor(pattern: MinigameItemInteraction[], )
+// }
