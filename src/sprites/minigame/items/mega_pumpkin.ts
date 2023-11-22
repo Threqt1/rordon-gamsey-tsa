@@ -35,6 +35,6 @@ export default class MinigameMegaPumpkin extends BaseMinigameItem {
     constructor(scene: Phaser.Scene, x: number, y: number, info: ItemInformation) {
         super(scene, x, y, info)
 
-        this._sprites[0].setScale(1.5)
+        this._sprites[0].setScale(2)
     }
 }
