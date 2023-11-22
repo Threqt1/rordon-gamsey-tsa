@@ -7,6 +7,7 @@
 import { SceneName } from "../enums/sceneNames";
 import MinigameApple from "../sprites/minigame/items/apple";
 import { MinigameItem } from "../sprites/minigame/items/base";
+import MinigameMegaApple from "../sprites/minigame/items/mega_apple";
 import MinigameMegaPumpkin from "../sprites/minigame/items/mega_pumpkin";
 import MinigamePumpkin from "../sprites/minigame/items/pumpkin";
 import MinigameNPC from "../sprites/minigame/npc";
@@ -17,17 +18,21 @@ import { LoadTilemap } from "../util/tilemaps";
 enum Item {
     APPLE,
     PUMPKIN,
-    MEGA_PUMPKIN
+    MEGA_PUMPKIN,
+    MEGA_APPLE
 }
 
 const LEVELS: Item[][] = [
-    [Item.APPLE],
-    [Item.PUMPKIN, Item.APPLE],
-    [Item.APPLE, Item.PUMPKIN, Item.APPLE],
-    [Item.PUMPKIN, Item.APPLE, Item.PUMPKIN],
-    [Item.MEGA_PUMPKIN],
+    // [Item.APPLE],
+    // [Item.PUMPKIN, Item.APPLE],
+    // [Item.APPLE, Item.PUMPKIN, Item.APPLE],
+    // [Item.PUMPKIN, Item.APPLE, Item.PUMPKIN],
+    // [Item.MEGA_PUMPKIN],
     [Item.APPLE, Item.PUMPKIN, Item.APPLE, Item.PUMPKIN, Item.APPLE],
-    [Item.PUMPKIN, Item.MEGA_PUMPKIN, Item.APPLE, Item.MEGA_PUMPKIN, Item.PUMPKIN]
+    [Item.MEGA_PUMPKIN],
+    [Item.PUMPKIN, Item.MEGA_PUMPKIN, Item.APPLE, Item.MEGA_PUMPKIN, Item.PUMPKIN],
+    [Item.MEGA_APPLE],
+    [Item.MEGA_PUMPKIN, Item.MEGA_APPLE, Item.PUMPKIN, Item.MEGA_APPLE, Item.MEGA_PUMPKIN]
 ]
 
 const MINIGAME_FADE_DURATION = 500
@@ -150,6 +155,9 @@ export default class MinigameScene extends Phaser.Scene {
                     break;
                 case Item.MEGA_PUMPKIN:
                     item = new MinigameMegaPumpkin(this, START_X, MIN_Y + yIncrement * (i), itemInfo)
+                    break;
+                case Item.MEGA_APPLE:
+                    item = new MinigameMegaApple(this, START_X, MIN_Y + yIncrement * (i), itemInfo)
                     break;
             }
             if (item === null) continue
