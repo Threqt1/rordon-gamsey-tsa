@@ -46,6 +46,6 @@ export default class PreloaderScene extends Scene {
         PlayerTexture.load(this)
         ItemsTexture.load(this)
         KeyboardTexture.load(this)
-        this.scene.start(SceneName.Minigame)
+        this.scene.start(SceneName.Menu)
     }
 }

@@ -47,7 +47,7 @@ export default class MenuScene extends Scene {
         startSprite.on("pointerup", () => {
             if (!switching) {
                 switching = true
-                switchScenesFadeOut(this, SceneName.Game)
+                switchScenesFadeOut(this, SceneName.Minigame)
             }
         })
 

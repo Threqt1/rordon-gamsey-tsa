@@ -21,7 +21,7 @@ export abstract class BaseSpriteWithInput extends BaseSprite {
         this._keyCodeKeyBindings = {}
 
         for (let keyBind of Object.values(this.getKeybinds())) {
-            let foundKey = scene.input.keyboard!.keys.find(r => r.keyCode === Phaser.Input.Keyboard.KeyCodes[keyBind])
+            let foundKey = scene.input.keyboard!.keys.find(r => r ? r.keyCode === Phaser.Input.Keyboard.KeyCodes[keyBind] : false)
             if (foundKey) {
                 this._keyCodeKeyBindings[keyBind] = foundKey
             } else {

@@ -28,9 +28,10 @@ export default class SpritesScenePlugin extends Phaser.Plugins.ScenePlugin {
     use() {
         var eventEmitter = this.systems!.events
 
-        eventEmitter.on("update", () => this.update())
+        eventEmitter.on("update", () => { this.update() })
 
-        eventEmitter.once("destroy", () => eventEmitter.off("update", this.update))
+        eventEmitter.once("destroy", () => { eventEmitter.off("update", this.update) })
+        eventEmitter.on("shutdown", () => { this.cleanup() })
 
         this.interactables = []
         this.controllables = []
@@ -78,6 +79,12 @@ export default class SpritesScenePlugin extends Phaser.Plugins.ScenePlugin {
         this.scene!.physics.add.collider(this.bodies, this.bodies);
         this.scene!.physics.add.collider(this.bodies, layer);
         this.scene!.physics.add.overlap(this.bodies, this.zones);
+    }
+
+    cleanup() {
+        this.controllables = []
+        this.interactables = []
+        this.bodies.destroy(true, true)
     }
 
     getBodyGroup() {

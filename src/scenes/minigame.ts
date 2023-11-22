@@ -56,6 +56,8 @@ export default class MinigameScene extends Phaser.Scene {
     private _colorMatrices: Phaser.FX.ColorMatrix[] = []
     private _playerDepth!: number
 
+    private _switching: boolean = false
+
     private _eventEmitter: MinigameEventEmitter
 
     constructor() {
@@ -68,6 +70,10 @@ export default class MinigameScene extends Phaser.Scene {
 
     create(data: { fade: boolean }) {
         this.sprites.use();
+
+        this.sys.events.on("shutdown", () => {
+            this.cleanup()
+        })
 
         let { map, playerDepth } = LoadTilemap(this, "test2")
 
@@ -166,7 +172,10 @@ export default class MinigameScene extends Phaser.Scene {
                 progressItems(i)
             })
             item.getEventEmitter().once("fail", () => {
-                progressItems(i)
+                if (!this._switching) {
+                    this._switching = true
+                    switchScenesFadeOut(this, SceneName.Menu)
+                }
             })
 
             tweens.push(...item.getTweens())
@@ -197,6 +206,13 @@ export default class MinigameScene extends Phaser.Scene {
         if (!this._levelActive) {
             this.activateLevel()
         }
+    }
+
+    private cleanup() {
+        this._levelActive = false
+        this._currentLevel = -1
+        this._switching = false
+        this._colorMatrices = []
     }
 }
 

@@ -58,7 +58,7 @@ export const MinigameInteractionKeybinds: Keybinds = {
 
 
 const END_FADE_DURATION = 500;
-const HIT_COOLDOWN = 10;
+const HIT_COOLDOWN = 100;
 
 const rotationTweenInfo = {
     rotation: Phaser.Math.DegToRad(360),
@@ -188,17 +188,18 @@ export abstract class BaseMinigameItem extends BaseInput implements MinigameItem
         let key = this.getKeyFor(this.getPattern()[this._currentPatternLocation])
         if (!key) return
         if (key.isDown) {
-            this.setControllable(false)
             this._currentPatternLocation++;
             this.progressPattern()
+            input.resetKeys()
             if (this._currentPatternLocation >= this.getPattern().length) {
                 this.onItemSuccess()
-            } else {
-                this._scene.time.delayedCall(HIT_COOLDOWN, () => {
-                    this.setControllable(true)
-                    input.resetKeys()
-                })
             }
+        } else if (Object.values(this._keyCodeKeyBindings).find(r => r != null && r.isDown)) {
+            this.setControllable(false)
+            this._scene.time.delayedCall(HIT_COOLDOWN, () => {
+                this.setControllable(true)
+                input.resetKeys()
+            })
         }
     }
 

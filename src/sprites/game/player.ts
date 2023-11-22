@@ -39,7 +39,6 @@ export default class GamePlayer extends BaseSpriteWithInput implements Controlla
     private _direction: Interaction = Interaction.DOWN
 
     private move(input: Phaser.Input.Keyboard.KeyboardPlugin) {
-        let keybinds = this.getKeybinds()
         let velX = 0
         let velY = 0
 

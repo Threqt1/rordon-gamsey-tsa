@@ -1,7 +1,7 @@
 import './style.css'
 import { Game } from 'phaser';
 
-import { GameScene, PreloaderScene, MenuScene, MinigameScene } from './scenes';
+import { PreloaderScene, MenuScene, MinigameScene } from './scenes';
 import { DebugScenePlugin, SpritesScenePlugin } from './plugins';
 import { PluginKey, PluginName } from './enums/pluginNames';
 
@@ -19,7 +19,6 @@ const config: Phaser.Types.Core.GameConfig = {
     scene: [
         PreloaderScene,
         MenuScene,
-        GameScene,
         MinigameScene
     ],
     plugins: {
