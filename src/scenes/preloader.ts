@@ -30,6 +30,8 @@ export default class PreloaderScene extends Scene {
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
 
+        this.load.audio("osbg", "/music/obsg.mp3")
+
         this.load.on("progress", (value: number) => {
             progressBar.clear()
             progressBar.fillStyle(0xF2F3F5, 1)

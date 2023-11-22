@@ -21,6 +21,22 @@ enum Item {
 }
 
 const LEVELS: Item[][] = [
+    // [Item.APPLE],
+    // [Item.PUMPKIN],
+    // [Item.APPLE, Item.PUMPKIN],
+    // [Item.PUMPKIN, Item.APPLE, Item.PUMPKIN],
+    // [Item.APPLE, Item.MEGA_PUMPKIN, Item.APPLE]
+
+    [Item.APPLE],
+    [Item.PUMPKIN, Item.APPLE],
+    [Item.APPLE, Item.PUMPKIN, Item.APPLE],
+    [Item.PUMPKIN, Item.APPLE, Item.PUMPKIN],
+    [Item.MEGA_PUMPKIN],
+    [Item.APPLE, Item.PUMPKIN, Item.APPLE, Item.PUMPKIN, Item.APPLE],
+    [Item.MEGA_PUMPKIN],
+    [Item.PUMPKIN, Item.MEGA_PUMPKIN, Item.APPLE, Item.MEGA_PUMPKIN, Item.PUMPKIN],
+    [Item.MEGA_PUMPKIN],
+    [Item.MEGA_PUMPKIN, Item.MEGA_PUMPKIN, Item.PUMPKIN, Item.MEGA_PUMPKIN, Item.MEGA_PUMPKIN],
     [Item.APPLE],
     [Item.PUMPKIN],
     [Item.APPLE, Item.PUMPKIN],
@@ -49,6 +65,8 @@ export default class MinigameScene extends Phaser.Scene {
     private _colorMatrices: Phaser.FX.ColorMatrix[] = []
     private _playerDepth!: number
 
+    private _music!: Phaser.Sound.WebAudioSound
+
     private _switching: boolean = false
 
     private _eventEmitter: MinigameEventEmitter
@@ -63,6 +81,9 @@ export default class MinigameScene extends Phaser.Scene {
 
     create(data: { fade: boolean }) {
         this.sprites.use();
+
+        this._music = this.sound.add("osbg") as Phaser.Sound.WebAudioSound
+        this._music.play({ loop: true })
 
         this.sys.events.on("shutdown", () => {
             this.cleanup()
@@ -203,6 +224,7 @@ export default class MinigameScene extends Phaser.Scene {
         this._currentLevel = -1
         this._switching = false
         this._colorMatrices = []
+        this._music.destroy()
     }
 }
 
