@@ -39,7 +39,8 @@ const config: Phaser.Types.Core.GameConfig = {
 /*
 add cleanup for scenes
 add VFX, screen shake, particles
-add points, timing
+add points, timing, transition level
+dialogue
 */
 
 new Game(config);
