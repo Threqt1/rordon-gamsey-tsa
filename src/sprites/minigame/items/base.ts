@@ -58,7 +58,7 @@ export const MinigameInteractionKeybinds: Keybinds = {
 
 
 const END_FADE_DURATION = 500;
-const HIT_COOLDOWN = 10000;
+const HIT_COOLDOWN = 100;
 
 const rotationTweenInfo = {
     rotation: Phaser.Math.DegToRad(360),

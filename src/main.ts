@@ -37,10 +37,8 @@ const config: Phaser.Types.Core.GameConfig = {
 }
 
 /*
-sprites - register animations, enums for all animations to play, textures
-controllers - logic for the character, moving, interacting, etc
-    - Controllable Interface - can be moved and controlled
-    - Interactable Interface - can be interacted with
+add cleanup for scenes
+add VFX, screen shake, particles
 */
 
 new Game(config);
