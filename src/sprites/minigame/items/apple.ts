@@ -32,7 +32,6 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
     private _tweens: Phaser.Tweens.Tween[]
 
     private _interactionPrompt: Phaser.GameObjects.Sprite
-    private _startInputTimestamp: number
 
     private _eventEmitter: MinigameItemEventEmitter
 
@@ -53,7 +52,6 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
         this._interactionPrompt.setDepth(100).setScale(0.3).setY(this._interactionPrompt.y + this._interactionPrompt.displayHeight + 5).setVisible(false)
 
         this._currentPatternLocation = 0;
-        this._startInputTimestamp = 0;
 
         let movementTween = scene.tweens.add({
             targets: [mainSprite, this._interactionPrompt],
@@ -113,8 +111,8 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
     public start() {
         this.progressPattern()
         this._interactionPrompt.setVisible(true)
-        this._startInputTimestamp = this._scene.time.now
         this._scene.sprites.addControllables(this)
+        this._scene.input.keyboard!.resetKeys()
         this.setControllable(true)
     }
 
@@ -135,9 +133,10 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
         })
     }
 
-    private slice() {
+    private slice(input: Phaser.Input.Keyboard.KeyboardPlugin) {
         let key = this.getKeyFor(MinigameApple.pattern[this._currentPatternLocation])
-        if (key.isDown && key.timeDown > this._startInputTimestamp) {
+        if (!key) return
+        if (key.isDown) {
             this.setControllable(false)
             this._currentPatternLocation++;
             this.progressPattern()
@@ -146,15 +145,15 @@ export class MinigameApple extends BaseInput implements MinigameItem, Controllab
             } else {
                 this._scene.time.delayedCall(HIT_COOLDOWN, () => {
                     this.setControllable(true)
-                    this._startInputTimestamp = this._scene.time.now
+                    input.resetKeys()
                 })
             }
         }
     }
 
-    public control(): void {
+    public control(input: Phaser.Input.InputPlugin): void {
         if (!this.isControllable()) return
-        this.slice()
+        this.slice(input.keyboard!)
     }
 
     protected getKeybinds(): Keybinds {
