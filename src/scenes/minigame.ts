@@ -84,7 +84,7 @@ export default class MinigameScene extends Phaser.Scene {
 
         this._music = this.sound.add("osbg") as Phaser.Sound.WebAudioSound
         this._music.play({ loop: true })
-        this._music.volume = 0.5
+        this._music.volume = 0.4
 
         this.sys.events.on("shutdown", () => {
             this.cleanup()
