@@ -26,7 +26,7 @@ const LEVELS: Item[][] = [
     [Item.APPLE, Item.PUMPKIN, Item.APPLE],
     [Item.PUMPKIN, Item.APPLE, Item.PUMPKIN],
     [Item.MEGA_PUMPKIN],
-    [Item.APPLE, Item.PUMPKIN, Item.APPLE, Item.PUMPKIN, Item.MEGA_PUMPKIN],
+    [Item.APPLE, Item.PUMPKIN, Item.APPLE, Item.PUMPKIN, Item.APPLE],
     [Item.PUMPKIN, Item.MEGA_PUMPKIN, Item.APPLE, Item.MEGA_PUMPKIN, Item.PUMPKIN]
 ]
 
@@ -106,9 +106,9 @@ export default class MinigameScene extends Phaser.Scene {
             targets: { value: on ? 0 : GRAYSCALE },
             value: on ? GRAYSCALE : 0,
             duration: MINIGAME_FADE_DURATION,
-            onUpdate: (_, __, ___, current) => {
+            onUpdate: (tween) => {
                 for (let colorMatrix of colorMatrices) {
-                    colorMatrix.grayscale(current)
+                    colorMatrix.grayscale(tween.getValue())
                 }
             }
         }

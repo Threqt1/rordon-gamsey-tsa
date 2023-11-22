@@ -10,9 +10,9 @@ export default class MinigamePumpkin extends BaseMinigameItem {
     ]
     private static patternTextures: [string, string][] = [
         [ItemsTexture.Items.Pumpkin + "_1", ItemsTexture.Items.Pumpkin + "_1"],
-        [ItemsTexture.Items.Pumpkin + "_3", ItemsTexture.Items.Pumpkin + "_2"],
-        [ItemsTexture.Items.Pumpkin + "_5", ItemsTexture.Items.Pumpkin + "_4"],
-        [ItemsTexture.Items.Pumpkin + "_7", ItemsTexture.Items.Pumpkin + "_6"],
+        [ItemsTexture.Items.Pumpkin + "_2", ItemsTexture.Items.Pumpkin + "_3"],
+        [ItemsTexture.Items.Pumpkin + "_4", ItemsTexture.Items.Pumpkin + "_5"],
+        [ItemsTexture.Items.Pumpkin + "_6", ItemsTexture.Items.Pumpkin + "_7"],
         [ItemsTexture.Items.Pumpkin + "_8", ItemsTexture.Items.Pumpkin + "_9"]
     ]
 
