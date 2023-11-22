@@ -59,6 +59,8 @@ export const MinigameInteractionKeybinds: Keybinds = {
 
 const END_FADE_DURATION = 500;
 const HIT_COOLDOWN = 100;
+const SCREEN_SHAKE_DURATION = 100
+const SCREEN_SHAKE_FACTOR = 0.0003
 
 const rotationTweenInfo = {
     rotation: Phaser.Math.DegToRad(360),
@@ -188,6 +190,7 @@ export abstract class BaseMinigameItem extends BaseInput implements MinigameItem
         let key = this.getKeyFor(this.getPattern()[this._currentPatternLocation])
         if (!key) return
         if (key.isDown) {
+            this._scene.cameras.main.shake(SCREEN_SHAKE_DURATION, SCREEN_SHAKE_FACTOR)
             this._currentPatternLocation++;
             this.progressPattern()
             input.resetKeys()
