@@ -61,12 +61,7 @@ const END_FADE_DURATION = 500;
 const HIT_COOLDOWN = 100;
 const SCREEN_SHAKE_DURATION = 100
 const SCREEN_SHAKE_FACTOR = 0.0003
-
-const rotationTweenInfo = {
-    rotation: Phaser.Math.DegToRad(360),
-    loop: -1,
-    duration: 1000,
-}
+const ROTATION_VELOCITY = 300;
 
 export abstract class BaseMinigameItem extends BaseInput implements MinigameItem {
     abstract getPattern(): MinigameItemInteraction[]
@@ -113,13 +108,9 @@ export abstract class BaseMinigameItem extends BaseInput implements MinigameItem
             onComplete: () => this.onItemFail(),
             paused: true
         })
-        let rotationTween = scene.tweens.add({
-            targets: mainSprite,
-            ...rotationTweenInfo,
-            paused: true
-        })
+        mainSprite.setAngularVelocity(ROTATION_VELOCITY)
 
-        this._tweens = [movementTween, rotationTween]
+        this._tweens = [movementTween]
     }
 
     private onItemFail() {
@@ -145,12 +136,8 @@ export abstract class BaseMinigameItem extends BaseInput implements MinigameItem
 
             let vector = new Phaser.Math.Vector2(0, 1).rotate(mainSprite.rotation - Phaser.Math.DegToRad(90)).scale(30)
             newChunk.setVelocity(vector.x, vector.y)
+            newChunk.setAngularVelocity(ROTATION_VELOCITY)
 
-            let rotationTween = this._scene.tweens.add({
-                targets: newChunk,
-                ...rotationTweenInfo
-            })
-            this._tweens.push(rotationTween)
             this._sprites.push(newChunk)
         }
     }
