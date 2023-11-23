@@ -13,6 +13,8 @@ export default class GameScene extends Scene {
     create(data?: { fade: boolean }) {
         let { collisions, map, playerDepth } = LoadTilemap(this, "test")
 
+        console.log(map)
+
         this.sprites.use()
 
         let player = new GamePlayer(this, 30, 130)
@@ -26,7 +28,7 @@ export default class GameScene extends Scene {
 
         let camera = this.cameras.main;
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
-        camera.startFollow(player, true, 0.2, 0.2);
+        camera.startFollow(player.sprite, true, 0.2, 0.2);
         camera.setZoom(this.scale.width / 350)
 
         this.sprites.makeCollisions(collisions)

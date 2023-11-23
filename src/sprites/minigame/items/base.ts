@@ -10,6 +10,7 @@ export interface MinigameItem {
     getTweens(): Phaser.Tweens.Tween[]
     getReady(): boolean
     getColorMatrix(): Phaser.FX.ColorMatrix
+    getSprite(): Phaser.Physics.Arcade.Sprite
 }
 
 export type ItemInformation = {
@@ -249,5 +250,9 @@ export abstract class BaseMinigameItem implements MinigameItem {
 
     getColorMatrix() {
         return this.colorMatrix
+    }
+
+    getSprite() {
+        return this.mainBody
     }
 }

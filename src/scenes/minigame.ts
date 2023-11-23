@@ -21,12 +21,6 @@ enum Item {
 }
 
 const LEVELS: Item[][] = [
-    // [Item.APPLE],
-    // [Item.PUMPKIN],
-    // [Item.APPLE, Item.PUMPKIN],
-    // [Item.PUMPKIN, Item.APPLE, Item.PUMPKIN],
-    // [Item.APPLE, Item.MEGA_PUMPKIN, Item.APPLE]
-
     [Item.APPLE],
     [Item.PUMPKIN, Item.APPLE],
     [Item.APPLE, Item.PUMPKIN, Item.APPLE],
@@ -49,10 +43,10 @@ const MINIGAME_TOTAL_DURATION = 5000
 const MINIGAME_START_TIME = MINIGAME_TOTAL_DURATION / 2.5
 const MINIGAME_LEVEL_COOLDOWN = 2000
 
-const START_X = 60
-const END_X = 430
-const MIN_Y = 30
-const MAX_Y = 110
+const START_X = 85
+const END_X = 400
+const MIN_Y = 225 - 50
+const MAX_Y = 225 + 50
 
 const TWEENS_TIME_DELAY = 0.8
 const GRAYSCALE = 0.6
@@ -89,19 +83,19 @@ export default class MinigameScene extends Phaser.Scene {
             this.cleanup()
         })
 
-        let { map, playerDepth } = LoadTilemap(this, "test2")
+        let { map, playerDepth } = LoadTilemap(this, "minigame")
 
         this._playerDepth = playerDepth
 
         let camera = this.cameras.main;
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
-        camera.setZoom(this.scale.width / map.widthInPixels)
+        camera.setZoom(this.scale.height / map.heightInPixels)
 
-        let player = new MinigamePlayer(this, 450, 70)
-        let npc = new MinigameNPC(this, 30, 70)
+        let player = new MinigamePlayer(this, END_X + 30, 225)
+        let npc = new MinigameNPC(this, START_X - 30, 225)
 
         this.sprites.addSprites(player.sprite, npc.sprite)
-        this.sprites.getBodyGroup().setDepth(playerDepth)
+        this.sprites.getBodyGroup().setDepth(100)
 
         for (let sprite of this.sprites.getBodies()) {
             this._colorMatrices.push(sprite.postFX!.addColorMatrix())
@@ -153,7 +147,8 @@ export default class MinigameScene extends Phaser.Scene {
             }
         }
 
-        let yIncrement = (MAX_Y - MIN_Y) / levelData.length
+        let yIncrement = (MAX_Y - MIN_Y) / (levelData.length + 1)
+
         for (let i = 0; i < levelData.length; i++) {
             let item: MinigameItem | null = null
             let itemInfo = {
@@ -161,15 +156,16 @@ export default class MinigameScene extends Phaser.Scene {
                 endX: END_X,
                 duration: MINIGAME_TOTAL_DURATION
             }
+            let y = MIN_Y + yIncrement * (i + 1)
             switch (levelData[i]) {
                 case Item.APPLE:
-                    item = new MinigameApple(this, START_X, MIN_Y + yIncrement * (i), itemInfo)
+                    item = new MinigameApple(this, START_X, y, itemInfo)
                     break;
                 case Item.PUMPKIN:
-                    item = new MinigamePumpkin(this, START_X, MIN_Y + yIncrement * (i), itemInfo)
+                    item = new MinigamePumpkin(this, START_X, y, itemInfo)
                     break;
                 case Item.MEGA_PUMPKIN:
-                    item = new MinigameMegaPumpkin(this, START_X, MIN_Y + yIncrement * (i), itemInfo)
+                    item = new MinigameMegaPumpkin(this, START_X, y, itemInfo)
                     break;
             }
             if (item === null) continue

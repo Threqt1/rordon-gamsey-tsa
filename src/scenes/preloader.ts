@@ -6,6 +6,7 @@ import { PlayerTexture } from "../textures/player";
 import { ItemsTexture } from "../textures/minigame/items";
 import { KeyboardTexture } from "../textures/keyboard";
 import { SlashesTexture } from "../textures/minigame/slashes";
+import { ElvesTexture } from "../textures/minigame/elves";
 
 export default class PreloaderScene extends Scene {
     constructor() {
@@ -24,11 +25,13 @@ export default class PreloaderScene extends Scene {
 
         PreloadTilemap(this, "test", "map.tmj", "spritesheet.png")
         PreloadTilemap(this, "test2", "map2.tmj", "spritesheet.png")
+        PreloadTilemap(this, "minigame", "minigame.tmj", "minigame.png")
 
         PlayerTexture.preload(this)
         ItemsTexture.preload(this)
         KeyboardTexture.preload(this)
         SlashesTexture.preload(this)
+        ElvesTexture.preload(this)
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
 
@@ -51,6 +54,7 @@ export default class PreloaderScene extends Scene {
         ItemsTexture.load(this)
         KeyboardTexture.load(this)
         SlashesTexture.load(this)
+        ElvesTexture.load(this)
         this.scene.start(SceneName.Menu)
     }
 }

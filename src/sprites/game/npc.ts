@@ -1,5 +1,6 @@
 import { CollisionCategory } from "../../enums/collisionCategories";
 import { Interactable } from "../../plugins/sprites";
+import { KeyboardTexture } from "../../textures/keyboard";
 import { PlayerTexture } from "../../textures/player";
 import { BaseInput, BaseSprite, Keybinds } from "../base";
 
@@ -30,7 +31,7 @@ export default class GameNPC implements Interactable {
         this.sprite.setPushable(false)
 
         this.interactable = true
-        this.interactionPrompt = this.scene.add.sprite(this.sprite.x, this.sprite.y + this.sprite.displayOriginY, "wkey").setDepth(100).setVisible(false).setScale(0.3)
+        this.interactionPrompt = this.scene.add.sprite(this.sprite.x, this.sprite.y + this.sprite.displayOriginY, KeyboardTexture.TextureKey, KeyboardTexture.KeyPictures["W"]).setDepth(100).setVisible(false).setScale(0.3)
         this.interactionPrompt.setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight / 2)
 
         this.zone = this.scene.add.zone(this.sprite.x, this.sprite.y, 50, 50)
