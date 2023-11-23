@@ -5,14 +5,12 @@
  */
 
 import { SceneName } from "../enums/sceneNames";
-import { BaseSprite } from "../sprites/base";
 import MinigameApple from "../sprites/minigame/items/apple";
 import { MinigameItem } from "../sprites/minigame/items/base";
 import MinigameMegaPumpkin from "../sprites/minigame/items/mega_pumpkin";
 import MinigamePumpkin from "../sprites/minigame/items/pumpkin";
 import MinigameNPC from "../sprites/minigame/npc";
 import MinigamePlayer from "../sprites/minigame/player";
-import { SlashesTexture } from "../textures/minigame/slashes";
 import { switchSceneFadeIn, switchScenesFadeOut } from "../util/fades";
 import { LoadTilemap } from "../util/tilemaps";
 
