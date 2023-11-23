@@ -1,7 +1,7 @@
 import { CollisionCategory } from "../../enums/collisionCategories"
 import { Controllable } from "../../plugins/sprites"
 import { PlayerTexture } from "../../textures/player"
-import { BaseSpriteWithInput, Keybinds } from "../base"
+import { BaseInput, BaseSprite, Keybinds } from "../base"
 
 enum Interaction {
     UP,
@@ -10,8 +10,8 @@ enum Interaction {
     RIGHT
 }
 
-export default class GamePlayer extends BaseSpriteWithInput implements Controllable {
-    private static _keybinds: Keybinds = {
+export default class GamePlayer implements Controllable {
+    static keybinds: Keybinds = {
         [Interaction.UP]:
             "W",
         [Interaction.DOWN]:
@@ -22,95 +22,98 @@ export default class GamePlayer extends BaseSpriteWithInput implements Controlla
             "D",
     }
 
-    protected getKeybinds(): Keybinds {
-        return GamePlayer._keybinds
-    }
-    private _controllable: boolean
-    private _speed = 80;
+    sprite: BaseSprite
+    scene: Phaser.Scene
+    input: BaseInput
+
+    controllable: boolean
+    speed = 80;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, PlayerTexture.TextureKey)
+        this.sprite = new BaseSprite(scene, x, y, PlayerTexture.TextureKey)
+        this.scene = scene
+        this.input = new BaseInput(scene, GamePlayer.keybinds)
 
-        this.scene.sprites.makeCollisionsFor(CollisionCategory.CONTROLLABLE, this.body as Phaser.Physics.Arcade.Body)
+        this.scene.sprites.makeCollisionsFor(CollisionCategory.CONTROLLABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
 
-        this._controllable = true
+        this.controllable = true
     }
 
-    private _direction: Interaction = Interaction.DOWN
+    direction: Interaction = Interaction.DOWN
 
-    private move(input: Phaser.Input.Keyboard.KeyboardPlugin) {
+    move(input: Phaser.Input.Keyboard.KeyboardPlugin) {
         let velX = 0
         let velY = 0
 
-        if (this.checkDown(input, Interaction.UP)) {
+        if (this.input.checkDown(input, Interaction.UP)) {
             velY = -1
-            this._direction = Interaction.UP
-        } else if (this.checkDown(input, Interaction.DOWN)) {
+            this.direction = Interaction.UP
+        } else if (this.input.checkDown(input, Interaction.DOWN)) {
             velY = 1
-            this._direction = Interaction.DOWN
+            this.direction = Interaction.DOWN
         }
 
-        if (this.checkDown(input, Interaction.RIGHT)) {
+        if (this.input.checkDown(input, Interaction.RIGHT)) {
             velX = 1
-            this._direction = Interaction.RIGHT
-        } else if (this.checkDown(input, Interaction.LEFT)) {
+            this.direction = Interaction.RIGHT
+        } else if (this.input.checkDown(input, Interaction.LEFT)) {
             velX = -1
-            this._direction = Interaction.LEFT
+            this.direction = Interaction.LEFT
         }
 
         let movementVector = new Phaser.Math.Vector2(velX, velY).normalize()
         if (velX != 0 && velY != 0) {
-            movementVector = movementVector.scale(this._speed * 1.2)
+            movementVector = movementVector.scale(this.speed * 1.2)
         } else {
-            movementVector = movementVector.scale(this._speed)
+            movementVector = movementVector.scale(this.speed)
         }
 
-        this.setVelocity(movementVector.x, movementVector.y)
+        this.sprite.setVelocity(movementVector.x, movementVector.y)
 
-        switch (this._direction) {
+        switch (this.direction) {
             case Interaction.UP:
                 if (velX === 0 && velY === 0) {
-                    this.anims.play(PlayerTexture.Animations.IdleBack, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.IdleBack, true)
                 } else {
-                    this.anims.play(PlayerTexture.Animations.WalkBack, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.WalkBack, true)
                 }
                 break;
             case Interaction.DOWN:
                 if (velX === 0 && velY === 0) {
-                    this.anims.play(PlayerTexture.Animations.IdleFront, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.IdleFront, true)
                 } else {
-                    this.anims.play(PlayerTexture.Animations.WalkFront, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.WalkFront, true)
                 }
                 break;
             case Interaction.LEFT:
-                this.setFlipX(true)
+                this.sprite.setFlipX(true)
                 if (velX === 0 && velY === 0) {
-                    this.anims.play(PlayerTexture.Animations.IdleSide, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.IdleSide, true)
                 } else {
-                    this.anims.play(PlayerTexture.Animations.WalkSide, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.WalkSide, true)
                 }
                 break;
             case Interaction.RIGHT:
-                this.setFlipX(false)
+                this.sprite.setFlipX(false)
                 if (velX === 0 && velY === 0) {
-                    this.anims.play(PlayerTexture.Animations.IdleSide, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.IdleSide, true)
                 } else {
-                    this.anims.play(PlayerTexture.Animations.WalkSide, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.WalkSide, true)
                 }
                 break;
         }
     }
 
-    public setControllable(controllable: boolean) {
-        this._controllable = controllable
+    setControllable(controllable: boolean) {
+        this.controllable = controllable
     }
 
-    public isControllable(): boolean {
-        return this._controllable;
+    isControllable(): boolean {
+        return this.controllable;
     }
 
-    public control(input: Phaser.Input.InputPlugin): void {
-        if (!this._controllable) return
+    control(input: Phaser.Input.InputPlugin) {
+        if (!this.controllable) return
         this.move(input.keyboard!)
     }
 }

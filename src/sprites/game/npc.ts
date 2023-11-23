@@ -1,68 +1,71 @@
 import { CollisionCategory } from "../../enums/collisionCategories";
 import { Interactable } from "../../plugins/sprites";
 import { PlayerTexture } from "../../textures/player";
-import { BaseSpriteWithInput, Keybinds } from "../base";
+import { BaseInput, BaseSprite, Keybinds } from "../base";
 
 enum Interaction {
     INTERACT
 }
 
-export default class GameNPC extends BaseSpriteWithInput implements Interactable {
-    private static _keybinds: Keybinds = {
+export default class GameNPC implements Interactable {
+    static keybinds: Keybinds = {
         [Interaction.INTERACT]:
             "E",
     }
 
-    protected getKeybinds(): Keybinds {
-        return GameNPC._keybinds
-    }
-    private _interactable: boolean
-    private _interactionPrompt: Phaser.GameObjects.Sprite
-    private _zone: Phaser.GameObjects.Zone
+    sprite: BaseSprite
+    scene: Phaser.Scene
+    input: BaseInput
+
+    interactable: boolean
+    interactionPrompt: Phaser.GameObjects.Sprite
+    zone: Phaser.GameObjects.Zone
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, PlayerTexture.TextureKey)
+        this.sprite = new BaseSprite(scene, x, y, PlayerTexture.TextureKey)
+        this.scene = scene
+        this.input = new BaseInput(scene, GameNPC.keybinds)
 
-        this.scene.sprites.makeCollisionsFor(CollisionCategory.INTERACTABLE, this.body as Phaser.Physics.Arcade.Body)
-        this.setPushable(false)
+        this.scene.sprites.makeCollisionsFor(CollisionCategory.INTERACTABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
+        this.sprite.setPushable(false)
 
-        this._interactable = true
-        this._interactionPrompt = this.scene.add.sprite(this.x, this.y + this.displayOriginY, "wkey").setDepth(100).setVisible(false).setScale(0.3)
-        this._interactionPrompt.setY(this._interactionPrompt.y + this._interactionPrompt.displayHeight / 2)
+        this.interactable = true
+        this.interactionPrompt = this.scene.add.sprite(this.sprite.x, this.sprite.y + this.sprite.displayOriginY, "wkey").setDepth(100).setVisible(false).setScale(0.3)
+        this.interactionPrompt.setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight / 2)
 
-        this._zone = this.scene.add.zone(this.x, this.y, 50, 50)
-        this.scene.physics.world.enable(this._zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
+        this.zone = this.scene.add.zone(this.sprite.x, this.sprite.y, 50, 50)
+        this.scene.physics.world.enable(this.zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
 
-        let body: Phaser.Physics.Arcade.Body = this._zone.body as Phaser.Physics.Arcade.Body
+        let body: Phaser.Physics.Arcade.Body = this.zone.body as Phaser.Physics.Arcade.Body
         this.scene.sprites.makeCollisionsFor(CollisionCategory.INTERACTION_ZONE, body)
         body.moves = false
 
-        this.anims.play(PlayerTexture.Animations.IdleFront)
+        this.sprite.anims.play(PlayerTexture.Animations.IdleFront)
     }
 
-    public getInteractableZone(): Phaser.GameObjects.Zone {
-        return this._zone;
+    getInteractableZone(): Phaser.GameObjects.Zone {
+        return this.zone;
     }
 
-    public setInteractionPrompt(show: boolean): void {
-        this._interactionPrompt.setVisible(show);
+    setInteractionPrompt(show: boolean): void {
+        this.interactionPrompt.setVisible(show);
     }
 
-    public isInteractable(): boolean {
-        return this._interactable ? this._interactionPrompt.visible : this._interactable
+    isInteractable(): boolean {
+        return this.interactable ? this.interactionPrompt.visible : this.interactable
     }
 
-    public setInteractable(interactable: boolean): void {
+    setInteractable(interactable: boolean): void {
         if (!interactable) {
-            this._interactionPrompt.setVisible(false)
+            this.interactionPrompt.setVisible(false)
         }
-        this._interactable = interactable
+        this.interactable = interactable
     }
 
-    public pollZoned() {
-        let touching = (this._zone.body as Phaser.Physics.Arcade.Body).touching.none
-        let wasTouching = (this._zone.body as Phaser.Physics.Arcade.Body).wasTouching.none
-        let embedded = (this._zone.body as Phaser.Physics.Arcade.Body).embedded
+    pollZoned() {
+        let touching = (this.zone.body as Phaser.Physics.Arcade.Body).touching.none
+        let wasTouching = (this.zone.body as Phaser.Physics.Arcade.Body).wasTouching.none
+        let embedded = (this.zone.body as Phaser.Physics.Arcade.Body).embedded
 
         if (touching && !wasTouching) {
             if (embedded) {
@@ -76,10 +79,10 @@ export default class GameNPC extends BaseSpriteWithInput implements Interactable
         }
     }
 
-    public interact(input: Phaser.Input.InputPlugin): void {
-        if (!this._interactable) return
+    interact(input: Phaser.Input.InputPlugin) {
+        if (!this.interactable) return
         this.pollZoned()
-        if (this.isInteractable() && this.checkDown(input.keyboard!, Interaction.INTERACT)) {
+        if (this.isInteractable() && this.input.checkDown(input.keyboard!, Interaction.INTERACT)) {
             this.setInteractable(false)
             console.log("Hi")
         }

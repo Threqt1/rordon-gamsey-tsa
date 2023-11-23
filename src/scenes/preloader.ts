@@ -5,6 +5,7 @@ import { pct } from "../util/sizes";
 import { PlayerTexture } from "../textures/player";
 import { ItemsTexture } from "../textures/minigame/items";
 import { KeyboardTexture } from "../textures/keyboard";
+import { SlashesTexture } from "../textures/minigame/slashes";
 
 export default class PreloaderScene extends Scene {
     constructor() {
@@ -27,6 +28,7 @@ export default class PreloaderScene extends Scene {
         PlayerTexture.preload(this)
         ItemsTexture.preload(this)
         KeyboardTexture.preload(this)
+        SlashesTexture.preload(this)
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
 
@@ -48,6 +50,7 @@ export default class PreloaderScene extends Scene {
         PlayerTexture.load(this)
         ItemsTexture.load(this)
         KeyboardTexture.load(this)
+        SlashesTexture.load(this)
         this.scene.start(SceneName.Menu)
     }
 }

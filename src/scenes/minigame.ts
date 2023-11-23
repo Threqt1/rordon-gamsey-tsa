@@ -5,12 +5,14 @@
  */
 
 import { SceneName } from "../enums/sceneNames";
+import { BaseSprite } from "../sprites/base";
 import MinigameApple from "../sprites/minigame/items/apple";
 import { MinigameItem } from "../sprites/minigame/items/base";
 import MinigameMegaPumpkin from "../sprites/minigame/items/mega_pumpkin";
 import MinigamePumpkin from "../sprites/minigame/items/pumpkin";
 import MinigameNPC from "../sprites/minigame/npc";
 import MinigamePlayer from "../sprites/minigame/player";
+import { SlashesTexture } from "../textures/minigame/slashes";
 import { switchSceneFadeIn, switchScenesFadeOut } from "../util/fades";
 import { LoadTilemap } from "../util/tilemaps";
 
@@ -55,7 +57,6 @@ const MIN_Y = 30
 const MAX_Y = 110
 
 const TWEENS_TIME_DELAY = 0.8
-const ANIMS_TIME_DELAY = 0.4
 const GRAYSCALE = 0.6
 
 export default class MinigameScene extends Phaser.Scene {
@@ -101,7 +102,7 @@ export default class MinigameScene extends Phaser.Scene {
         let player = new MinigamePlayer(this, 450, 70)
         let npc = new MinigameNPC(this, 30, 70)
 
-        this.sprites.addSprites(player, npc)
+        this.sprites.addSprites(player.sprite, npc.sprite)
         this.sprites.getBodyGroup().setDepth(playerDepth)
 
         for (let sprite of this.sprites.getBodies()) {
@@ -123,11 +124,6 @@ export default class MinigameScene extends Phaser.Scene {
             duration: MINIGAME_FADE_DURATION,
             onComplete: callback
         }
-        const animationTimeDelayTween: Phaser.Types.Tweens.TweenBuilderConfig = {
-            targets: this.anims,
-            globalTimeScale: on ? ANIMS_TIME_DELAY : 1,
-            duration: MINIGAME_FADE_DURATION
-        }
         const grayscaleTween: Phaser.Types.Tweens.TweenBuilderConfig = {
             targets: { value: on ? 0 : GRAYSCALE },
             value: on ? GRAYSCALE : 0,
@@ -138,7 +134,7 @@ export default class MinigameScene extends Phaser.Scene {
                 }
             }
         }
-        this.tweens.addMultiple([tweenTimeDelayTween, animationTimeDelayTween, grayscaleTween])
+        this.tweens.addMultiple([tweenTimeDelayTween, grayscaleTween])
     }
 
     private activateLevel() {
@@ -198,7 +194,7 @@ export default class MinigameScene extends Phaser.Scene {
         let delayInterval = (MINIGAME_START_TIME - 30) / items.length
         for (let i = 0; i < items.length; i++) {
             this.time.delayedCall(delayInterval * i, () => {
-                items[i].ready()
+                items[i].prepare()
             })
         }
 

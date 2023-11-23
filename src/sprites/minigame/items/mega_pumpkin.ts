@@ -13,28 +13,21 @@ export default class MinigameMegaPumpkin extends BaseMinigameItem {
         MinigameItemInteraction.SliceLeft,
     ]
     private static patternTextures: [string, string][] = [
-        [ItemsTexture.Items.Pumpkin + "_1", ItemsTexture.Items.Pumpkin + "_1"],
-        [ItemsTexture.Items.Pumpkin + "_3", ItemsTexture.Items.Pumpkin + "_2"],
-        [ItemsTexture.Items.Pumpkin + "_3", ItemsTexture.Items.Pumpkin + "_2"],
-        [ItemsTexture.Items.Pumpkin + "_5", ItemsTexture.Items.Pumpkin + "_4"],
-        [ItemsTexture.Items.Pumpkin + "_7", ItemsTexture.Items.Pumpkin + "_4"],
-        [ItemsTexture.Items.Pumpkin + "_5", ItemsTexture.Items.Pumpkin + "_6"],
-        [ItemsTexture.Items.Pumpkin + "_7", ItemsTexture.Items.Pumpkin + "_6"],
-        [ItemsTexture.Items.Pumpkin + "_9", ItemsTexture.Items.Pumpkin + "_8"],
-        [ItemsTexture.Items.Pumpkin + "_9", ItemsTexture.Items.Pumpkin + "_8"]
+        [ItemsTexture.Frames.Pumpkin + "_1", ItemsTexture.Frames.Pumpkin + "_1"],
+        [ItemsTexture.Frames.Pumpkin + "_3", ItemsTexture.Frames.Pumpkin + "_2"],
+        [ItemsTexture.Frames.Pumpkin + "_3", ItemsTexture.Frames.Pumpkin + "_2"],
+        [ItemsTexture.Frames.Pumpkin + "_5", ItemsTexture.Frames.Pumpkin + "_4"],
+        [ItemsTexture.Frames.Pumpkin + "_7", ItemsTexture.Frames.Pumpkin + "_4"],
+        [ItemsTexture.Frames.Pumpkin + "_5", ItemsTexture.Frames.Pumpkin + "_6"],
+        [ItemsTexture.Frames.Pumpkin + "_7", ItemsTexture.Frames.Pumpkin + "_6"],
+        [ItemsTexture.Frames.Pumpkin + "_9", ItemsTexture.Frames.Pumpkin + "_8"],
+        [ItemsTexture.Frames.Pumpkin + "_9", ItemsTexture.Frames.Pumpkin + "_8"]
 
     ]
 
-    getPattern(): MinigameItemInteraction[] {
-        return MinigameMegaPumpkin.pattern
-    }
-    getPatternTextures(): [string, string][] {
-        return MinigameMegaPumpkin.patternTextures
-    }
-
     constructor(scene: Phaser.Scene, x: number, y: number, info: ItemInformation) {
-        super(scene, x, y, info)
+        super(scene, x, y, info, MinigameMegaPumpkin.pattern, MinigameMegaPumpkin.patternTextures)
 
-        this._sprites[0].setScale(2)
+        this.mainBody.setScale(2)
     }
 }

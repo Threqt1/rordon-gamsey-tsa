@@ -21,7 +21,7 @@ export default class GameScene extends Scene {
 
         this.sprites.addControllables(player)
         this.sprites.addInteractables(npc1, npc2)
-        this.sprites.addSprites(player, npc1, npc2)
+        this.sprites.addSprites(player.sprite, npc1.sprite, npc2.sprite)
         this.sprites.getBodyGroup().setDepth(playerDepth)
 
         let camera = this.cameras.main;
