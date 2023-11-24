@@ -37,6 +37,8 @@ export default class PreloaderScene extends Scene {
 
         this.load.audio("osbg", "/music/obsg.mp3")
 
+        this.load.image("purple", "/img/purple.png")
+
         this.load.on("progress", (value: number) => {
             progressBar.clear()
             progressBar.fillStyle(0xF2F3F5, 1)
@@ -55,6 +57,6 @@ export default class PreloaderScene extends Scene {
         KeyboardTexture.load(this)
         SlashesTexture.load(this)
         ElvesTexture.load(this)
-        this.scene.start(SceneName.Menu)
+        this.scene.start(SceneName.Game)
     }
 }

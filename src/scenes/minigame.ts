@@ -89,7 +89,11 @@ export default class MinigameScene extends Phaser.Scene {
 
         let camera = this.cameras.main;
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
-        camera.setZoom(this.scale.height / map.heightInPixels)
+        if (this.scale.height > this.scale.width) {
+            camera.setZoom(this.scale.width / map.widthInPixels)
+        } else[
+            camera.setZoom(this.scale.height / map.heightInPixels)
+        ]
 
         let player = new MinigamePlayer(this, END_X + 30, 225)
         let npc = new MinigameNPC(this, START_X - 30, 225)

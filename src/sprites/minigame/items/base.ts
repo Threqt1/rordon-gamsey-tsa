@@ -122,7 +122,7 @@ export abstract class BaseMinigameItem implements MinigameItem {
             x: info.endX,
             duration: info.duration,
             onComplete: () => this.onItemFail(),
-            paused: true
+            paused: true,
         })
         this.mainBody.setAngularVelocity(ROTATION_VELOCITY)
 
@@ -165,6 +165,23 @@ export abstract class BaseMinigameItem implements MinigameItem {
     }
 
     prepare() {
+        // let emitter = this.scene.add.particles(this.mainBody.x, this.mainBody.y, "purple", {
+        //     lifespan: 750,
+        //     radial: true,
+        //     speed: 20,
+        //     quantity: 40,
+        // }).setDepth(100).stop()
+        // emitter.explode()
+
+        // let temp = () => {
+        //     if (emitter.getAliveParticleCount() === 0) this.scene.sys.events.off("update", temp)
+        //     emitter.forEachAlive((p) => {
+        //         p.alpha = p.lifeCurrent / (emitter.lifespan as number)
+        //         p.angle += 5
+        //     }, this)
+        // }
+
+        //this.scene.sys.events.on("update", temp, this)
         this.mainBody.setVisible(true)
         for (let tween of this.tweens) tween.resume()
         this.prepared = true;
