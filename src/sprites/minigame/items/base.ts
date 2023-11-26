@@ -219,14 +219,14 @@ export abstract class BaseMinigameItem implements MinigameItem {
         let key = this.baseInput.getKeyFor(this.pattern[this.currentPatternLocation])
         if (!key) return
         if (key.isDown) {
-            input.resetKeys()
-            if (this.currentPatternLocation >= this.pattern.length) {
-                this.onItemSuccess()
-            }
             this.scene.cameras.main.shake(SCREEN_SHAKE_DURATION, SCREEN_SHAKE_FACTOR)
             this.currentPatternLocation++;
             this.progressPattern()
             this.playSliceAnimation()
+            input.resetKeys()
+            if (this.currentPatternLocation >= this.pattern.length) {
+                this.onItemSuccess()
+            }
         } else if (Object.values(this.baseInput.keyMap).find(r => r != null && r.isDown)) {
             this.setControllable(false)
             this.scene.time.delayedCall(HIT_COOLDOWN, () => {
