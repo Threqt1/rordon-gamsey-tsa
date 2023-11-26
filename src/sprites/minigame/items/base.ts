@@ -121,7 +121,9 @@ export abstract class BaseMinigameItem implements MinigameItem {
             targets: [this.mainBody, this.slash, this.hit, this.interactionPrompt],
             x: info.endX,
             duration: info.duration,
-            onComplete: () => this.onItemFail(),
+            onComplete: () => {
+                if (this.isControllable()) this.onItemFail()
+            },
             paused: true,
         })
         this.mainBody.setAngularVelocity(ROTATION_VELOCITY)
