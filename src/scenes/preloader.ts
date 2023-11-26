@@ -57,6 +57,6 @@ export default class PreloaderScene extends Scene {
         KeyboardTexture.load(this)
         SlashesTexture.load(this)
         ElvesTexture.load(this)
-        this.scene.start(SceneName.Game)
+        this.scene.start(SceneName.Menu)
     }
 }
