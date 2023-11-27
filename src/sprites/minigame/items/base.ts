@@ -76,6 +76,7 @@ export abstract class BaseMinigameItem implements MinigameItem {
 
     prepared: boolean;
     started: boolean;
+    finished: boolean;
 
     scene: Phaser.Scene;
     baseInput: BaseInput
@@ -103,6 +104,7 @@ export abstract class BaseMinigameItem implements MinigameItem {
         this.controllable = false;
         this.prepared = false;
         this.started = false;
+        this.finished = false;
 
         this.mainBody = new BaseSprite(scene, x, y, ItemsTexture.TextureKey, this.patternTextures[0][0]).setDepth(info.spriteDepth).setVisible(false)
         this.colorMatrix = this.mainBody.postFX!.addColorMatrix()
@@ -124,7 +126,7 @@ export abstract class BaseMinigameItem implements MinigameItem {
             x: info.endX,
             duration: info.duration,
             onComplete: () => {
-                if (this.started && this.controllable || !this.started) this.onItemFail()
+                if (this.started && !this.finished || !this.started) this.onItemFail()
             },
             paused: true,
         })
@@ -139,6 +141,7 @@ export abstract class BaseMinigameItem implements MinigameItem {
     }
 
     onItemSuccess() {
+        this.finished = true
         this.eventEmitter.emit("success")
         this.cleanup()
     }
