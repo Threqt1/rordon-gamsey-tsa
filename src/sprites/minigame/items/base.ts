@@ -8,7 +8,6 @@ export interface MinigameItem {
     start(): void
     getEventEmitter(): MinigameItemEventEmitter
     getTweens(): Phaser.Tweens.Tween[]
-    getReady(): boolean
     getColorMatrix(): Phaser.FX.ColorMatrix
     getSprite(): Phaser.Physics.Arcade.Sprite
 }
@@ -74,7 +73,6 @@ export abstract class BaseMinigameItem implements MinigameItem {
 
     currentPatternLocation: number;
 
-    prepared: boolean;
     started: boolean;
     finished: boolean;
 
@@ -102,7 +100,6 @@ export abstract class BaseMinigameItem implements MinigameItem {
         this.baseInput = new BaseInput(scene, MinigameInteractionKeybinds)
 
         this.controllable = false;
-        this.prepared = false;
         this.started = false;
         this.finished = false;
 
@@ -191,7 +188,6 @@ export abstract class BaseMinigameItem implements MinigameItem {
         //this.scene.sys.events.on("update", temp, this)
         this.mainBody.setVisible(true)
         for (let tween of this.tweens) tween.resume()
-        this.prepared = true;
     }
 
     start() {
@@ -263,10 +259,6 @@ export abstract class BaseMinigameItem implements MinigameItem {
 
     getTweens() {
         return this.tweens
-    }
-
-    getReady() {
-        return this.prepared
     }
 
     getEventEmitter() {
