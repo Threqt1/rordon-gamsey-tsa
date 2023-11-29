@@ -4,15 +4,13 @@
  * FIX THE BAD DESIGN
  */
 
-import { SceneName } from "../enums/sceneNames";
-import MinigameApple from "../sprites/minigame/items/apple";
-import { MinigameItem } from "../sprites/minigame/items/base";
-import MinigameMegaPumpkin from "../sprites/minigame/items/mega_pumpkin";
-import MinigamePumpkin from "../sprites/minigame/items/pumpkin";
-import MinigameNPC from "../sprites/minigame/npc";
-import MinigamePlayer from "../sprites/minigame/player";
-import { switchSceneFadeIn, switchScenesFadeOut } from "../util/fades";
-import { LoadTilemap } from "../util/tilemaps";
+import Apple from "../../sprites/elf/minigame/items/apple";
+import { MinigameItem } from "../../sprites/elf/minigame/items/base";
+import MegaPumpkin from "../../sprites/elf/minigame/items/mega_pumpkin";
+import Pumpkin from "../../sprites/elf/minigame/items/pumpkin";
+import NPC from "../../sprites/elf/minigame/npc";
+import Player from "../../sprites/elf/minigame/player";
+import { loadTilemap, SceneEnum, switchScenesFadeOut } from "../scenesUtilities";
 
 enum Item {
     APPLE,
@@ -51,7 +49,7 @@ const MAX_Y = 225 + 50
 const TWEENS_TIME_DELAY = 0.8
 const GRAYSCALE = 0.6
 
-export default class MinigameScene extends Phaser.Scene {
+export default class ElfMinigameScene extends Phaser.Scene {
     private _levelActive: boolean
     private _currentLevel: number
 
@@ -65,15 +63,15 @@ export default class MinigameScene extends Phaser.Scene {
     private _eventEmitter: MinigameEventEmitter
 
     constructor() {
-        super(SceneName.Minigame)
+        super(SceneEnum.SceneName.Minigame)
 
         this._levelActive = false
         this._currentLevel = -1;
         this._eventEmitter = new MinigameEventEmitter()
     }
 
-    create(data: { fade: boolean }) {
-        this.sprites.use();
+    create() {
+        this.sprites.initialize();
 
         this._music = this.sound.add("osbg") as Phaser.Sound.WebAudioSound
         this._music.play({ loop: true })
@@ -83,7 +81,7 @@ export default class MinigameScene extends Phaser.Scene {
             this.cleanup()
         })
 
-        let { map, playerDepth } = LoadTilemap(this, "minigame")
+        let { map, playerDepth } = loadTilemap(this, "minigame")
 
         this._playerDepth = playerDepth
 
@@ -95,21 +93,17 @@ export default class MinigameScene extends Phaser.Scene {
             camera.setZoom(this.scale.height / map.heightInPixels)
         ]
 
-        let player = new MinigamePlayer(this, END_X + 30, 225)
-        let npc = new MinigameNPC(this, START_X - 30, 225)
+        let player = new Player(this, END_X + 30, 225)
+        let npc = new NPC(this, START_X - 30, 225)
 
         this.sprites.addSprites(player.sprite, npc.sprite)
-        this.sprites.getBodyGroup().setDepth(100)
+        this.sprites.physicsBodies.setDepth(100)
 
-        for (let sprite of this.sprites.getBodies()) {
+        for (let sprite of this.sprites.getPhysicsSprites()) {
             this._colorMatrices.push(sprite.postFX!.addColorMatrix())
         }
         for (let layer of map.layers) {
             if (layer.tilemapLayer != null) this._colorMatrices.push(layer.tilemapLayer.postFX!.addColorMatrix())
-        }
-
-        if (data !== undefined) {
-            if (data.fade) switchSceneFadeIn(this)
         }
     }
 
@@ -163,13 +157,13 @@ export default class MinigameScene extends Phaser.Scene {
             let y = MIN_Y + yIncrement * (i + 1)
             switch (levelData[i]) {
                 case Item.APPLE:
-                    item = new MinigameApple(this, START_X, y, itemInfo)
+                    item = new Apple(this, START_X, y, itemInfo)
                     break;
                 case Item.PUMPKIN:
-                    item = new MinigamePumpkin(this, START_X, y, itemInfo)
+                    item = new Pumpkin(this, START_X, y, itemInfo)
                     break;
                 case Item.MEGA_PUMPKIN:
-                    item = new MinigameMegaPumpkin(this, START_X, y, itemInfo)
+                    item = new MegaPumpkin(this, START_X, y, itemInfo)
                     break;
             }
             if (item === null) continue
@@ -180,7 +174,7 @@ export default class MinigameScene extends Phaser.Scene {
             item.getEventEmitter().once("fail", () => {
                 if (!this._switching) {
                     this._switching = true
-                    switchScenesFadeOut(this, SceneName.Menu)
+                    switchScenesFadeOut(this, SceneEnum.SceneName.Menu)
                 }
             })
 

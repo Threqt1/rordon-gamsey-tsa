@@ -1,47 +1,40 @@
-import { CollisionCategory } from "../enums/collisionCategories";
-import { PluginName } from "../enums/pluginNames";
+import { SceneEnum } from "../scenes"
+import { PluginName } from "./pluginsUtilities"
 
 export interface Controllable {
-    isControllable(): boolean
-    setControllable(controllable: boolean): void
     control(input: Phaser.Input.InputPlugin): void
 }
 
 export interface Interactable {
-    isInteractable(): boolean
-    setInteractable(interactable: boolean): void
-    setInteractionPrompt(show: boolean): void
     getInteractableZone(): Phaser.GameObjects.Zone
     interact(input: Phaser.Input.InputPlugin): void
 }
 
-export default class SpritesScenePlugin extends Phaser.Plugins.ScenePlugin {
-    private controllables!: Controllable[]
-    private interactables!: Interactable[]
-    private bodies!: Phaser.Physics.Arcade.Group
-    private zones!: Phaser.Physics.Arcade.Group
+export default class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
+    controllables!: Controllable[]
+    interactables!: Interactable[]
+    physicsBodies!: Phaser.Physics.Arcade.Group
+    interactableZones!: Phaser.Physics.Arcade.Group
 
     constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager) {
         super(scene, pluginManager, PluginName.SpritePlugin);
     }
 
-    use() {
+    initialize() {
         var eventEmitter = this.systems!.events
-
         eventEmitter.on("update", () => { this.update() })
-
         eventEmitter.once("destroy", () => { eventEmitter.off("update", this.update) })
         eventEmitter.on("shutdown", () => { this.cleanup() })
 
         this.interactables = []
         this.controllables = []
-        this.bodies = this.scene!.physics.add.group()
-        this.zones = this.scene!.physics.add.group()
+        this.physicsBodies = this.scene!.physics.add.group()
+        this.interactableZones = this.scene!.physics.add.group()
     }
 
     addInteractables(...interactables: Interactable[]) {
         this.interactables.push(...interactables)
-        this.zones.addMultiple(interactables.map(r => r.getInteractableZone()))
+        this.interactableZones.addMultiple(interactables.map(r => r.getInteractableZone()))
     }
 
     removeInteractables(...interactables: Interactable[]) {
@@ -57,46 +50,38 @@ export default class SpritesScenePlugin extends Phaser.Plugins.ScenePlugin {
     }
 
     addSprites(...statics: Phaser.Physics.Arcade.Sprite[]) {
-        this.bodies.addMultiple(statics)
+        this.physicsBodies.addMultiple(statics)
     }
 
     removeSprites(...sprites: Phaser.Physics.Arcade.Sprite[]) {
         for (let sprite of sprites) {
-            this.bodies.remove(sprite)
+            this.physicsBodies.remove(sprite)
         }
     }
 
-    makeCollisionsFor(category: CollisionCategory, body: Phaser.Physics.Arcade.Body) {
+    makeCOllisionsForBody(category: SceneEnum.CollisionCategory, body: Phaser.Physics.Arcade.Body) {
         body.setCollisionCategory(category)
         switch (category) {
-            case CollisionCategory.CONTROLLABLE:
-                body.setCollidesWith([CollisionCategory.CONTROLLABLE, CollisionCategory.INTERACTABLE, CollisionCategory.INTERACTION_ZONE, CollisionCategory.MAP])
+            case SceneEnum.CollisionCategory.CONTROLLABLE:
+                body.setCollidesWith([SceneEnum.CollisionCategory.CONTROLLABLE, SceneEnum.CollisionCategory.INTERACTABLE, SceneEnum.CollisionCategory.INTERACTION_ZONE, SceneEnum.CollisionCategory.MAP])
                 break;
         }
     }
 
-    makeCollisions(layer: Phaser.Tilemaps.TilemapLayer) {
-        this.scene!.physics.add.collider(this.bodies, this.bodies);
-        this.scene!.physics.add.collider(this.bodies, layer);
-        this.scene!.physics.add.overlap(this.bodies, this.zones);
+    makeCollisionsWithLayer(layer: Phaser.Tilemaps.TilemapLayer) {
+        this.scene!.physics.add.collider(this.physicsBodies, this.physicsBodies);
+        this.scene!.physics.add.collider(this.physicsBodies, layer);
+        this.scene!.physics.add.overlap(this.physicsBodies, this.interactableZones);
     }
 
     cleanup() {
         this.controllables = []
         this.interactables = []
-        this.bodies.destroy(true, true)
+        this.physicsBodies.destroy(true, true)
     }
 
-    getBodyGroup() {
-        return this.bodies
-    }
-
-    getBodies(): Phaser.Physics.Arcade.Sprite[] {
-        return this.bodies.getChildren() as Phaser.Physics.Arcade.Sprite[]
-    }
-
-    getZones() {
-        return this.zones
+    getPhysicsSprites(): Phaser.Physics.Arcade.Sprite[] {
+        return this.physicsBodies.getChildren() as Phaser.Physics.Arcade.Sprite[]
     }
 
     update() {

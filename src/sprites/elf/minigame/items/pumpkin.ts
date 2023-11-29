@@ -1,7 +1,7 @@
-import { ItemsTexture } from "../../../textures/minigame/items";
+import { ItemsTexture } from "../../../../textures/elf/minigame/items";
 import { BaseMinigameItem, ItemInformation, MinigameItemInteraction } from "./base";
 
-export default class MinigamePumpkin extends BaseMinigameItem {
+export default class Pumpkin extends BaseMinigameItem {
     private static pattern = [
         MinigameItemInteraction.SliceUp,
         MinigameItemInteraction.SliceDown,
@@ -17,6 +17,6 @@ export default class MinigamePumpkin extends BaseMinigameItem {
     ]
 
     constructor(scene: Phaser.Scene, x: number, y: number, info: ItemInformation) {
-        super(scene, x, y, info, MinigamePumpkin.pattern, MinigamePumpkin.patternTextures)
+        super(scene, x, y, info, Pumpkin.pattern, Pumpkin.patternTextures)
     }
 }

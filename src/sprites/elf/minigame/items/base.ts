@@ -1,7 +1,7 @@
-import { KeyboardTexture } from "../../../textures/keyboard"
-import { ItemsTexture } from "../../../textures/minigame/items"
-import { SlashesTexture } from "../../../textures/minigame/slashes"
-import { BaseInput, BaseSprite, Keybinds } from "../../base"
+import { KeyboardTexture } from "../../../../textures/keyboard"
+import { ItemsTexture } from "../../../../textures/elf/minigame/items"
+import { SlashesTexture } from "../../../../textures/elf/minigame/slashes"
+import { BaseInput, BaseSprite, Keybinds } from "../../../base"
 
 export interface MinigameItem {
     prepare(): void
