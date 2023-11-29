@@ -1,5 +1,2 @@
-import Elf from "./elf"
-import { PlayerTexture } from "./player"
-import { KeyboardTexture } from "./keyboard"
-
-export { Elf, PlayerTexture, KeyboardTexture }
+export * from "./player"
+export * from "./keyboard"

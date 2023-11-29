@@ -1,5 +1,5 @@
 import { Interactable } from "../../plugins/sprites";
-import { SceneEnum } from "../../scenes";
+import { SceneEnums } from "../../scenes";
 import { KeyboardTexture } from "../../textures/keyboard";
 import { PlayerTexture } from "../../textures/player";
 import { BaseInput, BaseSprite, Keybinds } from "../base";
@@ -8,7 +8,7 @@ enum Interaction {
     INTERACT
 }
 
-export default class NPC implements Interactable {
+export class NPC implements Interactable {
     static keybinds: Keybinds = {
         [Interaction.INTERACT]:
             "E",
@@ -27,7 +27,7 @@ export default class NPC implements Interactable {
         this.scene = scene
         this.input = new BaseInput(scene, NPC.keybinds)
 
-        this.scene.sprites.makeCOllisionsForBody(SceneEnum.CollisionCategory.INTERACTABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
+        this.scene.sprites.makeCOllisionsForBody(SceneEnums.CollisionCategories.INTERACTABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
         this.sprite.setPushable(false)
 
         this.interactable = true
@@ -38,7 +38,7 @@ export default class NPC implements Interactable {
         this.scene.physics.world.enable(this.zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
 
         let body: Phaser.Physics.Arcade.Body = this.zone.body as Phaser.Physics.Arcade.Body
-        this.scene.sprites.makeCOllisionsForBody(SceneEnum.CollisionCategory.INTERACTION_ZONE, body)
+        this.scene.sprites.makeCOllisionsForBody(SceneEnums.CollisionCategories.INTERACTION_ZONE, body)
         body.moves = false
 
         this.sprite.anims.play(PlayerTexture.Animations.IdleFront)

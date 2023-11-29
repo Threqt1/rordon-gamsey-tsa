@@ -1,11 +1,10 @@
 import { Scene } from "phaser"
-import Player from "../sprites/game/player"
-import NPC from "../sprites/game/npc"
-import { loadTilemap, SceneEnum, scaleAndConfigureCamera } from "./scenesUtilities"
+import { Player, NPC } from "../sprites/game"
+import { loadTilemap, SceneEnums, scaleAndConfigureCamera } from "."
 
-export default class GameScene extends Scene {
+export class GameScene extends Scene {
     constructor() {
-        super(SceneEnum.SceneName.Game)
+        super(SceneEnums.SceneNames.Game)
     }
 
     create() {

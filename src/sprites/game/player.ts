@@ -1,5 +1,5 @@
 import { Controllable } from "../../plugins/sprites"
-import { SceneEnum } from "../../scenes"
+import { SceneEnums } from "../../scenes"
 import { PlayerTexture } from "../../textures/player"
 import { BaseInput, BaseSprite, Keybinds } from "../base"
 
@@ -10,7 +10,7 @@ enum Interaction {
     RIGHT
 }
 
-export default class Player implements Controllable {
+export class Player implements Controllable {
     static keybinds: Keybinds = {
         [Interaction.UP]:
             "W",
@@ -34,7 +34,7 @@ export default class Player implements Controllable {
         this.scene = scene
         this.input = new BaseInput(scene, Player.keybinds)
 
-        this.scene.sprites.makeCOllisionsForBody(SceneEnum.CollisionCategory.CONTROLLABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
+        this.scene.sprites.makeCOllisionsForBody(SceneEnums.CollisionCategories.CONTROLLABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
 
         this.controllable = true
     }

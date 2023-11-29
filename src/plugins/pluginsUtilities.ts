@@ -1,9 +1,11 @@
-export enum PluginName {
-    DebugPlugin = "debugPlugin",
-    SpritePlugin = "spritePlugin",
-}
+export namespace PluginEnums {
+    export enum PluginNames {
+        DebugPlugin = "debugPlugin",
+        SpritePlugin = "spritePlugin",
+    }
 
-export enum PluginKey {
-    DebugPlugin = "debug",
-    SpritePlugin = "sprites"
+    export enum PluginKeys {
+        DebugPlugin = "debug",
+        SpritePlugin = "sprites"
+    }
 }

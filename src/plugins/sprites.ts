@@ -1,5 +1,5 @@
-import { SceneEnum } from "../scenes"
-import { PluginName } from "./pluginsUtilities"
+import { PluginEnums } from "."
+import { SceneEnums } from "../scenes"
 
 export interface Controllable {
     control(input: Phaser.Input.InputPlugin): void
@@ -10,14 +10,14 @@ export interface Interactable {
     interact(input: Phaser.Input.InputPlugin): void
 }
 
-export default class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
+export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
     controllables!: Controllable[]
     interactables!: Interactable[]
     physicsBodies!: Phaser.Physics.Arcade.Group
     interactableZones!: Phaser.Physics.Arcade.Group
 
     constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager) {
-        super(scene, pluginManager, PluginName.SpritePlugin);
+        super(scene, pluginManager, PluginEnums.PluginNames.SpritePlugin);
     }
 
     initialize() {
@@ -59,11 +59,11 @@ export default class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         }
     }
 
-    makeCOllisionsForBody(category: SceneEnum.CollisionCategory, body: Phaser.Physics.Arcade.Body) {
+    makeCOllisionsForBody(category: SceneEnums.CollisionCategories, body: Phaser.Physics.Arcade.Body) {
         body.setCollisionCategory(category)
         switch (category) {
-            case SceneEnum.CollisionCategory.CONTROLLABLE:
-                body.setCollidesWith([SceneEnum.CollisionCategory.CONTROLLABLE, SceneEnum.CollisionCategory.INTERACTABLE, SceneEnum.CollisionCategory.INTERACTION_ZONE, SceneEnum.CollisionCategory.MAP])
+            case SceneEnums.CollisionCategories.CONTROLLABLE:
+                body.setCollidesWith([SceneEnums.CollisionCategories.CONTROLLABLE, SceneEnums.CollisionCategories.INTERACTABLE, SceneEnums.CollisionCategories.INTERACTION_ZONE, SceneEnums.CollisionCategories.MAP])
                 break;
         }
     }

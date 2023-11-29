@@ -1,5 +1,3 @@
-import { ElvesTexture } from "./elves";
-import { ItemsTexture } from "./items";
-import { SlashesTexture } from "./slashes";
-
-export default { ElvesTexture, ItemsTexture, SlashesTexture }
+export * from "./elves"
+export * from "./items"
+export * from "./slashes"

@@ -1,16 +1,16 @@
 import { ItemsTexture } from "../../../../textures/elf/minigame/items";
-import { BaseMinigameItem, ItemInformation, MinigameItemInteraction } from "./base";
+import { BaseFruit, FruitInformation, FruitInteraction } from "./base";
 
-export default class MegaPumpkin extends BaseMinigameItem {
+export class MegaPumpkin extends BaseFruit {
     private static pattern = [
-        MinigameItemInteraction.SliceUp,
-        MinigameItemInteraction.SliceDown,
-        MinigameItemInteraction.SliceUp,
-        MinigameItemInteraction.SliceLeft,
-        MinigameItemInteraction.SliceDown,
-        MinigameItemInteraction.SliceRight,
-        MinigameItemInteraction.SliceRight,
-        MinigameItemInteraction.SliceLeft,
+        FruitInteraction.SliceUp,
+        FruitInteraction.SliceDown,
+        FruitInteraction.SliceUp,
+        FruitInteraction.SliceLeft,
+        FruitInteraction.SliceDown,
+        FruitInteraction.SliceRight,
+        FruitInteraction.SliceRight,
+        FruitInteraction.SliceLeft,
     ]
     private static patternTextures: [string, string][] = [
         [ItemsTexture.Frames.Pumpkin + "_1", ItemsTexture.Frames.Pumpkin + "_1"],
@@ -25,7 +25,7 @@ export default class MegaPumpkin extends BaseMinigameItem {
 
     ]
 
-    constructor(scene: Phaser.Scene, x: number, y: number, info: ItemInformation) {
+    constructor(scene: Phaser.Scene, x: number, y: number, info: FruitInformation) {
         super(scene, x, y, info, MegaPumpkin.pattern, MegaPumpkin.patternTextures)
 
         this.mainBody.setScale(2)

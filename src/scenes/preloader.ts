@@ -1,18 +1,15 @@
 import { Scene } from "phaser";
-import { PlayerTexture } from "../textures/player";
-import { ItemsTexture } from "../textures/elf/minigame/items";
-import { KeyboardTexture } from "../textures/keyboard";
-import { SlashesTexture } from "../textures/elf/minigame/slashes";
-import { ElvesTexture } from "../textures/elf/minigame/elves";
-import { preloadTilemap, SceneEnum } from "./scenesUtilities";
+import { KeyboardTexture, PlayerTexture } from "../textures";
+import { SlashesTexture, ElvesTexture, ItemsTexture } from "../textures/elf/minigame";
+import { preloadTilemap, SceneEnums } from ".";
 
-export function pct(full: number, pct: number) {
+function pct(full: number, pct: number) {
     return full * (pct / 100)
 }
 
-export default class PreloaderScene extends Scene {
+export class PreloaderScene extends Scene {
     constructor() {
-        super(SceneEnum.SceneName.Preloader)
+        super(SceneEnums.SceneNames.Preloader)
     }
 
     preload() {
@@ -37,8 +34,6 @@ export default class PreloaderScene extends Scene {
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
 
-        this.load.audio("osbg", "/music/obsg.mp3")
-
         this.load.image("purple", "/img/purple.png")
 
         this.load.on("progress", (value: number) => {
@@ -59,6 +54,6 @@ export default class PreloaderScene extends Scene {
         KeyboardTexture.load(this)
         SlashesTexture.load(this)
         ElvesTexture.load(this)
-        this.scene.start(SceneEnum.SceneName.Menu)
+        this.scene.start(SceneEnums.SceneNames.Menu)
     }
 }

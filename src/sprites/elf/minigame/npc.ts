@@ -1,7 +1,7 @@
 import { ElvesTexture } from "../../../textures/elf/minigame/elves";
 import { BaseSprite } from "../../base";
 
-export default class NPC {
+export class NPC {
     sprite: BaseSprite
 
     constructor(scene: Phaser.Scene, x: number, y: number) {

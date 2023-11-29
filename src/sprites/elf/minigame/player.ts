@@ -1,7 +1,7 @@
 import { PlayerTexture } from "../../../textures/player";
 import { BaseSprite } from "../../base";
 
-export default class Player {
+export class Player {
     sprite: BaseSprite
 
     constructor(scene: Phaser.Scene, x: number, y: number) {

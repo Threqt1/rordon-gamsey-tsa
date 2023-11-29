@@ -1,13 +1,13 @@
-import { PluginName } from "./pluginsUtilities";
+import { PluginEnums } from ".";
 
 const DEBUG_DEPTH = 999
 
-export default class DebugPlugin extends Phaser.Plugins.ScenePlugin {
+export class DebugPlugin extends Phaser.Plugins.ScenePlugin {
     private debugGraphics: Phaser.GameObjects.Graphics | undefined;
     private debugLayer: Phaser.Tilemaps.TilemapLayer | undefined;
 
     constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager) {
-        super(scene, pluginManager, PluginName.DebugPlugin);
+        super(scene, pluginManager, PluginEnums.PluginNames.DebugPlugin);
     }
 
     initialize(layer: Phaser.Tilemaps.TilemapLayer) {

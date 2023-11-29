@@ -1,3 +1,1 @@
-import ElfMinigameScene from "./minigame";
-
-export default { ElfMinigameScene }
+export * from "./minigame"

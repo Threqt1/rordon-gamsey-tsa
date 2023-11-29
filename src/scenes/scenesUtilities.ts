@@ -1,11 +1,11 @@
-export namespace SceneEnum {
-    export enum SceneName {
+export namespace SceneEnums {
+    export enum SceneNames {
         Preloader = "preloader",
         Menu = "menu",
         Game = "game",
         Minigame = "minigame"
     }
-    export enum CollisionCategory {
+    export enum CollisionCategories {
         MAP = 1,
         INTERACTABLE,
         CONTROLLABLE,
@@ -16,10 +16,11 @@ export namespace SceneEnum {
 const CAMERA_LERP_X = 0.2
 const CAMERA_LERP_Y = 0.2
 
-export function scaleAndConfigureCamera(scene: Phaser.Scene, map: Phaser.Tilemaps.Tilemap, player: Phaser.Physics.Arcade.Sprite) {
+export function scaleAndConfigureCamera(scene: Phaser.Scene, map: Phaser.Tilemaps.Tilemap, player?: Phaser.Physics.Arcade.Sprite) {
     const camera = scene.cameras.main;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
-    camera.startFollow(player, true, CAMERA_LERP_X, CAMERA_LERP_Y);
+    if (player)
+        camera.startFollow(player, true, CAMERA_LERP_X, CAMERA_LERP_Y);
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
     if (scene.scale.height > scene.scale.width) {
         camera.setZoom(scene.scale.width / map.widthInPixels)
@@ -61,7 +62,7 @@ export function loadTilemap(scene: Phaser.Scene, name: string): LoadedTilemap {
 
     const collisionsLayer = tilemap.createLayer(collisionsLayerName.name, tilesetImageName)!
     collisionsLayer.setDepth(0)
-    collisionsLayer.setCollisionCategory(SceneEnum.CollisionCategory.MAP)
+    collisionsLayer.setCollisionCategory(SceneEnums.CollisionCategories.MAP)
     tilemap.setCollisionBetween(1, tilemap.tiles.length, true, undefined, collisionsLayer)
 
     let depth = 0;
@@ -87,7 +88,7 @@ export function loadTilemap(scene: Phaser.Scene, name: string): LoadedTilemap {
 
 const DURATION = 500;
 
-export function switchScenesFadeOut(scene: Phaser.Scene, nextScene: SceneEnum.SceneName) {
+export function switchScenesFadeOut(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames) {
     scene.cameras.main.fadeOut(DURATION, 0, 0, 0)
     scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
         scene.scene.start(nextScene, { fade: true })

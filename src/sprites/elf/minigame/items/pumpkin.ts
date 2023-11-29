@@ -1,12 +1,12 @@
 import { ItemsTexture } from "../../../../textures/elf/minigame/items";
-import { BaseMinigameItem, ItemInformation, MinigameItemInteraction } from "./base";
+import { BaseFruit, FruitInformation, FruitInteraction } from "./base";
 
-export default class Pumpkin extends BaseMinigameItem {
+export class Pumpkin extends BaseFruit {
     private static pattern = [
-        MinigameItemInteraction.SliceUp,
-        MinigameItemInteraction.SliceDown,
-        MinigameItemInteraction.SliceLeft,
-        MinigameItemInteraction.SliceRight
+        FruitInteraction.SliceUp,
+        FruitInteraction.SliceDown,
+        FruitInteraction.SliceLeft,
+        FruitInteraction.SliceRight
     ]
     private static patternTextures: [string, string][] = [
         [ItemsTexture.Frames.Pumpkin + "_1", ItemsTexture.Frames.Pumpkin + "_1"],
@@ -16,7 +16,7 @@ export default class Pumpkin extends BaseMinigameItem {
         [ItemsTexture.Frames.Pumpkin + "_8", ItemsTexture.Frames.Pumpkin + "_9"]
     ]
 
-    constructor(scene: Phaser.Scene, x: number, y: number, info: ItemInformation) {
+    constructor(scene: Phaser.Scene, x: number, y: number, info: FruitInformation) {
         super(scene, x, y, info, Pumpkin.pattern, Pumpkin.patternTextures)
     }
 }

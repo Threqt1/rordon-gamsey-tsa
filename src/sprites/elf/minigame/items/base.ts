@@ -1,60 +1,70 @@
-import { KeyboardTexture } from "../../../../textures/keyboard"
-import { ItemsTexture } from "../../../../textures/elf/minigame/items"
-import { SlashesTexture } from "../../../../textures/elf/minigame/slashes"
+import { KeyboardTexture } from "../../../../textures"
+import { SlashesTexture, ItemsTexture } from "../../../../textures/elf/minigame"
 import { BaseInput, BaseSprite, Keybinds } from "../../../base"
 
-export interface MinigameItem {
+export enum Fruits {
+    APPLE,
+    PUMPKIN,
+    MEGA_PUMPKIN
+}
+
+export interface Fruit {
     prepare(): void
     start(): void
-    getEventEmitter(): MinigameItemEventEmitter
+    getEventEmitter(): FruitEventEmitter
     getTweens(): Phaser.Tweens.Tween[]
     getColorMatrix(): Phaser.FX.ColorMatrix
     getSprite(): Phaser.Physics.Arcade.Sprite
 }
 
-export type ItemInformation = {
+export type FruitInformation = {
     spriteDepth: number
     endX: number
-    duration: number
+    lifetime: number
 }
 
-type MinigameItemEvents = {
-    "success": []
-    "fail": []
+export enum FruitEventName {
+    SUCCESS = "success",
+    FAIL = "fail"
 }
 
-export class MinigameItemEventEmitter extends Phaser.Events.EventEmitter {
+type FruitEvents = {
+    [FruitEventName.SUCCESS]: []
+    [FruitEventName.FAIL]: []
+}
+
+export class FruitEventEmitter extends Phaser.Events.EventEmitter {
     constructor() {
         super()
     }
 
-    override emit<K extends keyof MinigameItemEvents>(
+    override emit<K extends keyof FruitEvents>(
         eventName: K,
-        ...args: MinigameItemEvents[K]
+        ...args: FruitEvents[K]
     ): boolean {
         return super.emit(eventName, ...args)
     }
 
-    override once<K extends keyof MinigameItemEvents>(
+    override once<K extends keyof FruitEvents>(
         eventName: K,
-        listener: (...args: MinigameItemEvents[K]) => void
+        listener: (...args: FruitEvents[K]) => void
     ): this {
         return super.once(eventName, listener)
     }
 }
 
-export enum MinigameItemInteraction {
+export enum FruitInteraction {
     SliceUp,
     SliceDown,
     SliceLeft,
     SliceRight
 }
 
-export const MinigameInteractionKeybinds: Keybinds = {
-    [MinigameItemInteraction.SliceUp]: "W",
-    [MinigameItemInteraction.SliceDown]: "S",
-    [MinigameItemInteraction.SliceLeft]: "A",
-    [MinigameItemInteraction.SliceRight]: "D",
+export const FruitInteractionKeybinds: Keybinds = {
+    [FruitInteraction.SliceUp]: "W",
+    [FruitInteraction.SliceDown]: "S",
+    [FruitInteraction.SliceLeft]: "A",
+    [FruitInteraction.SliceRight]: "D",
 }
 
 
@@ -67,8 +77,8 @@ const ROTATION_VELOCITY = 300;
 const SLASH_ANIMATIONS = [SlashesTexture.Animations.Slash1, SlashesTexture.Animations.Slash2, SlashesTexture.Animations.Slash3]
 const HIT_ANIMATIONS = [SlashesTexture.Animations.Hit1, SlashesTexture.Animations.Hit2, SlashesTexture.Animations.Hit3]
 
-export abstract class BaseMinigameItem implements MinigameItem {
-    pattern: MinigameItemInteraction[]
+export abstract class BaseFruit implements Fruit {
+    pattern: FruitInteraction[]
     patternTextures: [string, string][]
 
     currentPatternLocation: number;
@@ -90,14 +100,14 @@ export abstract class BaseMinigameItem implements MinigameItem {
 
     interactionPrompt: Phaser.GameObjects.Sprite
 
-    eventEmitter: MinigameItemEventEmitter
+    eventEmitter: FruitEventEmitter
 
-    constructor(scene: Phaser.Scene, x: number, y: number, info: ItemInformation, pattern: MinigameItemInteraction[], patternTextures: [string, string][]) {
+    constructor(scene: Phaser.Scene, x: number, y: number, info: FruitInformation, pattern: FruitInteraction[], patternTextures: [string, string][]) {
         this.pattern = pattern;
         this.patternTextures = patternTextures
 
         this.scene = scene
-        this.baseInput = new BaseInput(scene, MinigameInteractionKeybinds)
+        this.baseInput = new BaseInput(scene, FruitInteractionKeybinds)
 
         this.controllable = false;
         this.started = false;
@@ -111,7 +121,7 @@ export abstract class BaseMinigameItem implements MinigameItem {
         this.slash = new BaseSprite(scene, x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(0.7)
         this.hit = new BaseSprite(scene, x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(0.5)
 
-        this.eventEmitter = new MinigameItemEventEmitter()
+        this.eventEmitter = new FruitEventEmitter()
 
         this.interactionPrompt = scene.add.sprite(x, y, KeyboardTexture.TextureKey)
         this.interactionPrompt.setDepth(100).setScale(0.3).setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight + 5).setVisible(false)
@@ -121,7 +131,7 @@ export abstract class BaseMinigameItem implements MinigameItem {
         let movementTween = scene.tweens.add({
             targets: [this.mainBody, this.slash, this.hit, this.interactionPrompt],
             x: info.endX,
-            duration: info.duration,
+            duration: info.lifetime,
             onComplete: () => {
                 if (this.started && !this.finished || !this.started) this.onItemFail()
             },
@@ -133,13 +143,13 @@ export abstract class BaseMinigameItem implements MinigameItem {
     }
 
     onItemFail() {
-        this.eventEmitter.emit("fail")
+        this.eventEmitter.emit(FruitEventName.FAIL)
         this.cleanup()
     }
 
     onItemSuccess() {
         this.finished = true
-        this.eventEmitter.emit("success")
+        this.eventEmitter.emit(FruitEventName.SUCCESS)
         this.cleanup()
     }
 
@@ -246,7 +256,7 @@ export abstract class BaseMinigameItem implements MinigameItem {
     }
 
     protected getKeybinds(): Keybinds {
-        return MinigameInteractionKeybinds
+        return FruitInteractionKeybinds
     }
 
     isControllable(): boolean {

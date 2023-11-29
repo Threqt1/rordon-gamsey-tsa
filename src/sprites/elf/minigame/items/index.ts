@@ -1,5 +1,4 @@
-import Apple from "./apple";
-import MegaPumpkin from "./mega_pumpkin";
-import Pumpkin from "./pumpkin";
-
-export default { Apple, MegaPumpkin, Pumpkin }
+export * from "./apple"
+export * from "./mega_pumpkin"
+export * from "./pumpkin"
+export * from "./base"
