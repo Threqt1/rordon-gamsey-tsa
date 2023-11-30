@@ -1,3 +1,5 @@
+let PRELOADED = false
+
 export namespace KeyboardTexture {
     export const TextureKey = "keyboard"
     export const KeyPictures: { [key: string]: string } = {
@@ -8,6 +10,8 @@ export namespace KeyboardTexture {
     }
 
     export function preload(scene: Phaser.Scene) {
+        if (PRELOADED) return
+        PRELOADED = true
         scene.load.atlas(TextureKey, "/textures/keys.png", "/textures/keys.json")
     }
 

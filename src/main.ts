@@ -1,9 +1,9 @@
 import './style.css'
-import { Game } from 'phaser';
 
-import { PreloaderScene, MenuScene, MinigameScene, GameScene } from './scenes';
-import { DebugScenePlugin, SpritesScenePlugin } from './plugins';
-import { PluginKey, PluginName } from './enums/pluginNames';
+import { Game } from 'phaser';
+import { PreloaderScene, MenuScene, GameScene } from './scenes';
+import { ElfMinigameScene } from './scenes/elf';
+import { DebugPlugin, SpritesPlugin, PluginEnums } from './plugins';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
@@ -20,18 +20,18 @@ const config: Phaser.Types.Core.GameConfig = {
         PreloaderScene,
         MenuScene,
         GameScene,
-        MinigameScene
+        ElfMinigameScene
     ],
     plugins: {
         scene: [{
-            key: PluginName.DebugPlugin,
-            plugin: DebugScenePlugin,
-            mapping: PluginKey.DebugPlugin
+            key: PluginEnums.PluginNames.DebugPlugin,
+            plugin: DebugPlugin,
+            mapping: PluginEnums.PluginKeys.DebugPlugin
         },
         {
-            key: PluginName.SpritePlugin,
-            plugin: SpritesScenePlugin,
-            mapping: PluginKey.SpritePlugin
+            key: PluginEnums.PluginNames.SpritePlugin,
+            plugin: SpritesPlugin,
+            mapping: PluginEnums.PluginKeys.SpritePlugin
         }]
     },
     pixelArt: true,

@@ -1,8 +1,8 @@
-export type Keybinds = {
+type Keybinds = {
     [key: number]: keyof typeof Phaser.Input.Keyboard.KeyCodes
 }
 
-export class BaseSprite extends Phaser.Physics.Arcade.Sprite {
+class BaseSprite extends Phaser.Physics.Arcade.Sprite {
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string) {
         super(scene, x, y, texture, frame)
 
@@ -12,7 +12,7 @@ export class BaseSprite extends Phaser.Physics.Arcade.Sprite {
     }
 }
 
-export class BaseInput {
+class BaseInput {
     keyMap: { [key: string]: Phaser.Input.Keyboard.Key }
     keybinds: Keybinds
 
@@ -25,11 +25,14 @@ export class BaseInput {
         }
     }
 
-    getKeyFor(interaction: number) {
+    getKeyForInteraction(interaction: number) {
         return this.keyMap[this.keybinds[interaction]]
     }
 
-    checkDown(input: Phaser.Input.Keyboard.KeyboardPlugin, interaction: number) {
-        return input.checkDown(this.getKeyFor(interaction))
+    checkIfKeyDown(input: Phaser.Input.Keyboard.KeyboardPlugin, interaction: number) {
+        return input.checkDown(this.getKeyForInteraction(interaction))
     }
 }
+
+export { BaseSprite, BaseInput }
+export type { Keybinds }

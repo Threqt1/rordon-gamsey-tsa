@@ -1,16 +1,14 @@
 import { Scene } from "phaser";
-import { SceneName } from "../enums/sceneNames";
-import { PreloadTilemap } from "../util/tilemaps";
-import { pct } from "../util/sizes";
-import { PlayerTexture } from "../textures/player";
-import { ItemsTexture } from "../textures/minigame/items";
-import { KeyboardTexture } from "../textures/keyboard";
-import { SlashesTexture } from "../textures/minigame/slashes";
-import { ElvesTexture } from "../textures/minigame/elves";
+import { KeyboardTexture, PlayerTexture } from "../textures";
+import { preloadTilemap, SceneEnums } from ".";
 
-export default class PreloaderScene extends Scene {
+function pct(full: number, pct: number) {
+    return full * (pct / 100)
+}
+
+export class PreloaderScene extends Scene {
     constructor() {
-        super(SceneName.Preloader)
+        super(SceneEnums.SceneNames.Preloader)
     }
 
     preload() {
@@ -23,19 +21,14 @@ export default class PreloaderScene extends Scene {
         progressBox.fillStyle(0x222222, 0.8);
         progressBox.fillRect(pct(cameraWidth, 10), pct(cameraHeight, 50), pct(cameraWidth, 80), pct(cameraHeight, 10))
 
-        PreloadTilemap(this, "test", "map.tmj", "spritesheet.png")
-        PreloadTilemap(this, "test2", "map2.tmj", "spritesheet.png")
-        PreloadTilemap(this, "minigame", "minigame.tmj", "minigame.png")
+        preloadTilemap(this, "test", "map.tmj", "spritesheet.png")
+        preloadTilemap(this, "test2", "map2.tmj", "spritesheet.png")
+        preloadTilemap(this, "minigame", "minigame.tmj", "minigame.png")
 
         PlayerTexture.preload(this)
-        ItemsTexture.preload(this)
         KeyboardTexture.preload(this)
-        SlashesTexture.preload(this)
-        ElvesTexture.preload(this)
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
-
-        this.load.audio("osbg", "/music/obsg.mp3")
 
         this.load.image("purple", "/img/purple.png")
 
@@ -53,10 +46,8 @@ export default class PreloaderScene extends Scene {
 
     create() {
         PlayerTexture.load(this)
-        ItemsTexture.load(this)
         KeyboardTexture.load(this)
-        SlashesTexture.load(this)
-        ElvesTexture.load(this)
-        this.scene.start(SceneName.Menu)
+
+        this.scene.start(SceneEnums.SceneNames.Menu)
     }
 }

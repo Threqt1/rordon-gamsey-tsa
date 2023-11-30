@@ -1,10 +1,25 @@
 import { Scene } from "phaser";
-import { SceneName } from "../enums/sceneNames";
-import { switchScenesFadeOut } from "../util/fades";
+import { SceneEnums, switchScenesFadeOut } from ".";
 
-export default class MenuScene extends Scene {
+export class MenuScene extends Scene {
     constructor() {
-        super(SceneName.Menu)
+        super(SceneEnums.SceneNames.Menu)
+    }
+
+    preload() {
+        this.anims.create({
+            key: "startButton_animate",
+            frames: this.anims.generateFrameNames("button", { start: 1, end: 7, prefix: "start_", suffix: ".png" }),
+            repeat: -1,
+            frameRate: 10
+        })
+
+        this.anims.create({
+            key: "creditsButton_animate",
+            frames: this.anims.generateFrameNames("button", { start: 0, end: 9, prefix: "credits_", suffix: ".png" }),
+            repeat: -1,
+            frameRate: 10
+        })
     }
 
     create() {
@@ -20,19 +35,7 @@ export default class MenuScene extends Scene {
         creditsSprite.setScale(buttonScale)
         creditsSprite.setInteractive()
 
-        this.anims.create({
-            key: "startButton_animate",
-            frames: this.anims.generateFrameNames("button", { start: 1, end: 7, prefix: "start_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 10
-        })
 
-        this.anims.create({
-            key: "creditsButton_animate",
-            frames: this.anims.generateFrameNames("button", { start: 0, end: 9, prefix: "credits_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 10
-        })
 
         startSprite.on("pointerover", () => {
             startSprite.anims.play("startButton_animate")
@@ -47,7 +50,7 @@ export default class MenuScene extends Scene {
         startSprite.on("pointerup", () => {
             if (!switching) {
                 switching = true
-                switchScenesFadeOut(this, SceneName.Minigame)
+                switchScenesFadeOut(this, SceneEnums.SceneNames.Minigame)
             }
         })
 
