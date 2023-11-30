@@ -11,7 +11,7 @@ const LEVEL_SCHEMATICS: Fruits[][] = [
     [Fruits.PUMPKIN, Fruits.APPLE],
     [Fruits.APPLE, Fruits.PUMPKIN, Fruits.APPLE],
     [Fruits.PUMPKIN, Fruits.APPLE, Fruits.PUMPKIN],
-    [Fruits.PUMPKIN, Fruits.MEGA_PUMPKIN, Fruits.APPLE, Fruits.MEGA_PUMPKIN, Fruits.PUMPKIN],
+    [Fruits.PUMPKIN, Fruits.PUMPKIN, Fruits.APPLE, Fruits.PUMPKIN, Fruits.PUMPKIN],
     [Fruits.MEGA_PUMPKIN],
 ]
 
