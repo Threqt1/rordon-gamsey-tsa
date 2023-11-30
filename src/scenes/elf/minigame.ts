@@ -28,6 +28,34 @@ const MINIGAME_MAX_Y = 275
 const MINIGAME_TIME_DELAY = 0.8
 const MINIGAME_GRAYSCALE_FACTOR = 0.6
 
+enum MinigameEventNames {
+    DONE = "done"
+}
+
+type MinigameEvents = {
+    [MinigameEventNames.DONE]: []
+}
+
+class MinigameEventEmitter extends Phaser.Events.EventEmitter {
+    constructor() {
+        super()
+    }
+
+    override emit<K extends keyof MinigameEvents>(
+        eventName: K,
+        ...args: MinigameEvents[K]
+    ): boolean {
+        return super.emit(eventName, ...args)
+    }
+
+    override once<K extends keyof MinigameEvents>(
+        eventName: K,
+        listener: (...args: MinigameEvents[K]) => void
+    ): this {
+        return super.once(eventName, listener)
+    }
+}
+
 export class ElfMinigameScene extends Phaser.Scene {
     private isLevelActive: boolean
     private currentLevelIndex: number
@@ -107,7 +135,7 @@ export class ElfMinigameScene extends Phaser.Scene {
             if (fruitIndex + 1 < fruitsInGame.length) {
                 fruitsInGame[fruitIndex + 1].start()
             } else {
-                this.eventEmitter.emit("done")
+                this.eventEmitter.emit(MinigameEventNames.DONE)
             }
         }
 
@@ -158,7 +186,7 @@ export class ElfMinigameScene extends Phaser.Scene {
 
         this.time.delayedCall(MINIGAME_START_TIME - MINIGAME_FADE_DURATION, () => this.timeSlowdownTransition(true, tweens, colorMatrices, () => { fruitsInGame[0].start() }))
 
-        this.eventEmitter.once("done", () => {
+        this.eventEmitter.once(MinigameEventNames.DONE, () => {
             fruitsInGame = []
             this.timeSlowdownTransition(false, [], this.colorMatrices, () => {
                 this.time.delayedCall(MINIGAME_LEVEL_COOLDOWN, () => {
@@ -179,29 +207,5 @@ export class ElfMinigameScene extends Phaser.Scene {
         this.currentLevelIndex = -1
         this.gameEnded = false
         this.colorMatrices = []
-    }
-}
-
-type MinigameEvents = {
-    done: []
-}
-
-class MinigameEventEmitter extends Phaser.Events.EventEmitter {
-    constructor() {
-        super()
-    }
-
-    override emit<K extends keyof MinigameEvents>(
-        eventName: K,
-        ...args: MinigameEvents[K]
-    ): boolean {
-        return super.emit(eventName, ...args)
-    }
-
-    override once<K extends keyof MinigameEvents>(
-        eventName: K,
-        listener: (...args: MinigameEvents[K]) => void
-    ): this {
-        return super.once(eventName, listener)
     }
 }
