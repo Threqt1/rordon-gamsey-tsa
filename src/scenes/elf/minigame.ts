@@ -2,9 +2,10 @@
 add gameobjects on tiled to specify where fruits spawn/end/chara positions
  */
 
-import { Fruit, Apple, Pumpkin, MegaPumpkin, Fruits, FruitEventName } from "../../sprites/elf/minigame/items";
+import { Fruit, Apple, Pumpkin, MegaPumpkin, Fruits, FruitEventName, FruitInformation } from "../../sprites/elf/minigame/items";
 import { NPC, Player } from "../../sprites/elf/minigame"
 import { loadTilemap, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut } from "../scenesUtilities";
+import { SlashesTexture, ElvesTexture, ItemsTexture } from "../../textures/elf/minigame";
 
 const LEVEL_SCHEMATICS: Fruits[][] = [
     [Fruits.APPLE],
@@ -18,6 +19,7 @@ const LEVEL_SCHEMATICS: Fruits[][] = [
 const MINIGAME_FADE_DURATION = 500
 const MINIGAME_TOTAL_DURATION = 5000
 const MINIGAME_START_TIME = MINIGAME_TOTAL_DURATION / 2.5
+const MINIGAME_DISPLAY_FRUITS_TIME = MINIGAME_START_TIME - 30
 const MINIGAME_LEVEL_COOLDOWN = 2000
 const MINIGAME_SPRITE_OFFSET = 30;
 const MINIGAME_SPRITE_Y = 225;
@@ -72,7 +74,17 @@ export class ElfMinigameScene extends Phaser.Scene {
         this.eventEmitter = new MinigameEventEmitter()
     }
 
+    preload() {
+        SlashesTexture.preload(this)
+        ElvesTexture.preload(this)
+        ItemsTexture.preload(this)
+    }
+
     create() {
+        SlashesTexture.load(this)
+        ElvesTexture.load(this)
+        ItemsTexture.load(this)
+
         this.sprites.initialize();
 
         this.sys.events.on("shutdown", () => {
@@ -120,6 +132,17 @@ export class ElfMinigameScene extends Phaser.Scene {
         this.tweens.addMultiple([timeScaleTween, grayscaleTween])
     }
 
+    getFruitObject(fruit: Fruits, y: number, info: FruitInformation) {
+        switch (fruit) {
+            case Fruits.APPLE:
+                return new Apple(this, MINIGAME_START_X, y, info)
+            case Fruits.PUMPKIN:
+                return new Pumpkin(this, MINIGAME_START_X, y, info)
+            case Fruits.MEGA_PUMPKIN:
+                return new MegaPumpkin(this, MINIGAME_START_X, y, info)
+        }
+    }
+
     startNextLevel() {
         this.isLevelActive = true;
         this.currentLevelIndex++;
@@ -140,27 +163,15 @@ export class ElfMinigameScene extends Phaser.Scene {
         }
 
         let yIncrement = (MINIGAME_MAX_Y - MINIGAME_MIN_Y) / (fruitsInLevelSchematic.length + 1)
+        const fruitInfo = {
+            spriteDepth: this.playerSpriteDepth,
+            endX: MINIGAME_END_X,
+            lifetime: MINIGAME_TOTAL_DURATION
+        }
 
         for (let i = 0; i < fruitsInLevelSchematic.length; i++) {
-            let fruit: Fruit | null = null
-            let fruitInfo = {
-                spriteDepth: this.playerSpriteDepth,
-                endX: MINIGAME_END_X,
-                lifetime: MINIGAME_TOTAL_DURATION
-            }
             let y = MINIGAME_MIN_Y + yIncrement * (i + 1)
-            switch (fruitsInLevelSchematic[i]) {
-                case Fruits.APPLE:
-                    fruit = new Apple(this, MINIGAME_START_X, y, fruitInfo)
-                    break;
-                case Fruits.PUMPKIN:
-                    fruit = new Pumpkin(this, MINIGAME_START_X, y, fruitInfo)
-                    break;
-                case Fruits.MEGA_PUMPKIN:
-                    fruit = new MegaPumpkin(this, MINIGAME_START_X, y, fruitInfo)
-                    break;
-            }
-            if (fruit === null) continue
+            let fruit = this.getFruitObject(fruitsInLevelSchematic[i], y, fruitInfo)
 
             fruit.getEventEmitter().once(FruitEventName.SUCCESS, () => {
                 progressFruits(i)
@@ -177,9 +188,9 @@ export class ElfMinigameScene extends Phaser.Scene {
             fruitsInGame.push(fruit)
         }
 
-        let delayInterval = (MINIGAME_START_TIME - 30) / fruitsInGame.length
+        let delayBetweenFruits = MINIGAME_DISPLAY_FRUITS_TIME / fruitsInGame.length
         for (let i = 0; i < fruitsInGame.length; i++) {
-            this.time.delayedCall(delayInterval * i, () => {
+            this.time.delayedCall(delayBetweenFruits * i, () => {
                 fruitsInGame[i].prepare()
             })
         }
