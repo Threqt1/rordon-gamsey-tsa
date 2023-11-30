@@ -75,13 +75,13 @@ export class ElfMinigameScene extends Phaser.Scene {
     timeSlowdownTransition(reverse: boolean, tweens: Phaser.Tweens.Tween[], colorMatrices: Phaser.FX.ColorMatrix[], callback?: () => void) {
         const timeScaleTween: Phaser.Types.Tweens.TweenBuilderConfig = {
             targets: tweens,
-            timeScale: reverse ? 1 : MINIGAME_TIME_DELAY,
+            timeScale: reverse ? MINIGAME_TIME_DELAY : 1,
             duration: MINIGAME_FADE_DURATION,
             onComplete: callback
         }
         const grayscaleTween: Phaser.Types.Tweens.TweenBuilderConfig = {
-            targets: { value: reverse ? MINIGAME_GRAYSCALE_FACTOR : 0 },
-            value: reverse ? 0 : MINIGAME_GRAYSCALE_FACTOR,
+            targets: { value: reverse ? 0 : MINIGAME_GRAYSCALE_FACTOR },
+            value: reverse ? MINIGAME_GRAYSCALE_FACTOR : 0,
             duration: MINIGAME_FADE_DURATION,
             onUpdate: (tween) => {
                 for (let colorMatrix of colorMatrices) {
