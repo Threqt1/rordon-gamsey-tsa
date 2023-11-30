@@ -25,12 +25,12 @@ class BaseInput {
         }
     }
 
-    getKeyFor(interaction: number) {
+    getKeyForInteraction(interaction: number) {
         return this.keyMap[this.keybinds[interaction]]
     }
 
-    checkDown(input: Phaser.Input.Keyboard.KeyboardPlugin, interaction: number) {
-        return input.checkDown(this.getKeyFor(interaction))
+    checkIfKeyDown(input: Phaser.Input.Keyboard.KeyboardPlugin, interaction: number) {
+        return input.checkDown(this.getKeyForInteraction(interaction))
     }
 }
 

@@ -59,7 +59,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         }
     }
 
-    makeCOllisionsForBody(category: SceneEnums.CollisionCategories, body: Phaser.Physics.Arcade.Body) {
+    makeCollisionsForBody(category: SceneEnums.CollisionCategories, body: Phaser.Physics.Arcade.Body) {
         body.setCollisionCategory(category)
         switch (category) {
             case SceneEnums.CollisionCategories.CONTROLLABLE:

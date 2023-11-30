@@ -173,18 +173,18 @@ export class ElfMinigameScene extends Phaser.Scene {
             let y = MINIGAME_MIN_Y + yIncrement * (i + 1)
             let fruit = this.getFruitObject(fruitsInLevelSchematic[i], y, fruitInfo)
 
-            fruit.getEventEmitter().once(FruitEventName.SUCCESS, () => {
+            fruit.eventEmitter.once(FruitEventName.SUCCESS, () => {
                 progressFruits(i)
             })
-            fruit.getEventEmitter().once(FruitEventName.FAIL, () => {
+            fruit.eventEmitter.once(FruitEventName.FAIL, () => {
                 if (!this.gameEnded) {
                     this.gameEnded = true
                     switchScenesFadeOut(this, SceneEnums.SceneNames.Menu)
                 }
             })
 
-            tweens.push(...fruit.getTweens())
-            colorMatrices.push(fruit.getColorMatrix())
+            tweens.push(...fruit.tweens)
+            colorMatrices.push(fruit.colorMatrix)
             fruitsInGame.push(fruit)
         }
 

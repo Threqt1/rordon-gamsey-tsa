@@ -10,6 +10,8 @@ enum Interaction {
     RIGHT
 }
 
+const DIAGONAL_BOOST_FACTOR = 1.2
+
 export class Player implements Controllable {
     static keybinds: Keybinds = {
         [Interaction.UP]:
@@ -28,42 +30,41 @@ export class Player implements Controllable {
 
     controllable: boolean
     speed = 80;
+    direction: Interaction = Interaction.DOWN
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         this.sprite = new BaseSprite(scene, x, y, PlayerTexture.TextureKey)
         this.scene = scene
         this.input = new BaseInput(scene, Player.keybinds)
 
-        this.scene.sprites.makeCOllisionsForBody(SceneEnums.CollisionCategories.CONTROLLABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
+        this.scene.sprites.makeCollisionsForBody(SceneEnums.CollisionCategories.CONTROLLABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
 
         this.controllable = true
     }
 
-    direction: Interaction = Interaction.DOWN
-
     move(input: Phaser.Input.Keyboard.KeyboardPlugin) {
-        let velX = 0
-        let velY = 0
+        let velocityX = 0
+        let velocityY = 0
 
-        if (this.input.checkDown(input, Interaction.UP)) {
-            velY = -1
+        if (this.input.checkIfKeyDown(input, Interaction.UP)) {
+            velocityY = -1
             this.direction = Interaction.UP
-        } else if (this.input.checkDown(input, Interaction.DOWN)) {
-            velY = 1
+        } else if (this.input.checkIfKeyDown(input, Interaction.DOWN)) {
+            velocityY = 1
             this.direction = Interaction.DOWN
         }
 
-        if (this.input.checkDown(input, Interaction.RIGHT)) {
-            velX = 1
+        if (this.input.checkIfKeyDown(input, Interaction.RIGHT)) {
+            velocityX = 1
             this.direction = Interaction.RIGHT
-        } else if (this.input.checkDown(input, Interaction.LEFT)) {
-            velX = -1
+        } else if (this.input.checkIfKeyDown(input, Interaction.LEFT)) {
+            velocityX = -1
             this.direction = Interaction.LEFT
         }
 
-        let movementVector = new Phaser.Math.Vector2(velX, velY).normalize()
-        if (velX != 0 && velY != 0) {
-            movementVector = movementVector.scale(this.speed * 1.2)
+        let movementVector = new Phaser.Math.Vector2(velocityX, velocityY).normalize()
+        if (velocityX != 0 && velocityY != 0) {
+            movementVector = movementVector.scale(this.speed * DIAGONAL_BOOST_FACTOR)
         } else {
             movementVector = movementVector.scale(this.speed)
         }
@@ -72,14 +73,14 @@ export class Player implements Controllable {
 
         switch (this.direction) {
             case Interaction.UP:
-                if (velX === 0 && velY === 0) {
+                if (velocityX === 0 && velocityY === 0) {
                     this.sprite.anims.play(PlayerTexture.Animations.IdleBack, true)
                 } else {
                     this.sprite.anims.play(PlayerTexture.Animations.WalkBack, true)
                 }
                 break;
             case Interaction.DOWN:
-                if (velX === 0 && velY === 0) {
+                if (velocityX === 0 && velocityY === 0) {
                     this.sprite.anims.play(PlayerTexture.Animations.IdleFront, true)
                 } else {
                     this.sprite.anims.play(PlayerTexture.Animations.WalkFront, true)
@@ -87,7 +88,7 @@ export class Player implements Controllable {
                 break;
             case Interaction.LEFT:
                 this.sprite.setFlipX(true)
-                if (velX === 0 && velY === 0) {
+                if (velocityX === 0 && velocityY === 0) {
                     this.sprite.anims.play(PlayerTexture.Animations.IdleSide, true)
                 } else {
                     this.sprite.anims.play(PlayerTexture.Animations.WalkSide, true)
@@ -95,21 +96,13 @@ export class Player implements Controllable {
                 break;
             case Interaction.RIGHT:
                 this.sprite.setFlipX(false)
-                if (velX === 0 && velY === 0) {
+                if (velocityX === 0 && velocityY === 0) {
                     this.sprite.anims.play(PlayerTexture.Animations.IdleSide, true)
                 } else {
                     this.sprite.anims.play(PlayerTexture.Animations.WalkSide, true)
                 }
                 break;
         }
-    }
-
-    setControllable(controllable: boolean) {
-        this.controllable = controllable
-    }
-
-    isControllable(): boolean {
-        return this.controllable;
     }
 
     control(input: Phaser.Input.InputPlugin) {

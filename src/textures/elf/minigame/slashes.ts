@@ -1,3 +1,6 @@
+let PRELOADED = false
+let LOADED = false
+
 export namespace SlashesTexture {
     export const TextureKey = "slashes"
     export const Animations = {
@@ -13,10 +16,14 @@ export namespace SlashesTexture {
     }
 
     export function preload(scene: Phaser.Scene) {
+        if (PRELOADED) return
+        PRELOADED = true
         scene.load.atlas(TextureKey, "/textures/slashes.png", "/textures/slashes.json")
     }
 
     export function load(scene: Phaser.Scene) {
+        if (LOADED) return
+        LOADED = true
         scene.anims.create({
             key: Animations.Slash1,
             frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 5, prefix: "slash1_" }),
