@@ -48,20 +48,25 @@ export class NPC implements Interactable {
         return this.zone
     }
 
+    dialogue() {
+
+    }
+
     interact(input: Phaser.Input.InputPlugin) {
         if (!this.interactable) return
         let inZone = checkIfInZone(this.zone)
         switch (inZone) {
             case Zone.ENTERED:
-                this.interactionPrompt.setActive(true)
+                this.interactionPrompt.setVisible(true)
                 break;
             case Zone.LEFT:
-                this.interactionPrompt.setActive(true)
+                this.interactionPrompt.setVisible(false)
                 break;
         }
         if (this.interactable && this.input.checkIfKeyDown(input.keyboard!, Interaction.INTERACT)) {
             this.interactable = false
-            console.log("Hi")
+            this.dialogue()
+            this.interactionPrompt.setVisible(false)
         }
     }
 }

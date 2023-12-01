@@ -19,7 +19,7 @@ export namespace ItemsTexture {
             Core1: "Apple_3",
             Core2: "Apple_5",
             Chunk1: "Apple_2",
-            Chunk2: "Apple_$"
+            Chunk2: "Apple_4"
 
         }
     }
