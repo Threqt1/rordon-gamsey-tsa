@@ -8,11 +8,11 @@ import { loadTilemap, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut }
 import { SlashesTexture, ElvesTexture, ItemsTexture } from "../../textures/elf/minigame";
 
 const LEVEL_SCHEMATICS: Fruits[][] = [
-    // [Fruits.APPLE],
-    // [Fruits.PUMPKIN, Fruits.APPLE],
-    // [Fruits.APPLE, Fruits.PUMPKIN, Fruits.APPLE],
-    // [Fruits.PUMPKIN, Fruits.APPLE, Fruits.PUMPKIN],
-    // [Fruits.PUMPKIN, Fruits.PUMPKIN, Fruits.APPLE, Fruits.PUMPKIN, Fruits.PUMPKIN],
+    [Fruits.APPLE],
+    [Fruits.PUMPKIN, Fruits.APPLE],
+    [Fruits.APPLE, Fruits.PUMPKIN, Fruits.APPLE],
+    [Fruits.PUMPKIN, Fruits.APPLE, Fruits.PUMPKIN],
+    [Fruits.PUMPKIN, Fruits.PUMPKIN, Fruits.APPLE, Fruits.PUMPKIN, Fruits.PUMPKIN],
     [Fruits.MEGA_PUMPKIN],
     [Fruits.MEGA_PUMPKIN, Fruits.PUMPKIN, Fruits.MEGA_PUMPKIN],
     [Fruits.PUMPKIN, Fruits.MEGA_PUMPKIN, Fruits.APPLE, Fruits.MEGA_PUMPKIN, Fruits.PUMPKIN]
