@@ -13,15 +13,15 @@ export class MegaPumpkin extends BaseFruit {
         FruitInteraction.SliceLeft,
     ]
     private static patternTextures: [string, string][] = [
-        [ItemsTexture.Frames.Pumpkin + "_1", ItemsTexture.Frames.Pumpkin + "_1"],
-        [ItemsTexture.Frames.Pumpkin + "_3", ItemsTexture.Frames.Pumpkin + "_2"],
-        [ItemsTexture.Frames.Pumpkin + "_3", ItemsTexture.Frames.Pumpkin + "_2"],
-        [ItemsTexture.Frames.Pumpkin + "_5", ItemsTexture.Frames.Pumpkin + "_4"],
-        [ItemsTexture.Frames.Pumpkin + "_7", ItemsTexture.Frames.Pumpkin + "_4"],
-        [ItemsTexture.Frames.Pumpkin + "_5", ItemsTexture.Frames.Pumpkin + "_6"],
-        [ItemsTexture.Frames.Pumpkin + "_7", ItemsTexture.Frames.Pumpkin + "_6"],
-        [ItemsTexture.Frames.Pumpkin + "_9", ItemsTexture.Frames.Pumpkin + "_8"],
-        [ItemsTexture.Frames.Pumpkin + "_9", ItemsTexture.Frames.Pumpkin + "_8"]
+        [ItemsTexture.Frames.Pumpkin.Base, ItemsTexture.Frames.Pumpkin.Base],
+        [ItemsTexture.Frames.Pumpkin.Core1, ItemsTexture.Frames.Pumpkin.Chunk1],
+        [ItemsTexture.Frames.Pumpkin.Core1, ItemsTexture.Frames.Pumpkin.Chunk1],
+        [ItemsTexture.Frames.Pumpkin.Core2, ItemsTexture.Frames.Pumpkin.Chunk2],
+        [ItemsTexture.Frames.Pumpkin.Core2, ItemsTexture.Frames.Pumpkin.Chunk3],
+        [ItemsTexture.Frames.Pumpkin.Core3, ItemsTexture.Frames.Pumpkin.Chunk2],
+        [ItemsTexture.Frames.Pumpkin.Core3, ItemsTexture.Frames.Pumpkin.Chunk3],
+        [ItemsTexture.Frames.Pumpkin.Core4, ItemsTexture.Frames.Pumpkin.Chunk4],
+        [ItemsTexture.Frames.Pumpkin.Core4, ItemsTexture.Frames.Pumpkin.Chunk4]
 
     ]
 
