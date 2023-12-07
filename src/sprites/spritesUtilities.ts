@@ -5,9 +5,10 @@ export enum Zone {
 }
 
 export function checkIfInZone(zone: Phaser.GameObjects.Zone) {
-    let touching = (zone.body as Phaser.Physics.Arcade.Body).touching.none
-    let wasTouching = (zone.body as Phaser.Physics.Arcade.Body).wasTouching.none
-    let embedded = (zone.body as Phaser.Physics.Arcade.Body).embedded
+    let body = zone.body as Phaser.Physics.Arcade.Body
+    let touching = body.touching.none
+    let wasTouching = body.wasTouching.none
+    let embedded = body.embedded
 
     if (touching && !wasTouching) {
         if (embedded) {

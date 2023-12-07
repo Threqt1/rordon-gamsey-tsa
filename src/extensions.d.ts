@@ -1,12 +1,8 @@
-import SpritesPlugin from "./plugins/sprites"
-import MainCharacter from "./sprites/players/characters/mainCharacter/sprite"
+import { DebugPlugin, SpritesPlugin } from "./plugins"
 
 declare module "phaser" {
     export interface Scene {
-        debug: DebugScenePlugin
+        debug: DebugPlugin
         sprites: SpritesPlugin
     }
 }
-
-
-

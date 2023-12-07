@@ -1,5 +1,5 @@
 import { ItemsTexture } from "../../../../textures/elf/minigame/items";
-import { BaseFruit, FruitInformation, FruitInteraction } from "./base";
+import { BaseFruit, FruitInformation, FruitInteraction } from "./fruit";
 
 export class Apple extends BaseFruit {
     private static pattern = [FruitInteraction.SliceUp, FruitInteraction.SliceDown]

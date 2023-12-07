@@ -1,3 +1,4 @@
+import { Controllable } from "../../../../plugins"
 import { KeyboardTexture } from "../../../../textures"
 import { SlashesTexture, ItemsTexture } from "../../../../textures/elf/minigame"
 import { BaseInput, BaseSprite, Keybinds } from "../../../base"
@@ -8,7 +9,7 @@ export enum Fruits {
     MEGA_PUMPKIN
 }
 
-export interface Fruit {
+export interface Fruit extends Controllable {
     prepare(): void
     start(): void
 }
@@ -107,7 +108,6 @@ export abstract class BaseFruit implements Fruit {
         this.eventEmitter = new FruitEventEmitter()
         this.interactionPrompt = scene.add.sprite(x, y, KeyboardTexture.TextureKey)
         this.interactionPrompt.setDepth(100).setScale(0.3).setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight + 5).setVisible(false)
-
         this.currentPatternLocation = 0;
 
         let movementTween = scene.tweens.add({
@@ -189,7 +189,7 @@ export abstract class BaseFruit implements Fruit {
 
     start() {
         this.progressPattern()
-        this.scene.sprites.addControllables(this)
+        this.scene.sprites.addGameControllables(this)
         this.controllable = true
         this.started = true;
         this.interactionPrompt.setVisible(true)
@@ -197,7 +197,7 @@ export abstract class BaseFruit implements Fruit {
 
     cleanup() {
         this.controllable = false
-        this.scene.sprites.removeControllables(this)
+        this.scene.sprites.removeGameControllables(this)
         this.interactionPrompt.destroy()
 
         const finalCompleteCleanup = () => {
@@ -218,15 +218,12 @@ export abstract class BaseFruit implements Fruit {
         })
     }
 
-    slice(input: Phaser.Input.Keyboard.KeyboardPlugin) {
-        let key = this.baseInput.getKeyForInteraction(this.pattern[this.currentPatternLocation])
-        if (!key) return
-        if (key.isDown) {
+    slice() {
+        if (this.baseInput.checkIfKeyDown(this.pattern[this.currentPatternLocation])) {
             this.scene.cameras.main.shake(SCREEN_SHAKE_DURATION, SCREEN_SHAKE_FACTOR)
             this.currentPatternLocation++;
             this.progressPattern()
             this.playSliceAnimation()
-            input.resetKeys()
             if (this.currentPatternLocation >= this.pattern.length) {
                 this.onItemSuccess()
             }
@@ -234,13 +231,13 @@ export abstract class BaseFruit implements Fruit {
             this.controllable = false
             this.scene.time.delayedCall(HIT_COOLDOWN, () => {
                 this.controllable = true
-                input.resetKeys()
+                this.baseInput.input.resetKeys()
             })
         }
     }
 
-    control(input: Phaser.Input.InputPlugin): void {
+    control(): void {
         if (!this.controllable) return
-        this.slice(input.keyboard!)
+        this.slice()
     }
 }

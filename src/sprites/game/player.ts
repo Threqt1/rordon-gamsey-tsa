@@ -30,7 +30,7 @@ export class Player implements Controllable {
 
     controllable: boolean
     speed = 80;
-    direction: Interaction = Interaction.DOWN
+    direction: Interaction
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         this.sprite = new BaseSprite(scene, x, y, PlayerTexture.TextureKey)
@@ -40,24 +40,25 @@ export class Player implements Controllable {
         this.scene.sprites.makeCollisionsForBody(SceneEnums.CollisionCategories.CONTROLLABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
 
         this.controllable = true
+        this.direction = Interaction.DOWN
     }
 
-    move(input: Phaser.Input.Keyboard.KeyboardPlugin) {
+    move() {
         let velocityX = 0
         let velocityY = 0
 
-        if (this.input.checkIfKeyDown(input, Interaction.UP)) {
+        if (this.input.checkIfKeyDown(Interaction.UP, false)) {
             velocityY = -1
             this.direction = Interaction.UP
-        } else if (this.input.checkIfKeyDown(input, Interaction.DOWN)) {
+        } else if (this.input.checkIfKeyDown(Interaction.DOWN, false)) {
             velocityY = 1
             this.direction = Interaction.DOWN
         }
 
-        if (this.input.checkIfKeyDown(input, Interaction.RIGHT)) {
+        if (this.input.checkIfKeyDown(Interaction.RIGHT, false)) {
             velocityX = 1
             this.direction = Interaction.RIGHT
-        } else if (this.input.checkIfKeyDown(input, Interaction.LEFT)) {
+        } else if (this.input.checkIfKeyDown(Interaction.LEFT, false)) {
             velocityX = -1
             this.direction = Interaction.LEFT
         }
@@ -105,8 +106,8 @@ export class Player implements Controllable {
         }
     }
 
-    control(input: Phaser.Input.InputPlugin) {
+    control() {
         if (!this.controllable) return
-        this.move(input.keyboard!)
+        this.move()
     }
 }

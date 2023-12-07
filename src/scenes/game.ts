@@ -16,7 +16,7 @@ export class GameScene extends Scene {
         let npc1 = new NPC(this, 100, 150)
         let npc2 = new NPC(this, 150, 150)
 
-        this.sprites.addControllables(player)
+        this.sprites.addGameControllables(player)
         this.sprites.addInteractables(npc1, npc2)
         this.sprites.addSprites(player.sprite, npc1.sprite, npc2.sprite)
         this.sprites.physicsBodies.setDepth(playerDepth)

@@ -2,19 +2,23 @@ import { PluginEnums } from "."
 import { SceneEnums } from "../scenes"
 
 export interface Controllable {
-    control(input: Phaser.Input.InputPlugin): void
+    control(): void
 }
 
 export interface Interactable {
     getInteractableZone(): Phaser.GameObjects.Zone
-    interact(input: Phaser.Input.InputPlugin): void
+    interact(): void
 }
 
 export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
-    controllables!: Controllable[]
+    gameControllables!: Controllable[]
     interactables!: Interactable[]
+    guiControllables!: Controllable[]
     physicsBodies!: Phaser.Physics.Arcade.Group
     interactableZones!: Phaser.Physics.Arcade.Group
+    gameControllablesEnabled!: boolean
+    guiControllablesEnabled!: boolean
+    interactablesEnabled!: boolean
 
     constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager) {
         super(scene, pluginManager, PluginEnums.PluginNames.SpritePlugin);
@@ -27,9 +31,13 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         eventEmitter.on("shutdown", () => { this.cleanup() })
 
         this.interactables = []
-        this.controllables = []
+        this.gameControllables = []
+        this.guiControllables = []
         this.physicsBodies = this.scene!.physics.add.group()
         this.interactableZones = this.scene!.physics.add.group()
+        this.gameControllablesEnabled = true
+        this.guiControllablesEnabled = true
+        this.interactablesEnabled = true
     }
 
     addInteractables(...interactables: Interactable[]) {
@@ -41,12 +49,20 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         this.interactables = this.interactables.filter(r => interactables.indexOf(r) === -1);
     }
 
-    addControllables(...controllables: Controllable[]) {
-        this.controllables.push(...controllables)
+    addGameControllables(...controllables: Controllable[]) {
+        this.gameControllables.push(...controllables)
     }
 
-    removeControllables(...controllables: Controllable[]) {
-        this.controllables = this.controllables.filter(r => controllables.indexOf(r) === -1);
+    removeGameControllables(...controllables: Controllable[]) {
+        this.gameControllables = this.gameControllables.filter(r => controllables.indexOf(r) === -1);
+    }
+
+    addGUIControllables(...controllables: Controllable[]) {
+        this.guiControllables.push(...controllables)
+    }
+
+    removeGUIControllables(...controllables: Controllable[]) {
+        this.guiControllables = this.guiControllables.filter(r => controllables.indexOf(r) === -1);
     }
 
     addSprites(...statics: Phaser.Physics.Arcade.Sprite[]) {
@@ -75,7 +91,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
     }
 
     cleanup() {
-        this.controllables = []
+        this.gameControllables = []
         this.interactables = []
         this.physicsBodies.destroy(true, true)
     }
@@ -85,11 +101,20 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
     }
 
     update() {
-        for (let interactable of this.interactables) {
-            interactable.interact(this.scene!.input)
+        if (this.interactablesEnabled) {
+            for (let interactable of this.interactables) {
+                interactable.interact()
+            }
         }
-        for (let controllable of this.controllables) {
-            controllable.control(this.scene!.input);
+        if (this.gameControllablesEnabled) {
+            for (let controllable of this.gameControllables) {
+                controllable.control();
+            }
+        }
+        if (this.guiControllablesEnabled) {
+            for (let controllable of this.guiControllables) {
+                controllable.control();
+            }
         }
     }
 }

@@ -4,7 +4,8 @@ import { Interactable } from "../../plugins/sprites";
 import { SceneEnums } from "../../scenes";
 import { KeyboardTexture } from "../../textures/keyboard";
 import { PlayerTexture } from "../../textures/player";
-import { BaseInput, BaseSprite, Keybinds } from "../base";
+import { BaseDialogue, BaseInput, BaseSprite, Keybinds } from "../base";
+import { TestDialogue, TestDialogueEmitter } from "../../dialogue/test";
 
 enum Interaction {
     INTERACT
@@ -18,6 +19,7 @@ export class NPC implements Interactable {
     sprite: BaseSprite
     scene: Phaser.Scene
     input: BaseInput
+    dialogue: BaseDialogue<TestDialogueEmitter>
     interactable: boolean
     interactionPrompt: Phaser.GameObjects.Sprite
     zone: Phaser.GameObjects.Zone
@@ -26,7 +28,7 @@ export class NPC implements Interactable {
         this.sprite = new BaseSprite(scene, x, y, PlayerTexture.TextureKey)
         this.scene = scene
         this.input = new BaseInput(scene, NPC.keybinds)
-
+        this.dialogue = new BaseDialogue<TestDialogueEmitter>(this.scene, TestDialogue, TestDialogueEmitter)
         this.scene.sprites.makeCollisionsForBody(SceneEnums.CollisionCategories.INTERACTABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
         this.sprite.setPushable(false)
 
@@ -37,9 +39,8 @@ export class NPC implements Interactable {
         this.zone = this.scene.add.zone(this.sprite.x, this.sprite.y, 50, 50)
         this.scene.physics.world.enable(this.zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
 
-        let body: Phaser.Physics.Arcade.Body = this.zone.body as Phaser.Physics.Arcade.Body
+        let body = this.zone.body as Phaser.Physics.Arcade.Body
         this.scene.sprites.makeCollisionsForBody(SceneEnums.CollisionCategories.INTERACTION_ZONE, body)
-        body.moves = false
 
         this.sprite.anims.play(PlayerTexture.Animations.IdleFront)
     }
@@ -48,11 +49,7 @@ export class NPC implements Interactable {
         return this.zone
     }
 
-    dialogue() {
-
-    }
-
-    interact(input: Phaser.Input.InputPlugin) {
+    interact() {
         if (!this.interactable) return
         let inZone = checkIfInZone(this.zone)
         switch (inZone) {
@@ -63,9 +60,9 @@ export class NPC implements Interactable {
                 this.interactionPrompt.setVisible(false)
                 break;
         }
-        if (this.interactable && this.input.checkIfKeyDown(input.keyboard!, Interaction.INTERACT)) {
+        if (this.interactable && this.input.checkIfKeyDown(Interaction.INTERACT) && this.interactionPrompt.visible) {
             this.interactable = false
-            this.dialogue()
+            this.dialogue.start()
             this.interactionPrompt.setVisible(false)
         }
     }
