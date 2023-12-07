@@ -13,6 +13,7 @@ export enum DialogueWalkerStatus {
 }
 
 export class DialogueWalker<E extends Phaser.Events.EventEmitter> {
+    baseDialogue: Dialogue<E>
     currentDialogue!: Dialogue<E>
     currentDialoguePosition!: number
     currentDialogueText!: string[]
@@ -22,11 +23,12 @@ export class DialogueWalker<E extends Phaser.Events.EventEmitter> {
     registry: Phaser.Data.DataManager
 
     constructor(emitter: E, dialogue: Dialogue<E>, registry: Phaser.Data.DataManager) {
+        this.baseDialogue = dialogue
         this.eventEmitter = emitter
         this.registry = registry
         this.status = DialogueWalkerStatus.DIALOGUE
 
-        this.goToNextDialogue(dialogue)
+        this.goToDialogue(dialogue)
     }
 
     getCurrentText() {
@@ -51,15 +53,21 @@ export class DialogueWalker<E extends Phaser.Events.EventEmitter> {
     progressDialogue() {
         this.currentDialoguePosition++
         if (this.currentDialoguePosition >= this.currentDialogueText.length) {
-            if (this.currentDialogue.next.length == 0) {
-                this.status = DialogueWalkerStatus.FINISHED
-                return
+            switch (this.currentOptions.length) {
+                case 0:
+                    this.status = DialogueWalkerStatus.FINISHED
+                    break;
+                case 1:
+                    this.goToDialogue(this.currentOptions[0])
+                    break;
+                default:
+                    this.status = DialogueWalkerStatus.OPTIONS
+                    break;
             }
-            this.status = DialogueWalkerStatus.OPTIONS
         }
     }
 
-    goToNextDialogue(dialogue: Dialogue<E>) {
+    goToDialogue(dialogue: Dialogue<E>) {
         this.currentDialogue = dialogue
         this.currentDialogueText = this.currentDialogue.getDialogueText(this.registry)
         this.currentDialoguePosition = 0
@@ -67,10 +75,14 @@ export class DialogueWalker<E extends Phaser.Events.EventEmitter> {
         this.status = DialogueWalkerStatus.DIALOGUE
     }
 
+    reset() {
+        this.goToDialogue(this.baseDialogue)
+    }
+
     chooseOption(index: number) {
         if (index >= this.currentOptions.length) return
         let selectedDialogue = this.currentDialogue.next[index]!
         if (selectedDialogue.choose != undefined) selectedDialogue.choose(this.registry, this.eventEmitter)
-        this.goToNextDialogue(selectedDialogue)
+        this.goToDialogue(selectedDialogue)
     }
 }

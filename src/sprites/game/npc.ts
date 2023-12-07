@@ -61,7 +61,7 @@ export class NPC implements Interactable {
                 break;
         }
         if (this.interactable && this.input.checkIfKeyDown(Interaction.INTERACT) && this.interactionPrompt.visible) {
-            this.interactable = false
+            this.input.input.resetKeys()
             this.dialogue.start()
             this.interactionPrompt.setVisible(false)
         }

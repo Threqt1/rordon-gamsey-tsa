@@ -224,6 +224,7 @@ export abstract class BaseFruit implements Fruit {
             this.currentPatternLocation++;
             this.progressPattern()
             this.playSliceAnimation()
+            this.baseInput.input.resetKeys()
             if (this.currentPatternLocation >= this.pattern.length) {
                 this.onItemSuccess()
             }

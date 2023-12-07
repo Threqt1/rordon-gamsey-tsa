@@ -47,18 +47,18 @@ export class Player implements Controllable {
         let velocityX = 0
         let velocityY = 0
 
-        if (this.input.checkIfKeyDown(Interaction.UP, false)) {
+        if (this.input.checkIfKeyDown(Interaction.UP)) {
             velocityY = -1
             this.direction = Interaction.UP
-        } else if (this.input.checkIfKeyDown(Interaction.DOWN, false)) {
+        } else if (this.input.checkIfKeyDown(Interaction.DOWN)) {
             velocityY = 1
             this.direction = Interaction.DOWN
         }
 
-        if (this.input.checkIfKeyDown(Interaction.RIGHT, false)) {
+        if (this.input.checkIfKeyDown(Interaction.RIGHT)) {
             velocityX = 1
             this.direction = Interaction.RIGHT
-        } else if (this.input.checkIfKeyDown(Interaction.LEFT, false)) {
+        } else if (this.input.checkIfKeyDown(Interaction.LEFT)) {
             velocityX = -1
             this.direction = Interaction.LEFT
         }

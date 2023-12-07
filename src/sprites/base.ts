@@ -40,11 +40,10 @@ class BaseInput {
         return this.keyMap[this.keybinds[interaction]]
     }
 
-    checkIfKeyDown(interaction: number, resetKeys: boolean = true) {
+    checkIfKeyDown(interaction: number) {
         let key = this.getKeyForInteraction(interaction)
-        if (!key) return
+        if (!key) return false
         if (key.isDown) {
-            if (resetKeys) this.input.resetKeys()
             return true
         }
         return false
@@ -62,7 +61,7 @@ const DialogueOptionKeybinds: Keybinds = {
     [DialogueInteractions.OPTION_1]: "ONE",
     [DialogueInteractions.OPTION_2]: "TWO",
     [DialogueInteractions.OPTION_3]: "THREE",
-    [DialogueInteractions.SUBMIT]: "ENTER"
+    [DialogueInteractions.SUBMIT]: "E"
 
 }
 
@@ -87,12 +86,13 @@ export class BaseDialogue<E extends Phaser.Events.EventEmitter> implements Contr
         if (this.dialogueWalker.status === DialogueWalkerStatus.DIALOGUE) {
             console.log(this.dialogueWalker.getCurrentText())
         } else if (this.dialogueWalker.status === DialogueWalkerStatus.OPTIONS) {
-            console.log(this.dialogueWalker.getCurrentOptions().map(r => r.getOptionText(this.dialogueWalker.registry)))
+            console.log(this.dialogueWalker.getCurrentOptions().map((r, i) => `(${i + 1}) ${r.getOptionText(this.dialogueWalker.registry)}`).join("\n"))
         }
     }
 
     processDialogue() {
         if (this.input.checkIfKeyDown(DialogueInteractions.SUBMIT)) {
+            this.input.input.resetKeys()
             this.dialogueWalker.progressDialogue()
             this.display()
         }
@@ -108,6 +108,7 @@ export class BaseDialogue<E extends Phaser.Events.EventEmitter> implements Contr
         } else {
             return
         }
+        this.input.input.resetKeys()
         this.display()
     }
 
@@ -118,6 +119,7 @@ export class BaseDialogue<E extends Phaser.Events.EventEmitter> implements Contr
 
     start() {
         if (this.active) return
+        this.dialogueWalker.reset()
         this.active = true
         this.scene.sprites.gameControllablesEnabled = false
         this.display()
