@@ -98,3 +98,7 @@ export function switchScenesFadeOut(scene: Phaser.Scene, nextScene: SceneEnums.S
 export function switchSceneFadeIn(scene: Phaser.Scene) {
     scene.cameras.main.fadeIn(DURATION, 0, 0, 0);
 }
+
+export function pct(full: number, pct: number) {
+    return full * (pct / 100)
+}

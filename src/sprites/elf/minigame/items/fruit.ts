@@ -124,6 +124,10 @@ export abstract class BaseFruit implements Fruit {
         this.tweens = [movementTween]
     }
 
+    setControllable(controllable: boolean): void {
+        this.controllable = controllable
+    }
+
     onItemFail() {
         this.eventEmitter.emit(FruitEventName.FAIL)
         this.cleanup()

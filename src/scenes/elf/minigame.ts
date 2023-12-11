@@ -6,6 +6,8 @@ import { Fruit, Apple, Pumpkin, MegaPumpkin, Fruits, FruitEventName, FruitInform
 import { NPC, Player } from "../../sprites/elf/minigame"
 import { loadTilemap, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut } from "../scenesUtilities";
 import { SlashesTexture, ElvesTexture, ItemsTexture } from "../../textures/elf/minigame";
+import { EndDialogue, EndDialogueEmitter, EndDialogueEventNames } from "../../dialogue/elf/minigame";
+import { BaseDialogue } from "../../sprites";
 
 const LEVEL_SCHEMATICS: Fruits[][] = [
     [Fruits.APPLE],
@@ -14,15 +16,17 @@ const LEVEL_SCHEMATICS: Fruits[][] = [
     [Fruits.PUMPKIN, Fruits.APPLE, Fruits.PUMPKIN],
     [Fruits.PUMPKIN, Fruits.PUMPKIN, Fruits.APPLE, Fruits.PUMPKIN, Fruits.PUMPKIN],
     [Fruits.MEGA_PUMPKIN],
-    [Fruits.MEGA_PUMPKIN, Fruits.PUMPKIN, Fruits.MEGA_PUMPKIN],
-    [Fruits.PUMPKIN, Fruits.MEGA_PUMPKIN, Fruits.APPLE, Fruits.MEGA_PUMPKIN, Fruits.PUMPKIN]
+    // [Fruits.MEGA_PUMPKIN, Fruits.PUMPKIN, Fruits.MEGA_PUMPKIN],
+    // [Fruits.PUMPKIN, Fruits.MEGA_PUMPKIN, Fruits.APPLE, Fruits.MEGA_PUMPKIN, Fruits.PUMPKIN]
 ]
 
 const MINIGAME_FADE_DURATION = 500
+const MINIGAME_END_FADE_DURATION = 100
 const MINIGAME_TOTAL_DURATION = 5000
 const MINIGAME_START_TIME = MINIGAME_TOTAL_DURATION / 2.5
 const MINIGAME_DISPLAY_FRUITS_TIME = MINIGAME_START_TIME - 30
 const MINIGAME_LEVEL_COOLDOWN = 2000
+const MINIGAME_DIALOGUE_DISPLAY_COOLDOWN = 800
 const MINIGAME_SPRITE_OFFSET = 30;
 const MINIGAME_SPRITE_Y = 225;
 const MINIGAME_START_X = 85
@@ -61,19 +65,16 @@ class MinigameEventEmitter extends Phaser.Events.EventEmitter {
 }
 
 export class ElfMinigameScene extends Phaser.Scene {
-    private isLevelActive: boolean
-    private currentLevelIndex: number
-    private colorMatrices: Phaser.FX.ColorMatrix[] = []
+    private currentLevelIndex!: number
+    private colorMatrices!: Phaser.FX.ColorMatrix[]
     private playerSpriteDepth!: number
     private gameEnded: boolean = false
-    private eventEmitter: MinigameEventEmitter
+    private eventEmitter!: MinigameEventEmitter
+    private dialogue!: BaseDialogue<EndDialogueEmitter>
+
 
     constructor() {
         super(SceneEnums.SceneNames.Minigame)
-
-        this.isLevelActive = false
-        this.currentLevelIndex = -1;
-        this.eventEmitter = new MinigameEventEmitter()
     }
 
     preload() {
@@ -87,15 +88,19 @@ export class ElfMinigameScene extends Phaser.Scene {
         ElvesTexture.load(this)
         ItemsTexture.load(this)
 
-        this.sprites.initialize();
-
-        this.sys.events.on("shutdown", () => {
-            this.cleanup()
-        })
-
         let { map, playerDepth } = loadTilemap(this, "minigame")
 
+        this.sprites.initialize(map);
+        this.currentLevelIndex = -1
+        this.gameEnded = false
+        this.eventEmitter = new MinigameEventEmitter()
         this.playerSpriteDepth = playerDepth
+        this.dialogue = new BaseDialogue<EndDialogueEmitter>(this, EndDialogue, EndDialogueEmitter)
+        this.colorMatrices = []
+        this.dialogue.emitter.on(EndDialogueEventNames.END, () => {
+            this.gameEnded = true
+            switchScenesFadeOut(this, SceneEnums.SceneNames.Menu)
+        })
 
         scaleAndConfigureCamera(this, map)
 
@@ -112,6 +117,8 @@ export class ElfMinigameScene extends Phaser.Scene {
         for (let layer of map.layers) {
             if (layer.tilemapLayer != null) this.colorMatrices.push(layer.tilemapLayer.postFX!.addColorMatrix())
         }
+
+        this.startNextLevel()
     }
 
     timeSlowdownTransition(reverse: boolean, tweens: Phaser.Tweens.Tween[], colorMatrices: Phaser.FX.ColorMatrix[], callback?: () => void) {
@@ -146,10 +153,11 @@ export class ElfMinigameScene extends Phaser.Scene {
     }
 
     startNextLevel() {
-        this.isLevelActive = true;
         this.currentLevelIndex++;
 
-        if (this.currentLevelIndex >= LEVEL_SCHEMATICS.length) this.currentLevelIndex = 0
+        if (this.currentLevelIndex >= LEVEL_SCHEMATICS.length) {
+            return this.endGame()
+        }
 
         let fruitsInLevelSchematic = LEVEL_SCHEMATICS[this.currentLevelIndex]
         let tweens: Phaser.Tweens.Tween[] = []
@@ -203,22 +211,28 @@ export class ElfMinigameScene extends Phaser.Scene {
             fruitsInGame = []
             this.timeSlowdownTransition(false, [], this.colorMatrices, () => {
                 this.time.delayedCall(MINIGAME_LEVEL_COOLDOWN, () => {
-                    this.isLevelActive = false
+                    this.startNextLevel()
                 })
             })
         })
     }
 
-    update() {
-        if (!this.isLevelActive) {
-            this.startNextLevel()
+    endGame() {
+        const brightnessTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+            targets: { value: 1 },
+            value: 0,
+            duration: MINIGAME_END_FADE_DURATION,
+            onUpdate: (tween) => {
+                for (let colorMatrix of this.colorMatrices) {
+                    colorMatrix.brightness(tween.getValue())
+                }
+            },
+            onComplete: () => {
+                this.time.delayedCall(MINIGAME_DIALOGUE_DISPLAY_COOLDOWN, () => {
+                    this.dialogue.start()
+                })
+            }
         }
-    }
-
-    cleanup() {
-        this.isLevelActive = false
-        this.currentLevelIndex = -1
-        this.gameEnded = false
-        this.colorMatrices = []
+        this.tweens.add(brightnessTween)
     }
 }

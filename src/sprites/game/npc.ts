@@ -1,11 +1,11 @@
 import { GameObjects } from "phaser";
 import { Zone, checkIfInZone } from "..";
 import { Interactable } from "../../plugins/sprites";
-import { SceneEnums } from "../../scenes";
+import { SceneEnums, switchScenesFadeOut } from "../../scenes";
 import { KeyboardTexture } from "../../textures/keyboard";
 import { PlayerTexture } from "../../textures/player";
 import { BaseDialogue, BaseInput, BaseSprite, Keybinds } from "../base";
-import { TestDialogue, TestDialogueEmitter } from "../../dialogue/test";
+import { TeleportDialogue, TeleporterDialogueEmitter, TeleporterDialogueEventNames } from "../../dialogue/elf/hub";
 
 enum Interaction {
     INTERACT
@@ -19,7 +19,7 @@ export class NPC implements Interactable {
     sprite: BaseSprite
     scene: Phaser.Scene
     input: BaseInput
-    dialogue: BaseDialogue<TestDialogueEmitter>
+    dialogue: BaseDialogue<TeleporterDialogueEmitter>
     interactable: boolean
     interactionPrompt: Phaser.GameObjects.Sprite
     zone: Phaser.GameObjects.Zone
@@ -28,7 +28,11 @@ export class NPC implements Interactable {
         this.sprite = new BaseSprite(scene, x, y, PlayerTexture.TextureKey)
         this.scene = scene
         this.input = new BaseInput(scene, NPC.keybinds)
-        this.dialogue = new BaseDialogue<TestDialogueEmitter>(this.scene, TestDialogue, TestDialogueEmitter)
+        this.dialogue = new BaseDialogue<TeleporterDialogueEmitter>(this.scene, TeleportDialogue, TeleporterDialogueEmitter)
+        this.dialogue.emitter.on(TeleporterDialogueEventNames.TELEPORT, () => {
+            switchScenesFadeOut(scene, SceneEnums.SceneNames.Minigame)
+        })
+
         this.scene.sprites.makeCollisionsForBody(SceneEnums.CollisionCategories.INTERACTABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
         this.sprite.setPushable(false)
 
@@ -47,6 +51,10 @@ export class NPC implements Interactable {
 
     getInteractableZone(): GameObjects.Zone {
         return this.zone
+    }
+
+    setInteractable(interactable: boolean): void {
+        this.interactable = interactable
     }
 
     interact() {

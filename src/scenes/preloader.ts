@@ -1,10 +1,6 @@
 import { Scene } from "phaser";
-import { KeyboardTexture, PlayerTexture } from "../textures";
-import { preloadTilemap, SceneEnums } from ".";
-
-function pct(full: number, pct: number) {
-    return full * (pct / 100)
-}
+import { DialogueTexture, KeyboardTexture, PlayerTexture } from "../textures";
+import { pct, preloadTilemap, SceneEnums } from ".";
 
 export class PreloaderScene extends Scene {
     constructor() {
@@ -27,6 +23,7 @@ export class PreloaderScene extends Scene {
 
         PlayerTexture.preload(this)
         KeyboardTexture.preload(this)
+        DialogueTexture.preload(this)
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
 

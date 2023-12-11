@@ -1,4 +1,4 @@
-import { Dialogue, DialogueWalker, DialogueWalkerStatus } from "../dialogue"
+import { Dialogue, DialogueSprite, DialogueWalker, DialogueWalkerStatus } from "../dialogue"
 import { Controllable } from "../plugins"
 
 type Keybinds = {
@@ -67,26 +67,29 @@ const DialogueOptionKeybinds: Keybinds = {
 
 export class BaseDialogue<E extends Phaser.Events.EventEmitter> implements Controllable {
     scene: Phaser.Scene
+    dialogueSprite: DialogueSprite
     input: BaseInput
     dialogueWalker: DialogueWalker<E>
     emitter: E
-    active: boolean
+    controllable: boolean
 
     constructor(scene: Phaser.Scene, dialogue: Dialogue<E>, emitter: new () => E) {
         this.scene = scene
+        this.dialogueSprite = new DialogueSprite(scene, scene.sprites.map.widthInPixels, scene.sprites.map.heightInPixels)
+        this.dialogueSprite.setVisible(false)
         this.emitter = new emitter()
         this.dialogueWalker = new DialogueWalker<E>(this.emitter, dialogue, scene.registry)
         this.input = new BaseInput(scene, DialogueOptionKeybinds)
-        this.active = false
+        this.controllable = false
 
         scene.sprites.addGUIControllables(this)
     }
 
     display() {
         if (this.dialogueWalker.status === DialogueWalkerStatus.DIALOGUE) {
-            console.log(this.dialogueWalker.getCurrentText())
+            this.dialogueSprite.setText(this.dialogueWalker.getCurrentText())
         } else if (this.dialogueWalker.status === DialogueWalkerStatus.OPTIONS) {
-            console.log(this.dialogueWalker.getCurrentOptions().map((r, i) => `(${i + 1}) ${r.getOptionText(this.dialogueWalker.registry)}`).join("\n"))
+            this.dialogueSprite.setText(this.dialogueWalker.getCurrentOptions().map((r, i) => `(${i + 1}) ${r.getOptionText(this.dialogueWalker.registry)}`).join("\n"))
         }
     }
 
@@ -113,20 +116,26 @@ export class BaseDialogue<E extends Phaser.Events.EventEmitter> implements Contr
     }
 
     cleanup() {
-        this.active = false
+        this.controllable = false
+        this.dialogueSprite.setVisible(false)
         this.scene.sprites.gameControllablesEnabled = true
     }
 
     start() {
-        if (this.active) return
+        if (this.controllable) return
         this.dialogueWalker.reset()
-        this.active = true
-        this.scene.sprites.gameControllablesEnabled = false
+        this.controllable = true
+        this.dialogueSprite.setVisible(true)
+        this.scene.sprites.setGameControllable(false)
         this.display()
     }
 
+    setControllable(controllable: boolean): void {
+        this.controllable = controllable
+    }
+
     control() {
-        if (!this.active) return
+        if (!this.controllable) return
         switch (this.dialogueWalker.status) {
             case DialogueWalkerStatus.DIALOGUE:
                 this.processDialogue()

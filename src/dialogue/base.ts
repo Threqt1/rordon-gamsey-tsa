@@ -53,6 +53,8 @@ export class DialogueWalker<E extends Phaser.Events.EventEmitter> {
     progressDialogue() {
         this.currentDialoguePosition++
         if (this.currentDialoguePosition >= this.currentDialogueText.length) {
+            if (this.currentDialogue.choose != undefined) this.currentDialogue.choose(this.registry, this.eventEmitter)
+
             switch (this.currentOptions.length) {
                 case 0:
                     this.status = DialogueWalkerStatus.FINISHED
@@ -82,7 +84,6 @@ export class DialogueWalker<E extends Phaser.Events.EventEmitter> {
     chooseOption(index: number) {
         if (index >= this.currentOptions.length) return
         let selectedDialogue = this.currentDialogue.next[index]!
-        if (selectedDialogue.choose != undefined) selectedDialogue.choose(this.registry, this.eventEmitter)
         this.goToDialogue(selectedDialogue)
     }
 }

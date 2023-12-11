@@ -2,15 +2,18 @@ import { PluginEnums } from "."
 import { SceneEnums } from "../scenes"
 
 export interface Controllable {
+    setControllable(controllable: boolean): void
     control(): void
 }
 
 export interface Interactable {
     getInteractableZone(): Phaser.GameObjects.Zone
+    setInteractable(interactable: boolean): void
     interact(): void
 }
 
 export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
+    map!: Phaser.Tilemaps.Tilemap
     gameControllables!: Controllable[]
     interactables!: Interactable[]
     guiControllables!: Controllable[]
@@ -24,12 +27,13 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         super(scene, pluginManager, PluginEnums.PluginNames.SpritePlugin);
     }
 
-    initialize() {
+    initialize(map: Phaser.Tilemaps.Tilemap) {
         var eventEmitter = this.systems!.events
         eventEmitter.on("update", () => { this.update() })
         eventEmitter.once("destroy", () => { eventEmitter.off("update", this.update) })
         eventEmitter.on("shutdown", () => { this.cleanup() })
 
+        this.map = map
         this.interactables = []
         this.gameControllables = []
         this.guiControllables = []
@@ -72,6 +76,24 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
     removeSprites(...sprites: Phaser.Physics.Arcade.Sprite[]) {
         for (let sprite of sprites) {
             this.physicsBodies.remove(sprite)
+        }
+    }
+
+    setGUIControllable(isControllable: boolean) {
+        for (let guiControllable of this.guiControllables) {
+            guiControllable.setControllable(isControllable)
+        }
+    }
+
+    setGameControllable(isControllable: boolean) {
+        for (let gameControllable of this.gameControllables) {
+            gameControllable.setControllable(isControllable)
+        }
+    }
+
+    setInteractable(isInteractable: boolean) {
+        for (let interactable of this.interactables) {
+            interactable.setInteractable(isInteractable)
         }
     }
 

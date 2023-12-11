@@ -43,35 +43,7 @@ export class Player implements Controllable {
         this.direction = Interaction.DOWN
     }
 
-    move() {
-        let velocityX = 0
-        let velocityY = 0
-
-        if (this.input.checkIfKeyDown(Interaction.UP)) {
-            velocityY = -1
-            this.direction = Interaction.UP
-        } else if (this.input.checkIfKeyDown(Interaction.DOWN)) {
-            velocityY = 1
-            this.direction = Interaction.DOWN
-        }
-
-        if (this.input.checkIfKeyDown(Interaction.RIGHT)) {
-            velocityX = 1
-            this.direction = Interaction.RIGHT
-        } else if (this.input.checkIfKeyDown(Interaction.LEFT)) {
-            velocityX = -1
-            this.direction = Interaction.LEFT
-        }
-
-        let movementVector = new Phaser.Math.Vector2(velocityX, velocityY).normalize()
-        if (velocityX != 0 && velocityY != 0) {
-            movementVector = movementVector.scale(this.speed * DIAGONAL_BOOST_FACTOR)
-        } else {
-            movementVector = movementVector.scale(this.speed)
-        }
-
-        this.sprite.setVelocity(movementVector.x, movementVector.y)
-
+    playDirecitonAnimation(velocityX: number, velocityY: number) {
         switch (this.direction) {
             case Interaction.UP:
                 if (velocityX === 0 && velocityY === 0) {
@@ -106,8 +78,48 @@ export class Player implements Controllable {
         }
     }
 
+    movePlayerSprite() {
+        let velocityX = 0
+        let velocityY = 0
+
+        if (this.input.checkIfKeyDown(Interaction.UP)) {
+            velocityY = -1
+            this.direction = Interaction.UP
+        } else if (this.input.checkIfKeyDown(Interaction.DOWN)) {
+            velocityY = 1
+            this.direction = Interaction.DOWN
+        }
+
+        if (this.input.checkIfKeyDown(Interaction.RIGHT)) {
+            velocityX = 1
+            this.direction = Interaction.RIGHT
+        } else if (this.input.checkIfKeyDown(Interaction.LEFT)) {
+            velocityX = -1
+            this.direction = Interaction.LEFT
+        }
+
+        let movementVector = new Phaser.Math.Vector2(velocityX, velocityY).normalize()
+        if (velocityX != 0 && velocityY != 0) {
+            movementVector = movementVector.scale(this.speed * DIAGONAL_BOOST_FACTOR)
+        } else {
+            movementVector = movementVector.scale(this.speed)
+        }
+
+        this.sprite.setVelocity(movementVector.x, movementVector.y)
+
+        this.playDirecitonAnimation(velocityX, velocityY)
+    }
+
+    setControllable(controllable: boolean): void {
+        this.controllable = controllable
+        if (!this.controllable) {
+            this.sprite.setVelocity(0, 0)
+            this.playDirecitonAnimation(0, 0)
+        }
+    }
+
     control() {
         if (!this.controllable) return
-        this.move()
+        this.movePlayerSprite()
     }
 }
