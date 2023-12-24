@@ -19,7 +19,7 @@ export class PreloaderScene extends Scene {
 
         preloadTilemap(this, "test", "map.tmj", "spritesheet.png")
         preloadTilemap(this, "test2", "map2.tmj", "spritesheet.png")
-        preloadTilemap(this, "minigame", "minigame.tmj", "minigame.png")
+        preloadTilemap(this, "minigame", "minigame.tmj", "minigame/1.png", "minigame/2.png")
 
         PlayerTexture.preload(this)
         KeyboardTexture.preload(this)

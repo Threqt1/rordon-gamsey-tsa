@@ -32,8 +32,10 @@ export function scaleAndConfigureCamera(scene: Phaser.Scene, map: Phaser.Tilemap
 const MAPS_PATH = "/maps/tilemaps"
 const TILESETS_PATH = "/maps/tilesets"
 
-export function preloadTilemap(scene: Phaser.Scene, name: string, mapPath: string, tilesetPath: string): void {
-    scene.load.image(`${name}_tileset`, `${TILESETS_PATH}/${tilesetPath}`)
+export function preloadTilemap(scene: Phaser.Scene, name: string, mapPath: string, ...tilesetPaths: string[]): void {
+    for (let i = 0; i < tilesetPaths.length; i++) {
+        scene.load.image(`${name}_tileset_${i}`, `${TILESETS_PATH}/${tilesetPaths[i]}`)
+    }
     scene.load.tilemapTiledJSON(`${name}_map`, `${MAPS_PATH}/${mapPath}`)
     scene.load.json(`${name}_raw`, `${MAPS_PATH}/${mapPath}`)
 }
@@ -51,8 +53,11 @@ export function loadTilemap(scene: Phaser.Scene, name: string): LoadedTilemap {
     const rawTilemapJSON = Phaser.Tilemaps.Parsers.Tiled.ParseJSONTiled(name, scene.cache.json.get(`${name}_raw`), true)!
 
     const tilemap = scene.make.tilemap({ key: `${name}_map`, tileHeight: rawTilemapJSON.tileHeight, tileWidth: rawTilemapJSON.tileWidth })
-    tilemap.addTilesetImage(rawTilemapJSON.tilesets[0].name, `${name}_tileset`, rawTilemapJSON.tileWidth, rawTilemapJSON.tileHeight, 1, 2)
-    const tilesetImageName = rawTilemapJSON.tilesets[0].name
+    const tilesetImageNames: string[] = []
+    for (let i = 0; i < rawTilemapJSON.tilesets.length; i++) {
+        tilemap.addTilesetImage(rawTilemapJSON.tilesets[i].name, `${name}_tileset_${i}`, rawTilemapJSON.tileWidth, rawTilemapJSON.tileHeight, 1, 2)
+        tilesetImageNames.push(rawTilemapJSON.tilesets[i].name)
+    }
 
     let rawLayers = (rawTilemapJSON.layers as Phaser.Tilemaps.LayerData[])
     let collisionsLayerName = rawLayers.find(r => r.name.toLowerCase() === COLLISION_LAYER_NAME)
@@ -60,7 +65,7 @@ export function loadTilemap(scene: Phaser.Scene, name: string): LoadedTilemap {
     let playerLayerName = rawLayers.find(r => r.name.toLowerCase() === PLAYER_LAYER_NAME)
     if (!playerLayerName) throw new Error(`no player layer found for ${name}`)
 
-    const collisionsLayer = tilemap.createLayer(collisionsLayerName.name, tilesetImageName)!
+    const collisionsLayer = tilemap.createLayer(collisionsLayerName.name, tilesetImageNames)!
     collisionsLayer.setDepth(0)
     collisionsLayer.setCollisionCategory(SceneEnums.CollisionCategories.MAP)
     tilemap.setCollisionBetween(1, tilemap.tiles.length, true, undefined, collisionsLayer)
@@ -75,7 +80,7 @@ export function loadTilemap(scene: Phaser.Scene, name: string): LoadedTilemap {
             continue;
         };
 
-        let layer = tilemap.createLayer(rawLayer.name, tilesetImageName)!;
+        let layer = tilemap.createLayer(rawLayer.name, tilesetImageNames)!;
         layer.setDepth(depth)
     }
 
