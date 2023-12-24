@@ -19,15 +19,14 @@ export class PreloaderScene extends Scene {
 
         preloadTilemap(this, "test", "map.tmj", "spritesheet.png")
         preloadTilemap(this, "test2", "map2.tmj", "spritesheet.png")
-        preloadTilemap(this, "minigame", "minigame.tmj", "minigame/1.png", "minigame/2.png")
+        preloadTilemap(this, "goblin minigame", "goblin/minigame.tmj", "spritesheet.png")
+        preloadTilemap(this, "elf minigame", "elf/minigame.tmj", "elf/1.png", "elf/2.png")
 
         PlayerTexture.preload(this)
         KeyboardTexture.preload(this)
         DialogueTexture.preload(this)
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
-
-        this.load.image("purple", "/img/purple.png")
 
         this.load.on("progress", (value: number) => {
             progressBar.clear()

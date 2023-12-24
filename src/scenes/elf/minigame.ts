@@ -74,7 +74,7 @@ export class ElfMinigameScene extends Phaser.Scene {
 
 
     constructor() {
-        super(SceneEnums.SceneNames.Minigame)
+        super(SceneEnums.SceneNames.ElfMinigame)
     }
 
     preload() {
@@ -88,7 +88,7 @@ export class ElfMinigameScene extends Phaser.Scene {
         ElvesTexture.load(this)
         ItemsTexture.load(this)
 
-        let { map, playerDepth } = loadTilemap(this, "minigame")
+        let { map, playerDepth } = loadTilemap(this, "elf minigame")
 
         this.sprites.initialize(map);
         this.currentLevelIndex = -1

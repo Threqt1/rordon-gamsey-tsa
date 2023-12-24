@@ -3,7 +3,8 @@ export namespace SceneEnums {
         Preloader = "preloader",
         Menu = "menu",
         Game = "game",
-        Minigame = "minigame"
+        ElfMinigame = "elfminigame",
+        GoblinMinigame = "goblinminigame"
     }
     export enum CollisionCategories {
         MAP = 1,

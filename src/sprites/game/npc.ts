@@ -30,7 +30,7 @@ export class NPC implements Interactable {
         this.input = new BaseInput(scene, NPC.keybinds)
         this.dialogue = new BaseDialogue<TeleporterDialogueEmitter>(this.scene, TeleportDialogue, TeleporterDialogueEmitter)
         this.dialogue.emitter.on(TeleporterDialogueEventNames.TELEPORT, () => {
-            switchScenesFadeOut(scene, SceneEnums.SceneNames.Minigame)
+            switchScenesFadeOut(scene, SceneEnums.SceneNames.ElfMinigame)
         })
 
         this.scene.sprites.makeCollisionsForBody(SceneEnums.CollisionCategories.INTERACTABLE, this.sprite.body as Phaser.Physics.Arcade.Body)

@@ -50,7 +50,7 @@ export class MenuScene extends Scene {
         startSprite.on("pointerup", () => {
             if (!switching) {
                 switching = true
-                switchScenesFadeOut(this, SceneEnums.SceneNames.Game)
+                switchScenesFadeOut(this, SceneEnums.SceneNames.GoblinMinigame)
             }
         })
 

@@ -4,6 +4,9 @@ import { Game } from 'phaser';
 import { PreloaderScene, MenuScene, GameScene } from './scenes';
 import { ElfMinigameScene } from './scenes/elf';
 import { DebugPlugin, SpritesPlugin, PluginEnums } from './plugins';
+import PhaserRaycaster from "phaser-raycaster"
+import { GoblinMinigameScene } from './scenes/goblin';
+
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
@@ -20,10 +23,16 @@ const config: Phaser.Types.Core.GameConfig = {
         PreloaderScene,
         MenuScene,
         GameScene,
-        ElfMinigameScene
+        ElfMinigameScene,
+        GoblinMinigameScene
     ],
     plugins: {
         scene: [{
+            key: PluginEnums.PluginNames.RaycasterPlugin,
+            plugin: PhaserRaycaster,
+            mapping: PluginEnums.PluginKeys.RaycasterPlugin
+        },
+        {
             key: PluginEnums.PluginNames.DebugPlugin,
             plugin: DebugPlugin,
             mapping: PluginEnums.PluginKeys.DebugPlugin
