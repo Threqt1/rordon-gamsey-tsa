@@ -8,7 +8,7 @@ export class GameScene extends Scene {
     }
 
     create() {
-        let { collisionsLayer: collisions, map, playerDepth } = loadTilemap(this, "elf hub")
+        let { collisionsLayer: collisions, map, playerDepth } = loadTilemap(this, "test")
 
         this.sprites.initialize(map)
 
