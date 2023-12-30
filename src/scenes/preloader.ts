@@ -21,6 +21,7 @@ export class PreloaderScene extends Scene {
         preloadTilemap(this, "test2", "map2.tmj", "spritesheet.png")
         preloadTilemap(this, "goblin minigame", "goblin/minigame.tmj", "spritesheet.png")
         preloadTilemap(this, "elf minigame", "elf/minigame.tmj", "elf/1.png", "elf/2.png")
+        preloadTilemap(this, "elf hub", "elf/hub.tmj", "elf/2.png", "elf/2.png")
 
         PlayerTexture.preload(this)
         KeyboardTexture.preload(this)

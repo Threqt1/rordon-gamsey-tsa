@@ -2,7 +2,7 @@
 add gameobjects on tiled to specify where fruits spawn/end/chara positions
  */
 
-import { Fruit, Apple, Pumpkin, MegaPumpkin, Fruits, FruitEventName, FruitInformation } from "../../sprites/elf/minigame/items";
+import { Fruit, Apple, Pumpkin, Fruits, FruitEventName, FruitInformation } from "../../sprites/elf/minigame/items";
 import { NPC, Player } from "../../sprites/elf/minigame"
 import { loadTilemap, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut } from "../scenesUtilities";
 import { SlashesTexture, ElvesTexture, ItemsTexture } from "../../textures/elf/minigame";
@@ -14,10 +14,7 @@ const LEVEL_SCHEMATICS: Fruits[][] = [
     [Fruits.PUMPKIN, Fruits.APPLE],
     [Fruits.APPLE, Fruits.PUMPKIN, Fruits.APPLE],
     [Fruits.PUMPKIN, Fruits.APPLE, Fruits.PUMPKIN],
-    [Fruits.PUMPKIN, Fruits.PUMPKIN, Fruits.APPLE, Fruits.PUMPKIN, Fruits.PUMPKIN],
-    [Fruits.MEGA_PUMPKIN],
-    // [Fruits.MEGA_PUMPKIN, Fruits.PUMPKIN, Fruits.MEGA_PUMPKIN],
-    // [Fruits.PUMPKIN, Fruits.MEGA_PUMPKIN, Fruits.APPLE, Fruits.MEGA_PUMPKIN, Fruits.PUMPKIN]
+    [Fruits.PUMPKIN, Fruits.PUMPKIN, Fruits.APPLE, Fruits.PUMPKIN, Fruits.PUMPKIN]
 ]
 
 const MINIGAME_FADE_DURATION = 500
@@ -147,8 +144,6 @@ export class ElfMinigameScene extends Phaser.Scene {
                 return new Apple(this, MINIGAME_START_X, y, info)
             case Fruits.PUMPKIN:
                 return new Pumpkin(this, MINIGAME_START_X, y, info)
-            case Fruits.MEGA_PUMPKIN:
-                return new MegaPumpkin(this, MINIGAME_START_X, y, info)
         }
     }
 

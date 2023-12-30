@@ -6,7 +6,6 @@ import { BaseInput, BaseSprite, Keybinds } from "../../../base"
 export enum Fruits {
     APPLE,
     PUMPKIN,
-    MEGA_PUMPKIN
 }
 
 export interface Fruit extends Controllable {
