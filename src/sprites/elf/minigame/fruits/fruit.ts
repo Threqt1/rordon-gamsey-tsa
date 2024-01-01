@@ -69,6 +69,7 @@ const HIT_COOLDOWN = 100;
 const SCREEN_SHAKE_DURATION = 100
 const SCREEN_SHAKE_FACTOR = 0.0003
 const ROTATION_VELOCITY = 300;
+const SLASH_SCALE = 1;
 
 const SLASH_ANIMATIONS = [SlashesTexture.Animations.Slash1, SlashesTexture.Animations.Slash2, SlashesTexture.Animations.Slash3, SlashesTexture.Animations.Slash4]
 //const HIT_ANIMATIONS = [SlashesTexture.Animations.Hit1, SlashesTexture.Animations.Hit2, SlashesTexture.Animations.Hit3]
@@ -84,7 +85,6 @@ export abstract class BaseFruit implements Fruit {
     controllable: boolean
     mainBody: BaseSprite
     slashSprite: BaseSprite
-    hitSprite: BaseSprite
     fruitChunks: BaseSprite[]
     colorMatrix: Phaser.FX.ColorMatrix
     tweens: Phaser.Tweens.Tween[]
@@ -102,15 +102,14 @@ export abstract class BaseFruit implements Fruit {
         this.mainBody = new BaseSprite(scene, x, y, FruitsTexture.TextureKey, this.patternTextures[0][0]).setDepth(info.spriteDepth).setVisible(false)
         this.colorMatrix = this.mainBody.postFX!.addColorMatrix()
         this.fruitChunks = []
-        this.slashSprite = new BaseSprite(scene, x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(1)
-        this.hitSprite = new BaseSprite(scene, x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(0.5)
+        this.slashSprite = new BaseSprite(scene, x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(SLASH_SCALE)
         this.eventEmitter = new FruitEventEmitter()
         this.interactionPrompt = scene.add.sprite(x, y, KeyboardTexture.TextureKey)
         this.interactionPrompt.setDepth(100).setScale(0.3).setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight + 5).setVisible(false)
         this.currentPatternLocation = 0;
 
         let movementTween = scene.tweens.add({
-            targets: [this.mainBody, this.slashSprite, this.hitSprite, this.interactionPrompt],
+            targets: [this.mainBody, this.slashSprite, this.interactionPrompt],
             x: info.endX,
             duration: info.lifetime,
             onComplete: () => {
@@ -167,9 +166,7 @@ export abstract class BaseFruit implements Fruit {
 
     playSliceAnimation() {
         let randomSlash = Phaser.Math.RND.integerInRange(0, SLASH_ANIMATIONS.length - 1)
-        //let randomHit = Phaser.Math.RND.integerInRange(0, HIT_ANIMATIONS.length - 1)
         this.slashSprite.anims.play(SLASH_ANIMATIONS[randomSlash], true)
-        //this.hitSprite.anims.play(HIT_ANIMATIONS[randomHit], true)
     }
 
     prepare() {
@@ -210,7 +207,6 @@ export abstract class BaseFruit implements Fruit {
         const finalCompleteCleanup = () => {
             this.mainBody.destroy()
             this.slashSprite.destroy()
-            this.hitSprite.destroy()
             for (let sprite of this.fruitChunks) sprite.destroy()
             for (let tween of this.tweens) {
                 if (tween != null) tween.destroy()

@@ -5,7 +5,7 @@ add gameobjects on tiled to specify where fruits spawn/end/chara positions
 import { Fruit, Apple, Pumpkin, Fruits, FruitEventName, FruitInformation } from "../../sprites/elf/minigame/fruits";
 import { NPC, Player } from "../../sprites/elf/minigame"
 import { loadTilemap, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut } from "../scenesUtilities";
-import { SlashesTexture, ElvesTexture, FruitsTexture } from "../../textures/elf/minigame";
+import { SlashesTexture, ElvesTexture, FruitsTexture, TorchesTexture } from "../../textures/elf/minigame";
 import { EndDialogue, EndDialogueEmitter, EndDialogueEventNames } from "../../dialogue/elf/minigame";
 import { BaseDialogue } from "../../sprites";
 
@@ -22,8 +22,9 @@ const MINIGAME_END_FADE_DURATION = 100
 const MINIGAME_TOTAL_DURATION = 5000
 const MINIGAME_START_TIME = MINIGAME_TOTAL_DURATION / 2.5
 const MINIGAME_DISPLAY_FRUITS_TIME = MINIGAME_START_TIME - 30
-const MINIGAME_LEVEL_COOLDOWN = 2000
+const MINIGAME_LEVEL_COOLDOWN = 1000
 const MINIGAME_DIALOGUE_DISPLAY_COOLDOWN = 800
+const MINIGAME_TORCH_DELAY = 500
 const MINIGAME_SPRITE_OFFSET = 30;
 const MINIGAME_SPRITE_Y = 150;
 const MINIGAME_START_X = 135
@@ -32,6 +33,12 @@ const MINIGAME_MIN_Y = 125
 const MINIGAME_MAX_Y = 175
 const MINIGAME_TIME_DELAY = 0.8
 const MINIGAME_GRAYSCALE_FACTOR = 0.6
+
+const TORCH_1_POSITION = [160, 95]
+const TORCH_2_POSITION = [210, 95]
+const TORCH_3_POSITION = [260, 95]
+const TORCH_4_POSITION = [310, 95]
+const TORCH_5_POSITION = [360, 95]
 
 enum MinigameEventNames {
     DONE = "done"
@@ -62,12 +69,13 @@ class MinigameEventEmitter extends Phaser.Events.EventEmitter {
 }
 
 export class ElfMinigameScene extends Phaser.Scene {
-    private currentLevelIndex!: number
-    private colorMatrices!: Phaser.FX.ColorMatrix[]
-    private playerSpriteDepth!: number
-    private gameEnded: boolean = false
-    private eventEmitter!: MinigameEventEmitter
-    private dialogue!: BaseDialogue<EndDialogueEmitter>
+    currentLevelIndex!: number
+    colorMatrices!: Phaser.FX.ColorMatrix[]
+    playerSpriteDepth!: number
+    gameEnded: boolean = false
+    eventEmitter!: MinigameEventEmitter
+    dialogue!: BaseDialogue<EndDialogueEmitter>
+    torches!: Phaser.GameObjects.Sprite[]
 
 
     constructor() {
@@ -105,7 +113,7 @@ export class ElfMinigameScene extends Phaser.Scene {
         let npc = new NPC(this, MINIGAME_START_X - MINIGAME_SPRITE_OFFSET, MINIGAME_SPRITE_Y)
 
         this.sprites.addSprites(player.sprite, npc.sprite)
-        this.sprites.physicsBodies.setDepth(100)
+        this.sprites.physicsBodies.setDepth(playerDepth)
 
         for (let sprite of this.sprites.getPhysicsSprites()) {
             this.colorMatrices.push(sprite.postFX!.addColorMatrix())
@@ -113,6 +121,18 @@ export class ElfMinigameScene extends Phaser.Scene {
 
         for (let layer of map.layers) {
             if (layer.tilemapLayer != null) this.colorMatrices.push(layer.tilemapLayer.postFX!.addColorMatrix())
+        }
+
+        let torch1 = this.add.sprite(TORCH_1_POSITION[0], TORCH_1_POSITION[1], TorchesTexture.TextureKey, TorchesTexture.Frames.Torch1).setDepth(playerDepth)
+        let torch2 = this.add.sprite(TORCH_2_POSITION[0], TORCH_2_POSITION[1], TorchesTexture.TextureKey, TorchesTexture.Frames.Torch2).setDepth(playerDepth)
+        let torch3 = this.add.sprite(TORCH_3_POSITION[0], TORCH_3_POSITION[1], TorchesTexture.TextureKey, TorchesTexture.Frames.Torch3).setDepth(playerDepth)
+        let torch4 = this.add.sprite(TORCH_4_POSITION[0], TORCH_4_POSITION[1], TorchesTexture.TextureKey, TorchesTexture.Frames.Torch4).setDepth(playerDepth)
+        let torch5 = this.add.sprite(TORCH_5_POSITION[0], TORCH_5_POSITION[1], TorchesTexture.TextureKey, TorchesTexture.Frames.Torch5).setDepth(playerDepth)
+
+        this.torches = [torch1, torch2, torch3, torch4, torch5]
+
+        for (let torch of this.torches) {
+            this.colorMatrices.push(torch.postFX!.addColorMatrix())
         }
 
         this.startNextLevel()
@@ -169,7 +189,7 @@ export class ElfMinigameScene extends Phaser.Scene {
 
         let yIncrement = (MINIGAME_MAX_Y - MINIGAME_MIN_Y) / (fruitsInLevelSchematic.length + 1)
         const fruitInfo = {
-            spriteDepth: this.playerSpriteDepth,
+            spriteDepth: this.playerSpriteDepth + 1,
             endX: MINIGAME_END_X,
             lifetime: MINIGAME_TOTAL_DURATION
         }
@@ -193,23 +213,35 @@ export class ElfMinigameScene extends Phaser.Scene {
             fruitsInGame.push(fruit)
         }
 
-        let delayBetweenFruits = MINIGAME_DISPLAY_FRUITS_TIME / fruitsInGame.length
-        for (let i = 0; i < fruitsInGame.length; i++) {
-            this.time.delayedCall(delayBetweenFruits * i, () => {
-                fruitsInGame[i].prepare()
+        const postTorchFunctionality = () => {
+            let delayBetweenFruits = MINIGAME_DISPLAY_FRUITS_TIME / fruitsInGame.length
+            for (let i = 0; i < fruitsInGame.length; i++) {
+                this.time.delayedCall(delayBetweenFruits * i, () => {
+                    fruitsInGame[i].prepare()
+                })
+            }
+
+            this.time.delayedCall(MINIGAME_START_TIME - MINIGAME_FADE_DURATION, () => this.timeSlowdownTransition(true, tweens, colorMatrices, () => { fruitsInGame[0].start() }))
+
+            this.eventEmitter.once(MinigameEventNames.DONE, () => {
+                fruitsInGame = []
+                this.timeSlowdownTransition(false, [], this.colorMatrices, () => {
+                    this.time.delayedCall(MINIGAME_LEVEL_COOLDOWN, () => {
+                        this.startNextLevel()
+                    })
+                })
             })
         }
 
-        this.time.delayedCall(MINIGAME_START_TIME - MINIGAME_FADE_DURATION, () => this.timeSlowdownTransition(true, tweens, colorMatrices, () => { fruitsInGame[0].start() }))
-
-        this.eventEmitter.once(MinigameEventNames.DONE, () => {
-            fruitsInGame = []
-            this.timeSlowdownTransition(false, [], this.colorMatrices, () => {
-                this.time.delayedCall(MINIGAME_LEVEL_COOLDOWN, () => {
-                    this.startNextLevel()
-                })
+        let torch = this.torches[this.currentLevelIndex]
+        torch.play(`-torch${this.currentLevelIndex + 1}`)
+        torch.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.time.delayedCall(MINIGAME_TORCH_DELAY, () => {
+                postTorchFunctionality()
             })
         })
+
+
     }
 
     endGame() {

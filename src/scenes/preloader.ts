@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { DialogueTexture, KeyboardTexture, PlayerTexture } from "../textures";
 import { pct, preloadTilemap, SceneEnums } from ".";
+import { TorchesTexture } from "../textures/elf/minigame";
 
 export class PreloaderScene extends Scene {
     constructor() {
@@ -26,6 +27,7 @@ export class PreloaderScene extends Scene {
         PlayerTexture.preload(this)
         KeyboardTexture.preload(this)
         DialogueTexture.preload(this)
+        TorchesTexture.preload(this)
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
 
@@ -44,7 +46,8 @@ export class PreloaderScene extends Scene {
     create() {
         PlayerTexture.load(this)
         KeyboardTexture.load(this)
+        TorchesTexture.load(this)
 
-        this.scene.start(SceneEnums.SceneNames.Menu)
+        this.scene.start(SceneEnums.SceneNames.ElfMinigame)
     }
 }
