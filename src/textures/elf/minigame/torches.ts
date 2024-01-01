@@ -39,22 +39,22 @@ export namespace TorchesTexture {
         })
         scene.anims.create({
             key: Animations.Torch2Light,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 3, prefix: "torch2_" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 5, prefix: "torch2_" }),
             frameRate: 5
         })
         scene.anims.create({
             key: Animations.Torch3Light,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 4, prefix: "torch3_" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 7, prefix: "torch3_" }),
             frameRate: 5
         })
         scene.anims.create({
             key: Animations.Torch4Light,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 4, prefix: "torch4_" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 7, prefix: "torch4_" }),
             frameRate: 5
         })
         scene.anims.create({
             key: Animations.Torch5Light,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 6, prefix: "torch5_" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 11, prefix: "torch5_" }),
             frameRate: 5
         })
 
