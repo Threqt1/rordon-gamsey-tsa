@@ -19,6 +19,7 @@ export namespace TorchesTexture {
     export function load(scene: Phaser.Scene) {
         if (LOADED) return
         LOADED = true
+        scene;
         // scene.anims.create({
         //     key: Animations.Hit1,
         //     frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 5, prefix: "hit1_" }),

@@ -60,9 +60,9 @@ export class GoblinMinigameScene extends Phaser.Scene {
 
         let intersections = this.ray.castCircle()
 
-        for (let intersection of intersections) {
-            //this.rayVisualizationGraphics.strokeLineShape(new Phaser.Geom.Line(this.ray.origin.x, this.ray.origin.y, intersection.x, intersection.y));
-        }
+        // for (let intersection of intersections) {
+        //     //this.rayVisualizationGraphics.strokeLineShape(new Phaser.Geom.Line(this.ray.origin.x, this.ray.origin.y, intersection.x, intersection.y));
+        // }
 
         this.lightMaskGraphics.fillPoints(intersections)
     }
