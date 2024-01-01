@@ -4,7 +4,7 @@ import { Interactable } from "../../plugins/sprites";
 import { GUIScene, SceneEnums, switchScenesFadeOut } from "../../scenes";
 import { KeyboardTexture } from "../../textures/keyboard";
 import { PlayerTexture } from "../../textures/player";
-import { BaseDialogue, BaseInput, BaseSprite, Keybinds } from "../base";
+import { BaseInput, BaseSprite, Keybinds } from "../base";
 import { TeleportDialogue, TeleporterDialogueEventNames } from "../../dialogue/elf/hub";
 
 enum Interaction {

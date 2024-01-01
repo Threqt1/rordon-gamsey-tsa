@@ -2,7 +2,6 @@ import { pct } from "../scenes";
 import { BaseSprite } from "../sprites";
 import { DialogueTexture } from "../textures";
 
-const DIALOGUE_BOX_Y_PCT = 75
 const DIALOGUE_BOX_SCALE_X = 80
 const DIALOGUE_BOX_SCALE_Y = 25
 const TEXT_OFFSET_X = 12
