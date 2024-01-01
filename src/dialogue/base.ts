@@ -1,9 +1,9 @@
-export type Dialogue<E extends Phaser.Events.EventEmitter> = {
+export type Dialogue = {
     isAvaliable?: (registry: Phaser.Data.DataManager) => boolean
     getOptionText: (registry: Phaser.Data.DataManager) => string
     getDialogueText: (registry: Phaser.Data.DataManager) => string[]
-    choose?: (registry: Phaser.Data.DataManager, eventEmitter: E) => void
-    next: Dialogue<E>[]
+    choose?: (registry: Phaser.Data.DataManager, eventEmitter: Phaser.Events.EventEmitter) => void
+    next: Dialogue[]
 }
 
 export enum DialogueWalkerStatus {
@@ -12,17 +12,17 @@ export enum DialogueWalkerStatus {
     FINISHED
 }
 
-export class DialogueWalker<E extends Phaser.Events.EventEmitter> {
-    baseDialogue: Dialogue<E>
-    currentDialogue!: Dialogue<E>
+export class DialogueWalker {
+    baseDialogue: Dialogue
+    currentDialogue!: Dialogue
     currentDialoguePosition!: number
     currentDialogueText!: string[]
-    currentOptions!: Dialogue<E>[]
-    eventEmitter: E
+    currentOptions!: Dialogue[]
+    eventEmitter: Phaser.Events.EventEmitter
     status: DialogueWalkerStatus
     registry: Phaser.Data.DataManager
 
-    constructor(emitter: E, dialogue: Dialogue<E>, registry: Phaser.Data.DataManager) {
+    constructor(emitter: Phaser.Events.EventEmitter, dialogue: Dialogue, registry: Phaser.Data.DataManager) {
         this.baseDialogue = dialogue
         this.eventEmitter = emitter
         this.registry = registry
@@ -40,7 +40,7 @@ export class DialogueWalker<E extends Phaser.Events.EventEmitter> {
     }
 
     computeAvaliableOptions() {
-        let availableOptions: Dialogue<E>[] = []
+        let availableOptions: Dialogue[] = []
 
         for (let option of this.currentDialogue.next) {
             if (option.isAvaliable !== undefined && !option.isAvaliable(this.registry)) continue
@@ -69,7 +69,7 @@ export class DialogueWalker<E extends Phaser.Events.EventEmitter> {
         }
     }
 
-    goToDialogue(dialogue: Dialogue<E>) {
+    goToDialogue(dialogue: Dialogue) {
         this.currentDialogue = dialogue
         this.currentDialogueText = this.currentDialogue.getDialogueText(this.registry)
         this.currentDialoguePosition = 0

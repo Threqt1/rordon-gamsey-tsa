@@ -65,20 +65,19 @@ const DialogueOptionKeybinds: Keybinds = {
 
 }
 
-export class BaseDialogue<E extends Phaser.Events.EventEmitter> implements Controllable {
+export class BaseDialogue implements Controllable {
     scene: Phaser.Scene
     dialogueSprite: DialogueSprite
     input: BaseInput
-    dialogueWalker: DialogueWalker<E>
-    emitter: E
+    dialogueWalker!: DialogueWalker
+    emitter: Phaser.Events.EventEmitter
     controllable: boolean
 
-    constructor(scene: Phaser.Scene, dialogue: Dialogue<E>, emitter: new () => E) {
+    constructor(scene: Phaser.Scene, width: number, height: number) {
         this.scene = scene
-        this.dialogueSprite = new DialogueSprite(scene, scene.sprites.map.widthInPixels, scene.sprites.map.heightInPixels)
+        this.dialogueSprite = new DialogueSprite(scene, width, height)
         this.dialogueSprite.setVisible(false)
-        this.emitter = new emitter()
-        this.dialogueWalker = new DialogueWalker<E>(this.emitter, dialogue, scene.registry)
+        this.emitter = new Phaser.Events.EventEmitter()
         this.input = new BaseInput(scene, DialogueOptionKeybinds)
         this.controllable = false
 
@@ -121,8 +120,9 @@ export class BaseDialogue<E extends Phaser.Events.EventEmitter> implements Contr
         this.scene.sprites.gameControllablesEnabled = true
     }
 
-    start() {
+    start(dialogue: Dialogue) {
         if (this.controllable) return
+        this.dialogueWalker = new DialogueWalker(this.emitter, dialogue, this.scene.registry)
         this.dialogueWalker.reset()
         this.controllable = true
         this.dialogueSprite.setVisible(true)

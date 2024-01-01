@@ -1,18 +1,18 @@
 {
   "frames": {
-    "torch5_4": {
+    "torch5_10": {
       "frame": {
         "x": 0,
         "y": 0,
-        "w": 28,
+        "w": 30,
         "h": 32
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 2,
+        "x": 1,
         "y": 0,
-        "w": 28,
+        "w": 30,
         "h": 32
       },
       "sourceSize": {
@@ -24,19 +24,67 @@
         "y": 0.5
       }
     },
-    "torch5_5": {
+    "torch5_11": {
       "frame": {
         "x": 0,
         "y": 32,
-        "w": 28,
+        "w": 30,
         "h": 32
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 2,
+        "x": 1,
         "y": 0,
-        "w": 28,
+        "w": 30,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch5_12": {
+      "frame": {
+        "x": 0,
+        "y": 64,
+        "w": 30,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 0,
+        "w": 30,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch5_13": {
+      "frame": {
+        "x": 0,
+        "y": 96,
+        "w": 30,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 0,
+        "w": 30,
         "h": 32
       },
       "sourceSize": {
@@ -51,16 +99,16 @@
     "torch5_6": {
       "frame": {
         "x": 0,
-        "y": 64,
-        "w": 28,
+        "y": 128,
+        "w": 29,
         "h": 32
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 2,
+        "x": 1,
         "y": 0,
-        "w": 28,
+        "w": 29,
         "h": 32
       },
       "sourceSize": {
@@ -72,20 +120,116 @@
         "y": 0.5
       }
     },
-    "torch4_3": {
+    "torch5_7": {
       "frame": {
         "x": 0,
-        "y": 96,
-        "w": 18,
-        "h": 28
+        "y": 160,
+        "w": 29,
+        "h": 32
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 7,
-        "y": 4,
-        "w": 18,
-        "h": 28
+        "x": 1,
+        "y": 0,
+        "w": 29,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch5_8": {
+      "frame": {
+        "x": 0,
+        "y": 192,
+        "w": 29,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 0,
+        "w": 29,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch5_9": {
+      "frame": {
+        "x": 0,
+        "y": 224,
+        "w": 29,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 0,
+        "w": 29,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch4_6": {
+      "frame": {
+        "x": 0,
+        "y": 256,
+        "w": 20,
+        "h": 30
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 2,
+        "w": 20,
+        "h": 30
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch4_8": {
+      "frame": {
+        "x": 0,
+        "y": 286,
+        "w": 20,
+        "h": 30
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 2,
+        "w": 20,
+        "h": 30
       },
       "sourceSize": {
         "w": 32,
@@ -99,17 +243,17 @@
     "torch4_4": {
       "frame": {
         "x": 0,
-        "y": 124,
-        "w": 18,
-        "h": 28
+        "y": 316,
+        "w": 19,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 7,
-        "y": 4,
-        "w": 18,
-        "h": 28
+        "x": 6,
+        "y": 2,
+        "w": 19,
+        "h": 30
       },
       "sourceSize": {
         "w": 32,
@@ -120,20 +264,20 @@
         "y": 0.5
       }
     },
-    "torch5_3": {
+    "torch5_4": {
       "frame": {
         "x": 0,
-        "y": 152,
-        "w": 28,
-        "h": 27
+        "y": 346,
+        "w": 29,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 2,
-        "y": 5,
-        "w": 28,
-        "h": 27
+        "x": 1,
+        "y": 3,
+        "w": 29,
+        "h": 29
       },
       "sourceSize": {
         "w": 32,
@@ -144,20 +288,20 @@
         "y": 0.5
       }
     },
-    "torch5_1": {
+    "torch4_7": {
       "frame": {
-        "x": 18,
-        "y": 96,
-        "w": 28,
-        "h": 24
+        "x": 19,
+        "y": 316,
+        "w": 20,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 2,
-        "y": 8,
-        "w": 28,
-        "h": 24
+        "x": 6,
+        "y": 3,
+        "w": 20,
+        "h": 29
       },
       "sourceSize": {
         "w": 32,
@@ -168,20 +312,20 @@
         "y": 0.5
       }
     },
-    "torch5_2": {
+    "torch4_9": {
       "frame": {
-        "x": 18,
-        "y": 120,
-        "w": 28,
-        "h": 24
+        "x": 20,
+        "y": 256,
+        "w": 20,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 2,
-        "y": 8,
-        "w": 28,
-        "h": 24
+        "x": 6,
+        "y": 3,
+        "w": 20,
+        "h": 29
       },
       "sourceSize": {
         "w": 32,
@@ -192,20 +336,92 @@
         "y": 0.5
       }
     },
-    "torch3_3": {
+    "torch4_5": {
       "frame": {
-        "x": 28,
-        "y": 0,
-        "w": 22,
-        "h": 24
+        "x": 20,
+        "y": 285,
+        "w": 19,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 5,
-        "y": 8,
-        "w": 22,
-        "h": 24
+        "x": 6,
+        "y": 3,
+        "w": 19,
+        "h": 29
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch5_5": {
+      "frame": {
+        "x": 39,
+        "y": 285,
+        "w": 29,
+        "h": 28
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 4,
+        "w": 29,
+        "h": 28
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch3_6": {
+      "frame": {
+        "x": 68,
+        "y": 285,
+        "w": 24,
+        "h": 26
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 6,
+        "w": 24,
+        "h": 26
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch3_8": {
+      "frame": {
+        "x": 29,
+        "y": 128,
+        "w": 24,
+        "h": 26
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 6,
+        "w": 24,
+        "h": 26
       },
       "sourceSize": {
         "w": 32,
@@ -218,18 +434,18 @@
     },
     "torch3_4": {
       "frame": {
-        "x": 28,
-        "y": 24,
-        "w": 22,
-        "h": 24
+        "x": 29,
+        "y": 154,
+        "w": 23,
+        "h": 26
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 5,
-        "y": 8,
-        "w": 22,
-        "h": 24
+        "x": 4,
+        "y": 6,
+        "w": 23,
+        "h": 26
       },
       "sourceSize": {
         "w": 32,
@@ -242,18 +458,186 @@
     },
     "torch1_2": {
       "frame": {
-        "x": 28,
-        "y": 48,
+        "x": 29,
+        "y": 180,
         "w": 12,
-        "h": 24
+        "h": 26
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 10,
-        "y": 8,
+        "y": 6,
         "w": 12,
+        "h": 26
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch1_4": {
+      "frame": {
+        "x": 29,
+        "y": 206,
+        "w": 12,
+        "h": 26
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 6,
+        "w": 12,
+        "h": 26
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch5_2": {
+      "frame": {
+        "x": 29,
+        "y": 232,
+        "w": 29,
         "h": 24
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 8,
+        "w": 29,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch3_7": {
+      "frame": {
+        "x": 40,
+        "y": 256,
+        "w": 24,
+        "h": 25
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 7,
+        "w": 24,
+        "h": 25
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch3_9": {
+      "frame": {
+        "x": 41,
+        "y": 180,
+        "w": 24,
+        "h": 25
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 7,
+        "w": 24,
+        "h": 25
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch3_5": {
+      "frame": {
+        "x": 52,
+        "y": 154,
+        "w": 23,
+        "h": 25
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 7,
+        "w": 23,
+        "h": 25
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch2_4": {
+      "frame": {
+        "x": 41,
+        "y": 205,
+        "w": 20,
+        "h": 25
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 7,
+        "w": 20,
+        "h": 25
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch2_6": {
+      "frame": {
+        "x": 58,
+        "y": 230,
+        "w": 20,
+        "h": 25
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 7,
+        "w": 20,
+        "h": 25
       },
       "sourceSize": {
         "w": 32,
@@ -266,42 +650,18 @@
     },
     "torch2_2": {
       "frame": {
-        "x": 28,
-        "y": 72,
-        "w": 18,
-        "h": 23
+        "x": 61,
+        "y": 205,
+        "w": 19,
+        "h": 25
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 7,
-        "y": 9,
-        "w": 18,
-        "h": 23
-      },
-      "sourceSize": {
-        "w": 32,
-        "h": 32
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "torch2_3": {
-      "frame": {
-        "x": 40,
-        "y": 48,
-        "w": 18,
-        "h": 23
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 7,
-        "y": 9,
-        "w": 18,
-        "h": 23
+        "x": 6,
+        "y": 7,
+        "w": 19,
+        "h": 25
       },
       "sourceSize": {
         "w": 32,
@@ -314,18 +674,234 @@
     },
     "torch4_2": {
       "frame": {
-        "x": 50,
-        "y": 0,
-        "w": 18,
-        "h": 23
+        "x": 80,
+        "y": 205,
+        "w": 19,
+        "h": 25
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 7,
-        "y": 9,
-        "w": 18,
-        "h": 23
+        "x": 6,
+        "y": 7,
+        "w": 19,
+        "h": 25
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch1_3": {
+      "frame": {
+        "x": 65,
+        "y": 179,
+        "w": 12,
+        "h": 25
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 7,
+        "w": 12,
+        "h": 25
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch1_5": {
+      "frame": {
+        "x": 77,
+        "y": 179,
+        "w": 12,
+        "h": 25
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 7,
+        "w": 12,
+        "h": 25
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch5_3": {
+      "frame": {
+        "x": 64,
+        "y": 255,
+        "w": 29,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 8,
+        "w": 29,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch5_1": {
+      "frame": {
+        "x": 78,
+        "y": 230,
+        "w": 28,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 8,
+        "w": 28,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch2_5": {
+      "frame": {
+        "x": 30,
+        "y": 0,
+        "w": 20,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 8,
+        "w": 20,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch2_7": {
+      "frame": {
+        "x": 30,
+        "y": 24,
+        "w": 20,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 8,
+        "w": 20,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch2_3": {
+      "frame": {
+        "x": 30,
+        "y": 48,
+        "w": 19,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 8,
+        "w": 19,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch4_3": {
+      "frame": {
+        "x": 30,
+        "y": 72,
+        "w": 19,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 8,
+        "w": 19,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "torch3_2": {
+      "frame": {
+        "x": 30,
+        "y": 96,
+        "w": 23,
+        "h": 20
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 12,
+        "w": 23,
+        "h": 20
       },
       "sourceSize": {
         "w": 32,
@@ -338,8 +914,8 @@
     },
     "torch4_1": {
       "frame": {
-        "x": 50,
-        "y": 23,
+        "x": 49,
+        "y": 48,
         "w": 18,
         "h": 20
       },
@@ -360,20 +936,20 @@
         "y": 0.5
       }
     },
-    "torch3_2": {
+    "torch3_3": {
       "frame": {
-        "x": 0,
-        "y": 179,
-        "w": 22,
-        "h": 18
+        "x": 49,
+        "y": 68,
+        "w": 23,
+        "h": 19
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 5,
-        "y": 14,
-        "w": 22,
-        "h": 18
+        "x": 4,
+        "y": 13,
+        "w": 23,
+        "h": 19
       },
       "sourceSize": {
         "w": 32,
@@ -386,8 +962,8 @@
     },
     "torch3_1": {
       "frame": {
-        "x": 0,
-        "y": 197,
+        "x": 50,
+        "y": 0,
         "w": 22,
         "h": 16
       },
@@ -410,8 +986,8 @@
     },
     "torch1_1": {
       "frame": {
-        "x": 0,
-        "y": 213,
+        "x": 50,
+        "y": 16,
         "w": 12,
         "h": 16
       },
@@ -434,8 +1010,8 @@
     },
     "torch2_1": {
       "frame": {
-        "x": 0,
-        "y": 229,
+        "x": 50,
+        "y": 32,
         "w": 18,
         "h": 15
       },
@@ -463,8 +1039,8 @@
     "image": "torches.png",
     "format": "RGBA8888",
     "size": {
-      "w": 68,
-      "h": 244
+      "w": 106,
+      "h": 375
     },
     "scale": 1
   }

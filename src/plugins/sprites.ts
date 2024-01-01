@@ -13,7 +13,7 @@ export interface Interactable {
 }
 
 export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
-    map!: Phaser.Tilemaps.Tilemap
+    map!: Phaser.Tilemaps.Tilemap | undefined
     gameControllables!: Controllable[]
     interactables!: Interactable[]
     guiControllables!: Controllable[]
@@ -27,7 +27,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         super(scene, pluginManager, PluginEnums.PluginNames.SpritePlugin);
     }
 
-    initialize(map: Phaser.Tilemaps.Tilemap) {
+    initialize(map?: Phaser.Tilemaps.Tilemap) {
         var eventEmitter = this.systems!.events
         eventEmitter.on("update", () => { this.update() })
         eventEmitter.once("destroy", () => { eventEmitter.off("update", this.update) })

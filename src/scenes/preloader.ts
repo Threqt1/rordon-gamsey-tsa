@@ -48,6 +48,7 @@ export class PreloaderScene extends Scene {
         KeyboardTexture.load(this)
         TorchesTexture.load(this)
 
-        this.scene.start(SceneEnums.SceneNames.ElfMinigame)
+        this.scene.launch(SceneEnums.SceneNames.GUI)
+        this.scene.start(SceneEnums.SceneNames.Menu)
     }
 }

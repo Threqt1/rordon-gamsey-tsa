@@ -6,8 +6,8 @@ import { Fruit, Apple, Pumpkin, Fruits, FruitEventName, FruitInformation } from 
 import { NPC, Player } from "../../sprites/elf/minigame"
 import { loadTilemap, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut } from "../scenesUtilities";
 import { SlashesTexture, ElvesTexture, FruitsTexture, TorchesTexture } from "../../textures/elf/minigame";
-import { EndDialogue, EndDialogueEmitter, EndDialogueEventNames } from "../../dialogue/elf/minigame";
-import { BaseDialogue } from "../../sprites";
+import { EndDialogue, EndDialogueEventNames } from "../../dialogue/elf/minigame";
+import { GUIScene } from "..";
 
 const LEVEL_SCHEMATICS: Fruits[][] = [
     [Fruits.APPLE],
@@ -74,7 +74,6 @@ export class ElfMinigameScene extends Phaser.Scene {
     playerSpriteDepth!: number
     gameEnded: boolean = false
     eventEmitter!: MinigameEventEmitter
-    dialogue!: BaseDialogue<EndDialogueEmitter>
     torches!: Phaser.GameObjects.Sprite[]
 
 
@@ -100,12 +99,12 @@ export class ElfMinigameScene extends Phaser.Scene {
         this.gameEnded = false
         this.eventEmitter = new MinigameEventEmitter()
         this.playerSpriteDepth = playerDepth
-        this.dialogue = new BaseDialogue<EndDialogueEmitter>(this, EndDialogue, EndDialogueEmitter)
+        //this.dialogue = new BaseDialogue(this, EndDialogue, EndDialogueEmitter, map.widthInPixels, map.heightInPixels)
         this.colorMatrices = []
-        this.dialogue.emitter.on(EndDialogueEventNames.END, () => {
-            this.gameEnded = true
-            switchScenesFadeOut(this, SceneEnums.SceneNames.Menu)
-        })
+        // this.dialogue.emitter.on(EndDialogueEventNames.END, () => {
+        //     this.gameEnded = true
+        //     switchScenesFadeOut(this, SceneEnums.SceneNames.Menu)
+        // })
 
         scaleAndConfigureCamera(this, map)
 
@@ -234,7 +233,7 @@ export class ElfMinigameScene extends Phaser.Scene {
         }
 
         let torch = this.torches[this.currentLevelIndex]
-        torch.play(`-torch${this.currentLevelIndex + 1}`)
+        torch.play(`-torch${this.currentLevelIndex + 1}-light`).chain(`-torch${this.currentLevelIndex + 1}-idle`)
         torch.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.time.delayedCall(MINIGAME_TORCH_DELAY, () => {
                 postTorchFunctionality()
@@ -256,7 +255,12 @@ export class ElfMinigameScene extends Phaser.Scene {
             },
             onComplete: () => {
                 this.time.delayedCall(MINIGAME_DIALOGUE_DISPLAY_COOLDOWN, () => {
-                    this.dialogue.start()
+                    let dialogue = (this.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
+                    dialogue.emitter.once(EndDialogueEventNames.END, () => {
+                        this.gameEnded = true
+                        switchScenesFadeOut(this, SceneEnums.SceneNames.Menu)
+                    })
+                    dialogue.start(EndDialogue)
                 })
             }
         }

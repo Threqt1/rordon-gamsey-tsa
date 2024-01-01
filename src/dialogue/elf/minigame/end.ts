@@ -8,27 +8,7 @@ export type EndDialogueEvents = {
     [EndDialogueEventNames.END]: [],
 }
 
-export class EndDialogueEmitter extends Phaser.Events.EventEmitter {
-    constructor() {
-        super()
-    }
-
-    override emit<K extends keyof EndDialogueEvents>(
-        eventName: K,
-        ...args: EndDialogueEvents[K]
-    ): boolean {
-        return super.emit(eventName, ...args)
-    }
-
-    override once<K extends keyof EndDialogueEvents>(
-        eventName: K,
-        listener: (...args: EndDialogueEvents[K]) => void
-    ): this {
-        return super.once(eventName, listener)
-    }
-}
-
-let Base: Dialogue<EndDialogueEmitter> = {
+let Base: Dialogue = {
     getOptionText() { return "" },
     getDialogueText() {
         return [

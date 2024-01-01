@@ -8,27 +8,7 @@ export type TeleporterDialogueEvents = {
     [TeleporterDialogueEventNames.TELEPORT]: [],
 }
 
-export class TeleporterDialogueEmitter extends Phaser.Events.EventEmitter {
-    constructor() {
-        super()
-    }
-
-    override emit<K extends keyof TeleporterDialogueEvents>(
-        eventName: K,
-        ...args: TeleporterDialogueEvents[K]
-    ): boolean {
-        return super.emit(eventName, ...args)
-    }
-
-    override once<K extends keyof TeleporterDialogueEvents>(
-        eventName: K,
-        listener: (...args: TeleporterDialogueEvents[K]) => void
-    ): this {
-        return super.once(eventName, listener)
-    }
-}
-
-let Base: Dialogue<TeleporterDialogueEmitter> = {
+let Base: Dialogue = {
     getOptionText() { return "" },
     getDialogueText() {
         return [
@@ -41,7 +21,7 @@ let Base: Dialogue<TeleporterDialogueEmitter> = {
     next: []
 }
 
-let Teleport: Dialogue<TeleporterDialogueEmitter> = {
+let Teleport: Dialogue = {
     getOptionText() { return "No, teleport me!" },
     getDialogueText() {
         return [
@@ -54,7 +34,7 @@ let Teleport: Dialogue<TeleporterDialogueEmitter> = {
     next: []
 }
 
-let MoreElfInfo: Dialogue<TeleporterDialogueEmitter> = {
+let MoreElfInfo: Dialogue = {
     getOptionText() { return "Tell me more about Elf Land. " },
     getDialogueText() {
         return [

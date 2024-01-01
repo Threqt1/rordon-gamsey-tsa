@@ -24,31 +24,6 @@ export enum FruitEventName {
     FAIL = "fail"
 }
 
-type FruitEvents = {
-    [FruitEventName.SUCCESS]: []
-    [FruitEventName.FAIL]: []
-}
-
-export class FruitEventEmitter extends Phaser.Events.EventEmitter {
-    constructor() {
-        super()
-    }
-
-    override emit<K extends keyof FruitEvents>(
-        eventName: K,
-        ...args: FruitEvents[K]
-    ): boolean {
-        return super.emit(eventName, ...args)
-    }
-
-    override once<K extends keyof FruitEvents>(
-        eventName: K,
-        listener: (...args: FruitEvents[K]) => void
-    ): this {
-        return super.once(eventName, listener)
-    }
-}
-
 export enum FruitInteraction {
     SliceUp,
     SliceDown,
@@ -89,7 +64,7 @@ export abstract class BaseFruit implements Fruit {
     colorMatrix: Phaser.FX.ColorMatrix
     tweens: Phaser.Tweens.Tween[]
     interactionPrompt: Phaser.GameObjects.Sprite
-    eventEmitter: FruitEventEmitter
+    eventEmitter: Phaser.Events.EventEmitter
 
     constructor(scene: Phaser.Scene, x: number, y: number, info: FruitInformation, pattern: FruitInteraction[], patternTextures: [string, string][]) {
         this.pattern = pattern;
@@ -103,7 +78,7 @@ export abstract class BaseFruit implements Fruit {
         this.colorMatrix = this.mainBody.postFX!.addColorMatrix()
         this.fruitChunks = []
         this.slashSprite = new BaseSprite(scene, x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(SLASH_SCALE)
-        this.eventEmitter = new FruitEventEmitter()
+        this.eventEmitter = new Phaser.Events.EventEmitter()
         this.interactionPrompt = scene.add.sprite(x, y, KeyboardTexture.TextureKey)
         this.interactionPrompt.setDepth(100).setScale(0.3).setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight + 5).setVisible(false)
         this.currentPatternLocation = 0;

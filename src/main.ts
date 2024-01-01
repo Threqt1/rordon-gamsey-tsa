@@ -1,7 +1,7 @@
 import './style.css'
 
 import { Game } from 'phaser';
-import { PreloaderScene, MenuScene, GameScene } from './scenes';
+import { PreloaderScene, MenuScene, GameScene, GUIScene } from './scenes';
 import { ElfMinigameScene } from './scenes/elf';
 import { DebugPlugin, SpritesPlugin, PluginEnums } from './plugins';
 import PhaserRaycaster from "phaser-raycaster"
@@ -24,7 +24,8 @@ const config: Phaser.Types.Core.GameConfig = {
         MenuScene,
         GameScene,
         ElfMinigameScene,
-        GoblinMinigameScene
+        GoblinMinigameScene,
+        GUIScene
     ],
     plugins: {
         scene: [{
@@ -44,6 +45,7 @@ const config: Phaser.Types.Core.GameConfig = {
         }]
     },
     pixelArt: true,
+    antialias: false
 }
 
 /*

@@ -1,11 +1,11 @@
 import { GameObjects } from "phaser";
 import { Zone, checkIfInZone } from "..";
 import { Interactable } from "../../plugins/sprites";
-import { SceneEnums, switchScenesFadeOut } from "../../scenes";
+import { GUIScene, SceneEnums, switchScenesFadeOut } from "../../scenes";
 import { KeyboardTexture } from "../../textures/keyboard";
 import { PlayerTexture } from "../../textures/player";
 import { BaseDialogue, BaseInput, BaseSprite, Keybinds } from "../base";
-import { TeleportDialogue, TeleporterDialogueEmitter, TeleporterDialogueEventNames } from "../../dialogue/elf/hub";
+import { TeleportDialogue, TeleporterDialogueEventNames } from "../../dialogue/elf/hub";
 
 enum Interaction {
     INTERACT
@@ -19,7 +19,6 @@ export class NPC implements Interactable {
     sprite: BaseSprite
     scene: Phaser.Scene
     input: BaseInput
-    dialogue: BaseDialogue<TeleporterDialogueEmitter>
     interactable: boolean
     interactionPrompt: Phaser.GameObjects.Sprite
     zone: Phaser.GameObjects.Zone
@@ -28,10 +27,6 @@ export class NPC implements Interactable {
         this.sprite = new BaseSprite(scene, x, y, PlayerTexture.TextureKey)
         this.scene = scene
         this.input = new BaseInput(scene, NPC.keybinds)
-        this.dialogue = new BaseDialogue<TeleporterDialogueEmitter>(this.scene, TeleportDialogue, TeleporterDialogueEmitter)
-        this.dialogue.emitter.on(TeleporterDialogueEventNames.TELEPORT, () => {
-            switchScenesFadeOut(scene, SceneEnums.SceneNames.ElfMinigame)
-        })
 
         this.scene.sprites.makeCollisionsForBody(SceneEnums.CollisionCategories.INTERACTABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
         this.sprite.setPushable(false)
@@ -70,8 +65,12 @@ export class NPC implements Interactable {
         }
         if (this.interactable && this.input.checkIfKeyDown(Interaction.INTERACT) && this.interactionPrompt.visible) {
             this.input.input.resetKeys()
-            this.dialogue.start()
             this.interactionPrompt.setVisible(false)
+            let dialogue = (this.scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
+            dialogue.emitter.once(TeleporterDialogueEventNames.TELEPORT, () => {
+                switchScenesFadeOut(this.scene, SceneEnums.SceneNames.ElfMinigame)
+            })
+            dialogue.start(TeleportDialogue)
         }
     }
 }

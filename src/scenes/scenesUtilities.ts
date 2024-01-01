@@ -4,7 +4,8 @@ export namespace SceneEnums {
         Menu = "menu",
         Game = "game",
         ElfMinigame = "elfminigame",
-        GoblinMinigame = "goblinminigame"
+        GoblinMinigame = "goblinminigame",
+        GUI = "gui"
     }
     export enum CollisionCategories {
         MAP = 1,
