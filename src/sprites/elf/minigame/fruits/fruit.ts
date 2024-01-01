@@ -1,6 +1,6 @@
 import { Controllable } from "../../../../plugins"
 import { KeyboardTexture } from "../../../../textures"
-import { SlashesTexture, ItemsTexture } from "../../../../textures/elf/minigame"
+import { SlashesTexture, FruitsTexture } from "../../../../textures/elf/minigame"
 import { BaseInput, BaseSprite, Keybinds } from "../../../base"
 
 export enum Fruits {
@@ -70,8 +70,8 @@ const SCREEN_SHAKE_DURATION = 100
 const SCREEN_SHAKE_FACTOR = 0.0003
 const ROTATION_VELOCITY = 300;
 
-const SLASH_ANIMATIONS = [SlashesTexture.Animations.Slash1, SlashesTexture.Animations.Slash2, SlashesTexture.Animations.Slash3]
-const HIT_ANIMATIONS = [SlashesTexture.Animations.Hit1, SlashesTexture.Animations.Hit2, SlashesTexture.Animations.Hit3]
+const SLASH_ANIMATIONS = [SlashesTexture.Animations.Slash1, SlashesTexture.Animations.Slash2, SlashesTexture.Animations.Slash3, SlashesTexture.Animations.Slash4]
+//const HIT_ANIMATIONS = [SlashesTexture.Animations.Hit1, SlashesTexture.Animations.Hit2, SlashesTexture.Animations.Hit3]
 
 export abstract class BaseFruit implements Fruit {
     pattern: FruitInteraction[]
@@ -99,10 +99,10 @@ export abstract class BaseFruit implements Fruit {
         this.controllable = false;
         this.started = false;
         this.finished = false;
-        this.mainBody = new BaseSprite(scene, x, y, ItemsTexture.TextureKey, this.patternTextures[0][0]).setDepth(info.spriteDepth).setVisible(false)
+        this.mainBody = new BaseSprite(scene, x, y, FruitsTexture.TextureKey, this.patternTextures[0][0]).setDepth(info.spriteDepth).setVisible(false)
         this.colorMatrix = this.mainBody.postFX!.addColorMatrix()
         this.fruitChunks = []
-        this.slashSprite = new BaseSprite(scene, x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(0.7)
+        this.slashSprite = new BaseSprite(scene, x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(1)
         this.hitSprite = new BaseSprite(scene, x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(0.5)
         this.eventEmitter = new FruitEventEmitter()
         this.interactionPrompt = scene.add.sprite(x, y, KeyboardTexture.TextureKey)
@@ -119,6 +119,10 @@ export abstract class BaseFruit implements Fruit {
             paused: true,
         })
         this.mainBody.setAngularVelocity(ROTATION_VELOCITY)
+
+        this.slashSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.slashSprite.setFrame(SlashesTexture.Frames.Empty)
+        })
 
         this.tweens = [movementTween]
     }
@@ -140,7 +144,7 @@ export abstract class BaseFruit implements Fruit {
 
     createNewFruitChunk() {
         let newTextures = this.patternTextures[this.currentPatternLocation]
-        let newChunk = new BaseSprite(this.scene, this.mainBody.x, this.mainBody.y, ItemsTexture.TextureKey, newTextures[1]).setDepth(this.mainBody.depth)
+        let newChunk = new BaseSprite(this.scene, this.mainBody.x, this.mainBody.y, FruitsTexture.TextureKey, newTextures[1]).setDepth(this.mainBody.depth)
         newChunk.postFX!.addColorMatrix().grayscale(0.6)
 
         let vector = new Phaser.Math.Vector2(0, 1).rotate(this.mainBody.rotation - Phaser.Math.DegToRad(90)).scale(30)
@@ -163,9 +167,9 @@ export abstract class BaseFruit implements Fruit {
 
     playSliceAnimation() {
         let randomSlash = Phaser.Math.RND.integerInRange(0, SLASH_ANIMATIONS.length - 1)
-        let randomHit = Phaser.Math.RND.integerInRange(0, HIT_ANIMATIONS.length - 1)
+        //let randomHit = Phaser.Math.RND.integerInRange(0, HIT_ANIMATIONS.length - 1)
         this.slashSprite.anims.play(SLASH_ANIMATIONS[randomSlash], true)
-        this.hitSprite.anims.play(HIT_ANIMATIONS[randomHit], true)
+        //this.hitSprite.anims.play(HIT_ANIMATIONS[randomHit], true)
     }
 
     prepare() {

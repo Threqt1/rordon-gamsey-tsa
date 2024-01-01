@@ -2,10 +2,10 @@
 add gameobjects on tiled to specify where fruits spawn/end/chara positions
  */
 
-import { Fruit, Apple, Pumpkin, Fruits, FruitEventName, FruitInformation } from "../../sprites/elf/minigame/items";
+import { Fruit, Apple, Pumpkin, Fruits, FruitEventName, FruitInformation } from "../../sprites/elf/minigame/fruits";
 import { NPC, Player } from "../../sprites/elf/minigame"
 import { loadTilemap, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut } from "../scenesUtilities";
-import { SlashesTexture, ElvesTexture, ItemsTexture } from "../../textures/elf/minigame";
+import { SlashesTexture, ElvesTexture, FruitsTexture } from "../../textures/elf/minigame";
 import { EndDialogue, EndDialogueEmitter, EndDialogueEventNames } from "../../dialogue/elf/minigame";
 import { BaseDialogue } from "../../sprites";
 
@@ -77,13 +77,13 @@ export class ElfMinigameScene extends Phaser.Scene {
     preload() {
         SlashesTexture.preload(this)
         ElvesTexture.preload(this)
-        ItemsTexture.preload(this)
+        FruitsTexture.preload(this)
     }
 
     create() {
         SlashesTexture.load(this)
         ElvesTexture.load(this)
-        ItemsTexture.load(this)
+        FruitsTexture.load(this)
 
         let { map, playerDepth } = loadTilemap(this, "elf minigame")
 

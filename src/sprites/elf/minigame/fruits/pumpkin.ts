@@ -1,4 +1,4 @@
-import { ItemsTexture } from "../../../../textures/elf/minigame/items";
+import { FruitsTexture } from "../../../../textures/elf/minigame/fruits";
 import { BaseFruit, FruitInformation, FruitInteraction } from "./fruit";
 
 export class Pumpkin extends BaseFruit {
@@ -9,11 +9,11 @@ export class Pumpkin extends BaseFruit {
         FruitInteraction.SliceRight
     ]
     private static patternTextures: [string, string][] = [
-        [ItemsTexture.Frames.Pumpkin.Base, ItemsTexture.Frames.Pumpkin.Base],
-        [ItemsTexture.Frames.Pumpkin.Core1, ItemsTexture.Frames.Pumpkin.Chunk1],
-        [ItemsTexture.Frames.Pumpkin.Core2, ItemsTexture.Frames.Pumpkin.Chunk2],
-        [ItemsTexture.Frames.Pumpkin.Core3, ItemsTexture.Frames.Pumpkin.Chunk3],
-        [ItemsTexture.Frames.Pumpkin.Core4, ItemsTexture.Frames.Pumpkin.Chunk4]
+        [FruitsTexture.Frames.Pumpkin.Base, FruitsTexture.Frames.Pumpkin.Base],
+        [FruitsTexture.Frames.Pumpkin.Core1, FruitsTexture.Frames.Pumpkin.Chunk1],
+        [FruitsTexture.Frames.Pumpkin.Core2, FruitsTexture.Frames.Pumpkin.Chunk2],
+        [FruitsTexture.Frames.Pumpkin.Core3, FruitsTexture.Frames.Pumpkin.Chunk3],
+        [FruitsTexture.Frames.Pumpkin.Core4, FruitsTexture.Frames.Pumpkin.Chunk4]
     ]
 
     constructor(scene: Phaser.Scene, x: number, y: number, info: FruitInformation) {
