@@ -4,10 +4,10 @@ let LOADED = false
 export namespace SlashesTexture {
     export const TextureKey = "slashes"
     export const Animations = {
-        Slash1: TextureKey + "-slash-1",
-        Slash2: TextureKey + "-slash-2",
-        Slash3: TextureKey + "-slash-3",
-        Slash4: TextureKey + "-slash-4"
+        SideStraight: TextureKey + "-slash-1",
+        Vertical: TextureKey + "-slash-2",
+        Diagonal: TextureKey + "-slash-3",
+        SideCurved: TextureKey + "-slash-4"
         // Hit1: TextureKey + "-hit-1",
         // Hit2: TextureKey + "-hit-2",
         // Hit3: TextureKey + "-hit-3"
@@ -26,22 +26,22 @@ export namespace SlashesTexture {
         if (LOADED) return
         LOADED = true
         scene.anims.create({
-            key: Animations.Slash1,
+            key: Animations.SideStraight,
             frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 9, prefix: "slash_" }),
             frameRate: 30,
         })
         scene.anims.create({
-            key: Animations.Slash2,
+            key: Animations.Vertical,
             frames: scene.anims.generateFrameNames(TextureKey, { start: 10, end: 17, prefix: "slash_" }),
             frameRate: 30,
         })
         scene.anims.create({
-            key: Animations.Slash3,
+            key: Animations.SideCurved,
             frames: scene.anims.generateFrameNames(TextureKey, { start: 18, end: 26, prefix: "slash_" }),
             frameRate: 30,
         })
         scene.anims.create({
-            key: Animations.Slash4,
+            key: Animations.Diagonal,
             frames: scene.anims.generateFrameNames(TextureKey, { start: 27, end: 36, prefix: "slash_" }),
             frameRate: 30,
         })

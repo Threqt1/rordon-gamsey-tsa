@@ -46,12 +46,13 @@ const SCREEN_SHAKE_FACTOR = 0.0003
 const ROTATION_VELOCITY = 300;
 const SLASH_SCALE = 1;
 
-const SLASH_ANIMATIONS = [SlashesTexture.Animations.Slash1, SlashesTexture.Animations.Slash2, SlashesTexture.Animations.Slash3, SlashesTexture.Animations.Slash4]
+//const SLASH_ANIMATIONS = [SlashesTexture.Animations.Slash1, SlashesTexture.Animations.Slash2, SlashesTexture.Animations.Slash3, SlashesTexture.Animations.Slash4]
 //const HIT_ANIMATIONS = [SlashesTexture.Animations.Hit1, SlashesTexture.Animations.Hit2, SlashesTexture.Animations.Hit3]
 
 export abstract class BaseFruit implements Fruit {
     pattern: FruitInteraction[]
     patternTextures: [string, string][]
+    slashes: string[]
     currentPatternLocation: number;
     started: boolean;
     finished: boolean;
@@ -66,9 +67,10 @@ export abstract class BaseFruit implements Fruit {
     interactionPrompt: Phaser.GameObjects.Sprite
     eventEmitter: Phaser.Events.EventEmitter
 
-    constructor(scene: Phaser.Scene, x: number, y: number, info: FruitInformation, pattern: FruitInteraction[], patternTextures: [string, string][]) {
+    constructor(scene: Phaser.Scene, x: number, y: number, info: FruitInformation, pattern: FruitInteraction[], patternTextures: [string, string][], slashes: string[]) {
         this.pattern = pattern;
         this.patternTextures = patternTextures
+        this.slashes = slashes
         this.scene = scene
         this.baseInput = new BaseInput(scene, FruitInteractionKeybinds)
         this.controllable = false;
@@ -139,10 +141,10 @@ export abstract class BaseFruit implements Fruit {
         this.scene.input.keyboard!.resetKeys()
     }
 
-    playSliceAnimation() {
-        let randomSlash = Phaser.Math.RND.integerInRange(0, SLASH_ANIMATIONS.length - 1)
-        this.slashSprite.anims.play(SLASH_ANIMATIONS[randomSlash], true)
-    }
+    // playSliceAnimation() {
+    //     let randomSlash = Phaser.Math.RND.integerInRange(0, SLASH_ANIMATIONS.length - 1)
+    //     this.slashSprite.anims.play(SLASH_ANIMATIONS[randomSlash], true)
+    // }
 
     prepare() {
         // let emitter = this.scene.add.particles(this.mainBody.x, this.mainBody.y, "purple", {
@@ -201,7 +203,8 @@ export abstract class BaseFruit implements Fruit {
             this.scene.cameras.main.shake(SCREEN_SHAKE_DURATION, SCREEN_SHAKE_FACTOR)
             this.currentPatternLocation++;
             this.progressPattern()
-            this.playSliceAnimation()
+            this.slashSprite.anims.play(this.slashes[this.currentPatternLocation - 1], true)
+            //this.playSliceAnimation()
             this.baseInput.input.resetKeys()
             if (this.currentPatternLocation >= this.pattern.length) {
                 this.onItemSuccess()

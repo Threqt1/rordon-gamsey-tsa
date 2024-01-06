@@ -1,5 +1,5 @@
 import { SceneEnums, loadTilemap, scaleAndConfigureCamera } from ".."
-import { Player, NPC } from "../../sprites/game"
+import { Player, NPC, Interaction } from "../../sprites/game"
 
 export class GoblinMinigameScene extends Phaser.Scene {
     ray!: Raycaster.Ray
@@ -14,13 +14,13 @@ export class GoblinMinigameScene extends Phaser.Scene {
     }
 
     create() {
-        let { collisionsLayer: collisions, map, playerDepth } = loadTilemap(this, "goblin minigame")
+        let { collisionsLayer: collisions, map, playerDepth } = loadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame)
 
         this.sprites.initialize(map)
 
         this.player = new Player(this, 30, 130)
         let npc1 = new NPC(this, 100, 150)
-        this.fov = this.add.rectangle(0, 0, 16 * 5, 16 * 5)
+        //this.fov = this.add.rectangle(0, 0, map.widthInPixels, map.heightInPixels)
 
         this.sprites.addGameControllables(this.player)
         this.sprites.addInteractables(npc1)
@@ -35,9 +35,10 @@ export class GoblinMinigameScene extends Phaser.Scene {
         raycaster.mapGameObjects(collisions, false, {
             collisionTiles: [151]
         })
-        raycaster.mapGameObjects(this.fov, true)
+        //raycaster.mapGameObjects(this.fov, true)
 
         this.ray = raycaster.createRay()
+        this.ray.setConeDeg(60);
 
         this.lightMaskGraphics = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 0 } })
         this.rayVisualizationGraphics = this.add.graphics({ lineStyle: { width: 1, color: 0x00ff00 } }).setDepth(100)
@@ -55,14 +56,30 @@ export class GoblinMinigameScene extends Phaser.Scene {
         this.lightMaskGraphics.clear()
         this.rayVisualizationGraphics.clear()
 
-        this.fov.setPosition(this.player.sprite.x, this.player.sprite.y)
+        //this.fov.setPosition(this.player.sprite.x, this.player.sprite.y)
         this.ray.setOrigin(this.player.sprite.x, this.player.sprite.y)
+        switch (this.player.direction) {
+            case Interaction.UP:
+                this.ray.setAngleDeg(-90)
+                break;
+            case Interaction.LEFT:
+                this.ray.setAngleDeg(-180)
+                break;
+            case Interaction.RIGHT:
+                this.ray.setAngleDeg(0)
+                break;
+            case Interaction.DOWN:
+                this.ray.setAngleDeg(90)
+                break;
+        }
 
-        let intersections = this.ray.castCircle()
+        let intersections = this.ray.castCone()
 
-        // for (let intersection of intersections) {
-        //     //this.rayVisualizationGraphics.strokeLineShape(new Phaser.Geom.Line(this.ray.origin.x, this.ray.origin.y, intersection.x, intersection.y));
-        // }
+        for (let intersection of intersections) {
+            this.rayVisualizationGraphics.strokeLineShape(new Phaser.Geom.Line(this.ray.origin.x, this.ray.origin.y, intersection.x, intersection.y));
+        }
+
+        intersections.push(new Phaser.Geom.Point(this.player.sprite.x, this.player.sprite.y))
 
         this.lightMaskGraphics.fillPoints(intersections)
     }

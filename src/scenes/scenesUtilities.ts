@@ -1,3 +1,5 @@
+import { GUIScene } from ".";
+
 export namespace SceneEnums {
     export enum SceneNames {
         Preloader = "preloader",
@@ -6,6 +8,11 @@ export namespace SceneEnums {
         ElfMinigame = "elfminigame",
         GoblinMinigame = "goblinminigame",
         GUI = "gui"
+    }
+    export enum TilemapNames {
+        Game = "game",
+        GoblinMinigame = "goblinminigame",
+        ElfMinigame = "elfminigame"
     }
     export enum CollisionCategories {
         MAP = 1,
@@ -96,6 +103,7 @@ export function loadTilemap(scene: Phaser.Scene, name: string): LoadedTilemap {
 const DURATION = 500;
 
 export function switchScenesFadeOut(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames) {
+    (scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue.stop()
     scene.cameras.main.fadeOut(DURATION, 0, 0, 0)
     scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
         scene.scene.start(nextScene, { fade: true })

@@ -114,10 +114,10 @@ export class BaseDialogue implements Controllable {
         this.display()
     }
 
-    cleanup() {
+    stop() {
         this.controllable = false
         this.dialogueSprite.setVisible(false)
-        this.scene.sprites.gameControllablesEnabled = true
+        this.scene.sprites.setGameControllable(true)
     }
 
     start(dialogue: Dialogue) {
@@ -144,7 +144,7 @@ export class BaseDialogue implements Controllable {
                 this.processOptions()
                 break;
             case DialogueWalkerStatus.FINISHED:
-                this.cleanup()
+                this.stop()
                 break;
         }
     }

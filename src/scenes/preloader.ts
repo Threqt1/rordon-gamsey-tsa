@@ -18,11 +18,9 @@ export class PreloaderScene extends Scene {
         progressBox.fillStyle(0x222222, 0.8);
         progressBox.fillRect(pct(cameraWidth, 10), pct(cameraHeight, 50), pct(cameraWidth, 80), pct(cameraHeight, 10))
 
-        preloadTilemap(this, "test", "map.tmj", "spritesheet.png")
-        preloadTilemap(this, "test2", "map2.tmj", "spritesheet.png")
-        preloadTilemap(this, "goblin minigame", "goblin/minigame.tmj", "spritesheet.png")
-        preloadTilemap(this, "elf minigame", "elf/minigame.tmj", "elf/1.png", "elf/2.png")
-        preloadTilemap(this, "elf hub", "elf/hub.tmj", "elf/2.png", "elf/2.png")
+        preloadTilemap(this, SceneEnums.TilemapNames.Game, "map.tmj", "spritesheet.png")
+        preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame, "goblin/minigame.tmj", "spritesheet.png")
+        preloadTilemap(this, SceneEnums.TilemapNames.ElfMinigame, "elf/minigame.tmj", "elf/1.png", "elf/2.png")
 
         PlayerTexture.preload(this)
         KeyboardTexture.preload(this)
@@ -49,6 +47,6 @@ export class PreloaderScene extends Scene {
         TorchesTexture.load(this)
 
         this.scene.launch(SceneEnums.SceneNames.GUI)
-        this.scene.start(SceneEnums.SceneNames.Menu)
+        this.scene.start(SceneEnums.SceneNames.GoblinMinigame)
     }
 }

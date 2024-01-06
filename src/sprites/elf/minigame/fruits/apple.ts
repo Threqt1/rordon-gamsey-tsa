@@ -1,3 +1,4 @@
+import { SlashesTexture } from "../../../../textures/elf/minigame";
 import { FruitsTexture } from "../../../../textures/elf/minigame/fruits";
 import { BaseFruit, FruitInformation, FruitInteraction } from "./fruit";
 
@@ -8,8 +9,12 @@ export class Apple extends BaseFruit {
         [FruitsTexture.Frames.Apple.Core1, FruitsTexture.Frames.Apple.Chunk1],
         [FruitsTexture.Frames.Apple.Core2, FruitsTexture.Frames.Apple.Chunk2]
     ]
+    private static slashes: string[] = [
+        SlashesTexture.Animations.Diagonal,
+        SlashesTexture.Animations.SideCurved,
+    ]
 
     constructor(scene: Phaser.Scene, x: number, y: number, info: FruitInformation) {
-        super(scene, x, y, info, Apple.pattern, Apple.patternTextures)
+        super(scene, x, y, info, Apple.pattern, Apple.patternTextures, Apple.slashes)
     }
 }

@@ -3,7 +3,7 @@ import { SceneEnums } from "../../scenes"
 import { PlayerTexture } from "../../textures/player"
 import { BaseInput, BaseSprite, Keybinds } from "../base"
 
-enum Interaction {
+export enum Interaction {
     UP,
     DOWN,
     LEFT,
