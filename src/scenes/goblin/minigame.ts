@@ -1,5 +1,5 @@
 import { SceneEnums, loadTilemap, scaleAndConfigureCamera } from ".."
-import { Player, NPC, Interaction } from "../../sprites/game"
+import { Player } from "../../sprites/game"
 import { GoblinNPC } from "../../sprites/goblin/npc"
 
 export class GoblinMinigameScene extends Phaser.Scene {
@@ -21,8 +21,8 @@ export class GoblinMinigameScene extends Phaser.Scene {
 
         this.player = new Player(this, 30, 130)
         this.player.sprite.setDepth(playerDepth)
-        let path = new Phaser.Curves.Path(100, 130).lineTo(100, 160).lineTo(150, 160).lineTo(150, 130).lineTo(100, 130)
-        let npc = new GoblinNPC(this, path, 100, 130)
+        let points = [new Phaser.Math.Vector2(100, 130), new Phaser.Math.Vector2(100, 150), new Phaser.Math.Vector2(150, 150), new Phaser.Math.Vector2(150, 130)]
+        let npc = new GoblinNPC(this, points, 100, 130)
         npc.sprite.setDepth(playerDepth)
 
         this.sprites.addGameControllables(this.player)
@@ -32,6 +32,8 @@ export class GoblinMinigameScene extends Phaser.Scene {
         scaleAndConfigureCamera(this, map, this.player.sprite)
 
         this.sprites.makeCollisionsWithLayer(collisions)
+
+        npc.start()
 
         // this.player = new Player(this, 30, 130)
         // let npc1 = new NPC(this, 100, 150)

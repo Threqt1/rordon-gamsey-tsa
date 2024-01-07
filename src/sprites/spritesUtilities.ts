@@ -4,6 +4,13 @@ export enum Zone {
     NONE
 }
 
+export enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+}
+
 export function checkIfInZone(zone: Phaser.GameObjects.Zone) {
     let body = zone.body as Phaser.Physics.Arcade.Body
     let touching = body.touching.none
