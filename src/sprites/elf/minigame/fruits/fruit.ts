@@ -1,7 +1,7 @@
 import { Controllable } from "../../../../plugins"
 import { KeyboardTexture } from "../../../../textures"
 import { SlashesTexture, FruitsTexture } from "../../../../textures/elf/minigame"
-import { BaseInput, BaseSprite, Keybinds } from "../../../base"
+import { BaseInput, Keybinds } from "../../../base"
 
 export enum Fruits {
     APPLE,
@@ -59,9 +59,9 @@ export abstract class BaseFruit implements Fruit {
     scene: Phaser.Scene;
     baseInput: BaseInput
     controllable: boolean
-    mainBody: BaseSprite
-    slashSprite: BaseSprite
-    fruitChunks: BaseSprite[]
+    mainBody: Phaser.Physics.Arcade.Sprite
+    slashSprite: Phaser.Physics.Arcade.Sprite
+    fruitChunks: Phaser.Physics.Arcade.Sprite[]
     colorMatrix: Phaser.FX.ColorMatrix
     tweens: Phaser.Tweens.Tween[]
     interactionPrompt: Phaser.GameObjects.Sprite
@@ -76,10 +76,10 @@ export abstract class BaseFruit implements Fruit {
         this.controllable = false;
         this.started = false;
         this.finished = false;
-        this.mainBody = new BaseSprite(scene, x, y, FruitsTexture.TextureKey, this.patternTextures[0][0]).setDepth(info.spriteDepth).setVisible(false)
+        this.mainBody = scene.physics.add.sprite(x, y, FruitsTexture.TextureKey, this.patternTextures[0][0]).setDepth(info.spriteDepth).setVisible(false)
         this.colorMatrix = this.mainBody.postFX!.addColorMatrix()
         this.fruitChunks = []
-        this.slashSprite = new BaseSprite(scene, x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(SLASH_SCALE)
+        this.slashSprite = scene.physics.add.sprite(x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(SLASH_SCALE)
         this.eventEmitter = new Phaser.Events.EventEmitter()
         this.interactionPrompt = scene.add.sprite(x, y, KeyboardTexture.TextureKey)
         this.interactionPrompt.setDepth(100).setScale(0.3).setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight + 5).setVisible(false)
@@ -120,7 +120,7 @@ export abstract class BaseFruit implements Fruit {
 
     createNewFruitChunk() {
         let newTextures = this.patternTextures[this.currentPatternLocation]
-        let newChunk = new BaseSprite(this.scene, this.mainBody.x, this.mainBody.y, FruitsTexture.TextureKey, newTextures[1]).setDepth(this.mainBody.depth)
+        let newChunk = this.scene.physics.add.sprite(this.mainBody.x, this.mainBody.y, FruitsTexture.TextureKey, newTextures[1]).setDepth(this.mainBody.depth)
         newChunk.postFX!.addColorMatrix().grayscale(0.6)
 
         let vector = new Phaser.Math.Vector2(0, 1).rotate(this.mainBody.rotation - Phaser.Math.DegToRad(90)).scale(30)

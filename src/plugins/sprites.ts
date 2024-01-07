@@ -69,11 +69,11 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         this.guiControllables = this.guiControllables.filter(r => controllables.indexOf(r) === -1);
     }
 
-    addSprites(...statics: Phaser.Physics.Arcade.Sprite[]) {
-        this.physicsBodies.addMultiple(statics)
+    addPhysicsBodies<T extends Phaser.GameObjects.GameObject>(...sprites: T[]) {
+        this.physicsBodies.addMultiple(sprites)
     }
 
-    removeSprites(...sprites: Phaser.Physics.Arcade.Sprite[]) {
+    removePhysicsBodies<T extends Phaser.GameObjects.GameObject>(...sprites: T[]) {
         for (let sprite of sprites) {
             this.physicsBodies.remove(sprite)
         }
@@ -97,15 +97,6 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         }
     }
 
-    makeCollisionsForBody(category: SceneEnums.CollisionCategories, body: Phaser.Physics.Arcade.Body) {
-        body.setCollisionCategory(category)
-        switch (category) {
-            case SceneEnums.CollisionCategories.CONTROLLABLE:
-                body.setCollidesWith([SceneEnums.CollisionCategories.CONTROLLABLE, SceneEnums.CollisionCategories.INTERACTABLE, SceneEnums.CollisionCategories.INTERACTION_ZONE, SceneEnums.CollisionCategories.MAP])
-                break;
-        }
-    }
-
     makeCollisionsWithLayer(layer: Phaser.Tilemaps.TilemapLayer) {
         this.scene!.physics.add.collider(this.physicsBodies, this.physicsBodies);
         this.scene!.physics.add.collider(this.physicsBodies, layer);
@@ -116,10 +107,6 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         this.gameControllables = []
         this.interactables = []
         this.physicsBodies.destroy(true, true)
-    }
-
-    getPhysicsSprites(): Phaser.Physics.Arcade.Sprite[] {
-        return this.physicsBodies.getChildren() as Phaser.Physics.Arcade.Sprite[]
     }
 
     update() {

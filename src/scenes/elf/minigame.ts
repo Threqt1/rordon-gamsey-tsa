@@ -83,14 +83,12 @@ export class ElfMinigameScene extends Phaser.Scene {
         scaleAndConfigureCamera(this, map)
 
         let player = new Player(this, this.markers.Player.x, this.markers.Player.y)
+        player.sprite.setDepth(playerDepth)
         let npc = new NPC(this, this.markers.Elf.x, this.markers.Elf.y)
+        npc.sprite.setDepth(playerDepth)
 
-        this.sprites.addSprites(player.sprite, npc.sprite)
-        this.sprites.physicsBodies.setDepth(playerDepth)
-
-        for (let sprite of this.sprites.getPhysicsSprites()) {
-            this.colorMatrices.push(sprite.postFX!.addColorMatrix())
-        }
+        this.colorMatrices.push(player.sprite.postFX!.addColorMatrix())
+        this.colorMatrices.push(npc.sprite.postFX!.addColorMatrix())
 
         for (let layer of map.layers) {
             if (layer.tilemapLayer != null) this.colorMatrices.push(layer.tilemapLayer.postFX!.addColorMatrix())

@@ -1,7 +1,7 @@
 import { Controllable } from "../../plugins/sprites"
 import { SceneEnums } from "../../scenes"
 import { PlayerTexture } from "../../textures/player"
-import { BaseInput, BaseSprite, Keybinds } from "../base"
+import { BaseInput, Keybinds } from "../base"
 
 export enum Interaction {
     UP,
@@ -24,7 +24,7 @@ export class Player implements Controllable {
             "D",
     }
 
-    sprite: BaseSprite
+    sprite: Phaser.Physics.Arcade.Sprite
     scene: Phaser.Scene
     input: BaseInput
 
@@ -33,11 +33,9 @@ export class Player implements Controllable {
     direction: Interaction
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        this.sprite = new BaseSprite(scene, x, y, PlayerTexture.TextureKey)
+        this.sprite = scene.physics.add.sprite(x, y, PlayerTexture.TextureKey)
         this.scene = scene
         this.input = new BaseInput(scene, Player.keybinds)
-
-        this.scene.sprites.makeCollisionsForBody(SceneEnums.CollisionCategories.CONTROLLABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
 
         this.controllable = true
         this.direction = Interaction.DOWN

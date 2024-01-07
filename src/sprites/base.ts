@@ -1,21 +1,11 @@
 import { Dialogue, DialogueSprite, DialogueWalker, DialogueWalkerStatus } from "../dialogue"
 import { Controllable } from "../plugins"
 
-type Keybinds = {
+export type Keybinds = {
     [key: number]: keyof typeof Phaser.Input.Keyboard.KeyCodes
 }
 
-class BaseSprite extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string) {
-        super(scene, x, y, texture, frame)
-
-        this.scene.sys.displayList.add(this)
-        this.scene.sys.updateList.add(this)
-        this.scene.physics.world.enableBody(this, Phaser.Physics.Arcade.DYNAMIC_BODY)
-    }
-}
-
-class BaseInput {
+export class BaseInput {
     scene: Phaser.Scene
     input: Phaser.Input.Keyboard.KeyboardPlugin
     keyMap: { [key: string]: Phaser.Input.Keyboard.Key }
@@ -149,6 +139,3 @@ export class BaseDialogue implements Controllable {
         }
     }
 }
-
-export { BaseSprite, BaseInput }
-export type { Keybinds }

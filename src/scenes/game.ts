@@ -17,7 +17,7 @@ export class GameScene extends Scene {
 
         this.sprites.addGameControllables(player)
         this.sprites.addInteractables(npc1)
-        this.sprites.addSprites(player.sprite, npc1.sprite)
+        this.sprites.addPhysicsBodies(player.sprite, npc1.sprite)
         this.sprites.physicsBodies.setDepth(playerDepth)
 
         scaleAndConfigureCamera(this, map, player.sprite)

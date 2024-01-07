@@ -1,11 +1,10 @@
 import { PlayerTexture } from "../../../textures/player";
-import { BaseSprite } from "../../base";
 
 export class Player {
-    sprite: BaseSprite
+    sprite: Phaser.GameObjects.Sprite
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        this.sprite = new BaseSprite(scene, x, y, PlayerTexture.TextureKey)
+        this.sprite = scene.add.sprite(x, y, PlayerTexture.TextureKey)
 
         this.sprite.setFlipX(true);
 

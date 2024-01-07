@@ -1,10 +1,10 @@
 import { GameObjects } from "phaser";
 import { Zone, checkIfInZone } from "..";
-import { Interactable } from "../../plugins/sprites";
+import { Interactable, SpritesPlugin } from "../../plugins/sprites";
 import { GUIScene, SceneEnums, switchScenesFadeOut } from "../../scenes";
 import { KeyboardTexture } from "../../textures/keyboard";
 import { PlayerTexture } from "../../textures/player";
-import { BaseInput, BaseSprite, Keybinds } from "../base";
+import { BaseInput, Keybinds } from "../base";
 import { TeleportDialogue, TeleporterDialogueEventNames } from "../../dialogue/elf/hub";
 
 enum Interaction {
@@ -16,7 +16,7 @@ export class NPC implements Interactable {
         [Interaction.INTERACT]:
             "E",
     }
-    sprite: BaseSprite
+    sprite: Phaser.Physics.Arcade.Sprite
     scene: Phaser.Scene
     input: BaseInput
     interactable: boolean
@@ -24,11 +24,10 @@ export class NPC implements Interactable {
     zone: Phaser.GameObjects.Zone
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        this.sprite = new BaseSprite(scene, x, y, PlayerTexture.TextureKey)
+        this.sprite = scene.physics.add.sprite(x, y, PlayerTexture.TextureKey)
         this.scene = scene
         this.input = new BaseInput(scene, NPC.keybinds)
 
-        this.scene.sprites.makeCollisionsForBody(SceneEnums.CollisionCategories.INTERACTABLE, this.sprite.body as Phaser.Physics.Arcade.Body)
         this.sprite.setPushable(false)
 
         this.interactable = true
@@ -39,7 +38,6 @@ export class NPC implements Interactable {
         this.scene.physics.world.enable(this.zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
 
         let body = this.zone.body as Phaser.Physics.Arcade.Body
-        this.scene.sprites.makeCollisionsForBody(SceneEnums.CollisionCategories.INTERACTION_ZONE, body)
 
         this.sprite.anims.play(PlayerTexture.Animations.IdleFront)
     }

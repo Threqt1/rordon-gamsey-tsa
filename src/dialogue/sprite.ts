@@ -1,5 +1,4 @@
 import { pct } from "../scenes";
-import { BaseSprite } from "../sprites";
 import { DialogueTexture } from "../textures";
 
 const DIALOGUE_BOX_SCALE_X = 80
@@ -9,11 +8,11 @@ const TEXT_OFFSET_Y = 20
 const FONT_SIZE = 40
 
 export class DialogueSprite {
-    sprite: BaseSprite
+    sprite: Phaser.GameObjects.Sprite
     text: Phaser.GameObjects.Text
 
     constructor(scene: Phaser.Scene, mapWidth: number, mapHeight: number) {
-        this.sprite = new BaseSprite(scene, scene.cameras.main.width / 2, scene.cameras.main.height, DialogueTexture.Frames.Box)
+        this.sprite = scene.add.sprite(scene.cameras.main.width / 2, scene.cameras.main.height, DialogueTexture.Frames.Box)
             .setDepth(100).setOrigin(0.5, 1)
         this.sprite.setScale(pct(mapWidth, DIALOGUE_BOX_SCALE_X) / this.sprite.displayWidth, pct(mapHeight, DIALOGUE_BOX_SCALE_Y) / this.sprite.displayHeight)
         this.text = scene.make.text({
