@@ -63,11 +63,9 @@ export class NPC implements Interactable {
             this.input.input.resetKeys()
             this.interactionPrompt.setVisible(false)
             let dialogue = (this.scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
-            dialogue.emitter.once(TeleporterDialogueEventNames.TELEPORT, () => {
-                switchScenesFadeOut(this.scene, SceneEnums.SceneNames.ElfMinigame)
-            })
             dialogue.start(this.scene, TeleportDialogue, () => {
                 this.interactable = false
+                switchScenesFadeOut(this.scene, SceneEnums.SceneNames.ElfMinigame)
             })
         }
     }

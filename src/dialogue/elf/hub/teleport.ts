@@ -1,11 +1,9 @@
 import { Dialogue } from "../../"
 
 export enum TeleporterDialogueEventNames {
-    TELEPORT = "teleport"
 }
 
 export type TeleporterDialogueEvents = {
-    [TeleporterDialogueEventNames.TELEPORT]: [],
 }
 
 let Base: Dialogue = {
@@ -27,9 +25,6 @@ let Teleport: Dialogue = {
         return [
             "Alright, safe travels."
         ]
-    },
-    choose(_, eventEmitter) {
-        eventEmitter.emit(TeleporterDialogueEventNames.TELEPORT)
     },
     next: []
 }
