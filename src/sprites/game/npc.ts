@@ -1,6 +1,6 @@
 import { GameObjects } from "phaser";
 import { Zone, checkIfInZone } from "..";
-import { Interactable } from "../../plugins/sprites";
+import { Interactable, SpritesPlugin } from "../../plugins/sprites";
 import { GUIScene, SceneEnums, switchScenesFadeOut } from "../../scenes";
 import { KeyboardTexture } from "../../textures/keyboard";
 import { PlayerTexture } from "../../textures/player";
@@ -37,8 +37,6 @@ export class NPC implements Interactable {
         this.zone = this.scene.add.zone(this.sprite.x, this.sprite.y, 50, 50)
         this.scene.physics.world.enable(this.zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
 
-        let body = this.zone.body as Phaser.Physics.Arcade.Body
-
         this.sprite.anims.play(PlayerTexture.Animations.IdleFront)
     }
 
@@ -54,10 +52,10 @@ export class NPC implements Interactable {
         if (!this.interactable) return
         let inZone = checkIfInZone(this.zone)
         switch (inZone) {
-            case Zone.ENTERED:
+            case Zone.IN:
                 this.interactionPrompt.setVisible(true)
                 break;
-            case Zone.LEFT:
+            case Zone.OUT:
                 this.interactionPrompt.setVisible(false)
                 break;
         }
@@ -68,7 +66,9 @@ export class NPC implements Interactable {
             dialogue.emitter.once(TeleporterDialogueEventNames.TELEPORT, () => {
                 switchScenesFadeOut(this.scene, SceneEnums.SceneNames.ElfMinigame)
             })
-            dialogue.start(TeleportDialogue)
+            dialogue.start(this.scene, TeleportDialogue, () => {
+                this.interactable = false
+            })
         }
     }
 }

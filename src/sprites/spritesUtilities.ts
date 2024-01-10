@@ -1,7 +1,6 @@
 export enum Zone {
-    ENTERED,
-    LEFT,
-    NONE
+    IN,
+    OUT
 }
 
 export enum Direction {
@@ -13,20 +12,13 @@ export enum Direction {
 
 export function checkIfInZone(zone: Phaser.GameObjects.Zone) {
     let body = zone.body as Phaser.Physics.Arcade.Body
-    let touching = body.touching.none
-    let wasTouching = body.wasTouching.none
+    let touching = !body.touching.none
+    let wasTouching = !body.wasTouching.none
     let embedded = body.embedded
 
-    if (touching && !wasTouching) {
-        if (embedded) {
-            return Zone.ENTERED
-        } else {
-            return Zone.LEFT
-        }
-    }
-    else if (!touching && wasTouching) {
-        return Zone.ENTERED
+    if (touching && !wasTouching || touching && wasTouching || embedded) {
+        return Zone.IN
     }
 
-    return Zone.NONE
+    return Zone.OUT
 }

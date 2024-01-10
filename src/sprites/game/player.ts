@@ -35,7 +35,7 @@ export class Player implements Controllable {
         this.direction = Direction.DOWN
     }
 
-    playDirecitonAnimation(velocityX: number, velocityY: number) {
+    playDirectionAnimation(velocityX: number, velocityY: number) {
         switch (this.direction) {
             case Direction.UP:
                 if (velocityX === 0 && velocityY === 0) {
@@ -99,14 +99,14 @@ export class Player implements Controllable {
 
         this.sprite.setVelocity(movementVector.x, movementVector.y)
 
-        this.playDirecitonAnimation(velocityX, velocityY)
+        this.playDirectionAnimation(velocityX, velocityY)
     }
 
     setControllable(controllable: boolean): void {
         this.controllable = controllable
         if (!this.controllable) {
             this.sprite.setVelocity(0, 0)
-            this.playDirecitonAnimation(0, 0)
+            this.playDirectionAnimation(0, 0)
         }
     }
 

@@ -1,6 +1,8 @@
 import { Direction } from "..";
 import { PlayerTexture } from "../../textures";
 
+const FOV = 50
+
 export class GoblinNPC {
     scene: Phaser.Scene
     sprite: Phaser.GameObjects.PathFollower
@@ -8,44 +10,59 @@ export class GoblinNPC {
     endPause: number
     fullPath: Phaser.Math.Vector2[]
     currentPathPosition: number
+    ray: Raycaster.Ray
+    litAreaGraphics: Phaser.GameObjects.Graphics
+    direction!: Direction
+    stopped: boolean
 
-    constructor(scene: Phaser.Scene, points: Phaser.Math.Vector2[], x: number, y: number) {
+    constructor(scene: Phaser.Scene, points: Phaser.Math.Vector2[], x: number, y: number, raycaster: Raycaster, litAreaGraphics: Phaser.GameObjects.Graphics) {
         this.scene = scene
         this.sprite = scene.add.follower(new Phaser.Curves.Path(), x, y, PlayerTexture.TextureKey);
         scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY);
         (this.sprite.body as Phaser.Physics.Arcade.Body).pushable = false
-
         this.fullPath = points
         this.speed = 20
         this.endPause = 1000
         this.currentPathPosition = 0
-
         this.sprite.play(PlayerTexture.Animations.IdleFront, true);
+        this.ray = raycaster.createRay()
+        this.ray.setConeDeg(FOV)
+        this.ray.autoSlice = true;
+        this.ray.enablePhysics();
+        this.ray.setCollisionRange(1000);
+        this.litAreaGraphics = litAreaGraphics
+        this.stopped = false
     }
 
     start() {
         this.startNextSegment()
     }
 
+    stop() {
+        this.stopped = true
+        this.sprite.stopFollow()
+    }
+
     startNextSegment() {
+        if (this.stopped) return
         let nextPathPosition = this.currentPathPosition + 1 >= this.fullPath.length ? 0 : this.currentPathPosition + 1
         let currentSegment = new Phaser.Curves.Line(this.fullPath[this.currentPathPosition], this.fullPath[nextPathPosition])
         let currentPath = new Phaser.Curves.Path(this.fullPath[this.currentPathPosition].x, this.fullPath[this.currentPathPosition].y).lineTo(this.fullPath[nextPathPosition])
-        let direction = this.getCurrentDirection(currentSegment)
+        this.direction = this.getCurrentDirection(currentSegment)
 
         this.sprite.setPath(currentPath)
         this.sprite.startFollow({
             duration: currentSegment.getLength() / this.speed * 1000,
             onComplete: () => {
                 this.currentPathPosition = nextPathPosition
-                this.playIdleAnimation(direction)
+                this.playIdleAnimation(this.direction)
                 this.scene.time.delayedCall(this.endPause, () => {
                     this.startNextSegment()
                 })
             }
         })
 
-        this.playWalkAnimation(direction)
+        this.playWalkAnimation(this.direction)
     }
 
     playIdleAnimation(direction: Direction) {
@@ -100,5 +117,45 @@ export class GoblinNPC {
                 return Direction.RIGHT
             }
         }
+    }
+
+    drawLight(): void {
+        this.ray.setOrigin(this.sprite.x, this.sprite.y)
+        switch (this.direction) {
+            case Direction.UP:
+                this.ray.setAngleDeg(-90)
+                break;
+            case Direction.LEFT:
+                this.ray.setAngleDeg(-180)
+                break;
+            case Direction.RIGHT:
+                this.ray.setAngleDeg(0)
+                break;
+            case Direction.DOWN:
+                this.ray.setAngleDeg(90)
+                break;
+        }
+
+        let xOffset, yOffset;
+        if (this.direction === Direction.LEFT) {
+            xOffset = -1
+        } else if (this.direction === Direction.RIGHT) {
+            xOffset = 1
+        } else {
+            xOffset = 0
+        }
+
+        if (this.direction === Direction.UP) {
+            yOffset = -1
+        } else if (this.direction === Direction.DOWN) {
+            yOffset = 1
+        } else {
+            yOffset = 0
+        }
+
+        let intersections = this.ray.castCone()
+        intersections.push(new Phaser.Geom.Point(this.sprite.x + (this.sprite.displayWidth / 2 * xOffset), this.sprite.y + (this.sprite.displayHeight / 2 * yOffset)))
+
+        this.litAreaGraphics.fillPoints(intersections)
     }
 }

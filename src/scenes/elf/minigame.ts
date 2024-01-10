@@ -4,7 +4,7 @@ add gameobjects on tiled to specify where fruits spawn/end/chara positions
 
 import { Fruit, Apple, Pumpkin, Fruits, FruitEventName, FruitInformation } from "../../sprites/elf/minigame/fruits";
 import { NPC, Player } from "../../sprites/elf/minigame"
-import { loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut, GUIScene } from "..";
+import { loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut, GUIScene, sceneFadeDialogueSwitch } from "..";
 import { SlashesTexture, ElvesTexture, FruitsTexture, TorchesTexture } from "../../textures/elf/minigame";
 import { EndDialogue, EndDialogueEventNames } from "../../dialogue/elf/minigame";
 
@@ -17,12 +17,10 @@ const LEVEL_SCHEMATICS: Fruits[][] = [
 ]
 
 const MINIGAME_FADE_DURATION = 500
-const MINIGAME_END_FADE_DURATION = 100
 const MINIGAME_TOTAL_DURATION = 5000
 const MINIGAME_START_TIME = MINIGAME_TOTAL_DURATION / 2.5
 const MINIGAME_DISPLAY_FRUITS_TIME = MINIGAME_START_TIME - 30
 const MINIGAME_LEVEL_COOLDOWN = 1300
-const MINIGAME_DIALOGUE_DISPLAY_COOLDOWN = 800
 const MINIGAME_TORCH_DELAY = 500
 const MINIGAME_TIME_DELAY = 0.8
 const MINIGAME_GRAYSCALE_FACTOR = 0.6
@@ -53,7 +51,6 @@ export class ElfMinigameScene extends Phaser.Scene {
     eventEmitter!: Phaser.Events.EventEmitter
     torches!: Phaser.GameObjects.Sprite[]
     markers!: ElfMinigameMarkers
-
 
     constructor() {
         super(SceneEnums.SceneNames.ElfMinigame)
@@ -216,26 +213,8 @@ export class ElfMinigameScene extends Phaser.Scene {
     }
 
     endGame() {
-        const brightnessTween: Phaser.Types.Tweens.TweenBuilderConfig = {
-            targets: { value: 1 },
-            value: 0,
-            duration: MINIGAME_END_FADE_DURATION,
-            onUpdate: (tween) => {
-                for (let colorMatrix of this.colorMatrices) {
-                    colorMatrix.brightness(tween.getValue())
-                }
-            },
-            onComplete: () => {
-                this.time.delayedCall(MINIGAME_DIALOGUE_DISPLAY_COOLDOWN, () => {
-                    let dialogue = (this.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
-                    dialogue.emitter.once(EndDialogueEventNames.END, () => {
-                        this.gameEnded = true
-                        switchScenesFadeOut(this, SceneEnums.SceneNames.Menu)
-                    })
-                    dialogue.start(EndDialogue)
-                })
-            }
-        }
-        this.tweens.add(brightnessTween)
+        sceneFadeDialogueSwitch(this, SceneEnums.SceneNames.Menu, this.colorMatrices, EndDialogue, () => {
+            this.gameEnded = true
+        })
     }
 }

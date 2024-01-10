@@ -1,4 +1,5 @@
 import { GUIScene } from ".";
+import { Dialogue } from "../dialogue";
 
 export namespace SceneEnums {
     export enum SceneNames {
@@ -128,6 +129,32 @@ export function switchScenesFadeOut(scene: Phaser.Scene, nextScene: SceneEnums.S
     scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
         scene.scene.start(nextScene, { fade: true })
     })
+}
+
+const END_FADE_DURATION = 100
+const DIALOGUE_DISPLAY_COOLDOWN = 800
+
+export function sceneFadeDialogueSwitch(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames, colorMatrices: Phaser.FX.ColorMatrix[], dialogue: Dialogue, endCallback: () => void) {
+    const brightnessTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+        targets: { value: 1 },
+        value: 0,
+        duration: END_FADE_DURATION,
+        onUpdate: (tween) => {
+            for (let colorMatrix of colorMatrices) {
+                colorMatrix.brightness(tween.getValue())
+            }
+        },
+        onComplete: () => {
+            scene.time.delayedCall(DIALOGUE_DISPLAY_COOLDOWN, () => {
+                let dialogueScene = (scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
+                dialogueScene.start(scene, dialogue, () => {
+                    endCallback()
+                    switchScenesFadeOut(scene, nextScene)
+                })
+            })
+        }
+    }
+    scene.tweens.add(brightnessTween)
 }
 
 export function switchSceneFadeIn(scene: Phaser.Scene) {

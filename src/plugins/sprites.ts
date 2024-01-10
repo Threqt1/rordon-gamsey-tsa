@@ -18,6 +18,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
     interactables!: Interactable[]
     guiControllables!: Controllable[]
     physicsBodies!: Phaser.Physics.Arcade.Group
+    interactingBodies!: Phaser.Physics.Arcade.Group
     interactableZones!: Phaser.Physics.Arcade.Group
     gameControllablesEnabled!: boolean
     guiControllablesEnabled!: boolean
@@ -38,6 +39,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         this.gameControllables = []
         this.guiControllables = []
         this.physicsBodies = this.scene!.physics.add.group()
+        this.interactingBodies = this.scene!.physics.add.group()
         this.interactableZones = this.scene!.physics.add.group()
         this.gameControllablesEnabled = true
         this.guiControllablesEnabled = true
@@ -79,6 +81,16 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         }
     }
 
+    addInteractingBodies<T extends Phaser.GameObjects.GameObject>(...sprites: T[]) {
+        this.interactingBodies.addMultiple(sprites)
+    }
+
+    removeInteractingBodies<T extends Phaser.GameObjects.GameObject>(...sprites: T[]) {
+        for (let sprite of sprites) {
+            this.interactingBodies.remove(sprite)
+        }
+    }
+
     setGUIControllable(isControllable: boolean) {
         for (let guiControllable of this.guiControllables) {
             guiControllable.setControllable(isControllable)
@@ -100,7 +112,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
     makeCollisionsWithLayer(layer: Phaser.Tilemaps.TilemapLayer) {
         this.scene!.physics.add.collider(this.physicsBodies, this.physicsBodies);
         this.scene!.physics.add.collider(this.physicsBodies, layer);
-        this.scene!.physics.add.overlap(this.physicsBodies, this.interactableZones);
+        this.scene!.physics.add.overlap(this.interactingBodies, this.interactableZones);
     }
 
     cleanup() {
