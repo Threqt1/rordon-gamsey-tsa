@@ -2,6 +2,9 @@ import { Direction } from "..";
 import { PlayerTexture } from "../../textures";
 
 const FOV = 50
+const SWEEPING_DURATION = 750 * 2
+const SWEEPING_PAUSE = 500
+const SWEEPING_ANGLE = 30
 
 export class GoblinNPC {
     scene: Phaser.Scene
@@ -50,19 +53,62 @@ export class GoblinNPC {
         let currentPath = new Phaser.Curves.Path(this.fullPath[this.currentPathPosition].x, this.fullPath[this.currentPathPosition].y).lineTo(this.fullPath[nextPathPosition])
         this.direction = this.getCurrentDirection(currentSegment)
 
+        switch (this.direction) {
+            case Direction.UP:
+                this.ray.setAngleDeg(-90)
+                break;
+            case Direction.LEFT:
+                this.ray.setAngleDeg(-180)
+                break;
+            case Direction.RIGHT:
+                this.ray.setAngleDeg(0)
+                break;
+            case Direction.DOWN:
+                this.ray.setAngleDeg(90)
+                break;
+        }
+
         this.sprite.setPath(currentPath)
         this.sprite.startFollow({
             duration: currentSegment.getLength() / this.speed * 1000,
             onComplete: () => {
                 this.currentPathPosition = nextPathPosition
-                this.playIdleAnimation(this.direction)
-                this.scene.time.delayedCall(this.endPause, () => {
-                    this.startNextSegment()
-                })
+                this.midSegmentPause()
             }
         })
 
         this.playWalkAnimation(this.direction)
+    }
+
+    midSegmentPause() {
+        this.playIdleAnimation(this.direction)
+        let currentAngle = Phaser.Math.RadToDeg(this.ray.angle)
+        let upwardTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+            targets: { value: currentAngle },
+            value: currentAngle - SWEEPING_ANGLE,
+            duration: SWEEPING_DURATION / 2,
+            onUpdate: (tween) => {
+                this.ray.setAngleDeg(tween.getValue())
+            },
+            yoyo: true
+        }
+        let downwardTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+            targets: { value: currentAngle },
+            value: currentAngle + SWEEPING_ANGLE,
+            duration: SWEEPING_DURATION / 2,
+            onUpdate: (tween) => {
+                this.ray.setAngleDeg(tween.getValue())
+            },
+            yoyo: true
+        }
+        this.scene.tweens.chain({
+            tweens: [upwardTween, downwardTween],
+            onComplete: () => {
+                this.scene.time.delayedCall(SWEEPING_PAUSE, () => {
+                    this.startNextSegment()
+                })
+            }
+        })
     }
 
     playIdleAnimation(direction: Direction) {
@@ -121,20 +167,6 @@ export class GoblinNPC {
 
     drawLight(): void {
         this.ray.setOrigin(this.sprite.x, this.sprite.y)
-        switch (this.direction) {
-            case Direction.UP:
-                this.ray.setAngleDeg(-90)
-                break;
-            case Direction.LEFT:
-                this.ray.setAngleDeg(-180)
-                break;
-            case Direction.RIGHT:
-                this.ray.setAngleDeg(0)
-                break;
-            case Direction.DOWN:
-                this.ray.setAngleDeg(90)
-                break;
-        }
 
         let xOffset, yOffset;
         if (this.direction === Direction.LEFT) {

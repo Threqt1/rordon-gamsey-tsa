@@ -4,9 +4,9 @@ add gameobjects on tiled to specify where fruits spawn/end/chara positions
 
 import { Fruit, Apple, Pumpkin, Fruits, FruitEventName, FruitInformation } from "../../sprites/elf/minigame/fruits";
 import { NPC, Player } from "../../sprites/elf/minigame"
-import { loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut, GUIScene, sceneFadeDialogueSwitch } from "..";
+import { loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut, sceneFadeDialogueSwitch } from "..";
 import { SlashesTexture, ElvesTexture, FruitsTexture, TorchesTexture } from "../../textures/elf/minigame";
-import { EndDialogue, EndDialogueEventNames } from "../../dialogue/elf/minigame";
+import { EndDialogue } from "../../dialogue/elf/minigame";
 
 const LEVEL_SCHEMATICS: Fruits[][] = [
     [Fruits.APPLE],

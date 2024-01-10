@@ -29,7 +29,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
         this.litAreaGraphics = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 0 } })
         this.litAreaMask = new Phaser.Display.Masks.GeometryMask(this, this.litAreaGraphics)
         this.litAreaMask.setInvertAlpha(true)
-        let lightGraphics = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.6 } })
+        this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.6 } })
             .setDepth(100)
             .setMask(this.litAreaMask)
             .fillRect(0, 0, this.scale.canvas.width, this.scale.canvas.height)

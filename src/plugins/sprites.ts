@@ -1,5 +1,4 @@
 import { PluginEnums } from "."
-import { SceneEnums } from "../scenes"
 
 export interface Controllable {
     setControllable(controllable: boolean): void
