@@ -1,6 +1,5 @@
 import { Direction } from ".."
 import { Controllable } from "../../plugins/sprites"
-import { SceneEnums } from "../../scenes"
 import { PlayerTexture } from "../../textures/player"
 import { BaseInput, Keybinds } from "../base"
 

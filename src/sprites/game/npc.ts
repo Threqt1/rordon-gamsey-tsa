@@ -1,6 +1,6 @@
 import { GameObjects } from "phaser";
 import { Zone, checkIfInZone } from "..";
-import { Interactable, SpritesPlugin } from "../../plugins/sprites";
+import { Interactable } from "../../plugins/sprites";
 import { GUIScene, SceneEnums, switchScenesFadeOut } from "../../scenes";
 import { KeyboardTexture } from "../../textures/keyboard";
 import { PlayerTexture } from "../../textures/player";
