@@ -5,7 +5,7 @@ import { GUIScene, SceneEnums, switchScenesFadeOut } from "../../scenes";
 import { KeyboardTexture } from "../../textures/keyboard";
 import { PlayerTexture } from "../../textures/player";
 import { BaseInput, Keybinds } from "../base";
-import { TeleportDialogue, TeleporterDialogueEventNames } from "../../dialogue/elf/hub";
+import { TeleportDialogue } from "../../dialogue/elf/hub";
 
 enum Interaction {
     INTERACT

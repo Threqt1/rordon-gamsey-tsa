@@ -17,6 +17,7 @@ export class GoblinNPC {
     litAreaGraphics: Phaser.GameObjects.Graphics
     direction!: Direction
     stopped: boolean
+    //debugGraphics: Phaser.GameObjects.Graphics
 
     constructor(scene: Phaser.Scene, points: Phaser.Math.Vector2[], x: number, y: number, raycaster: Raycaster, litAreaGraphics: Phaser.GameObjects.Graphics) {
         this.scene = scene
@@ -35,6 +36,7 @@ export class GoblinNPC {
         this.ray.setCollisionRange(1000);
         this.litAreaGraphics = litAreaGraphics
         this.stopped = false
+        //this.debugGraphics = scene.add.graphics({ lineStyle: { width: 1, color: 0x00ff00 }, fillStyle: { color: 0xffffff, alpha: 0.3 } }).setDepth(100)
     }
 
     start() {
@@ -166,6 +168,7 @@ export class GoblinNPC {
     }
 
     drawLight(): void {
+        //this.debugGraphics.clear()
         this.ray.setOrigin(this.sprite.x, this.sprite.y)
 
         let xOffset, yOffset;
@@ -188,6 +191,9 @@ export class GoblinNPC {
         let intersections = this.ray.castCone()
         intersections.push(new Phaser.Geom.Point(this.sprite.x + (this.sprite.displayWidth / 2 * xOffset), this.sprite.y + (this.sprite.displayHeight / 2 * yOffset)))
 
-        this.litAreaGraphics.fillPoints(intersections)
+        for (let slice of this.ray.slicedIntersections) {
+            //this.debugGraphics.strokeTriangleShape(slice)
+            this.litAreaGraphics.fillTriangleShape(slice)
+        }
     }
 }

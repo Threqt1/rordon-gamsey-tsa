@@ -49,7 +49,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
 
         this.sprites.addGameControllables(this.player)
         this.sprites.addPhysicsBodies(this.player.sprite)
-        this.sprites.addPhysicsBodies(npc.sprite)
+        this.sprites.addPhysicsBodies(...this.npcs.map(r => r.sprite))
 
         scaleAndConfigureCamera(this, map, this.player.sprite)
 
@@ -57,7 +57,6 @@ export class GoblinMinigameScene extends Phaser.Scene {
 
         this.colorMatrices = []
         this.colorMatrices.push(this.player.sprite.postFX.addColorMatrix())
-        //this.colorMatrices.push(lightGraphics.postFX.addColorMatrix())
         for (let npc of this.npcs) {
             this.colorMatrices.push(npc.sprite.postFX.addColorMatrix())
         }
@@ -77,7 +76,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
         for (let npc of this.npcs) {
             npc.drawLight()
             if (npc.ray.overlap(this.player.sprite).length > 0) {
-                this.endGame()
+                //this.endGame()
             }
         }
     }
