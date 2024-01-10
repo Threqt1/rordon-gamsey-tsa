@@ -17,9 +17,10 @@ export class GoblinNPC {
     litAreaGraphics: Phaser.GameObjects.Graphics
     direction!: Direction
     stopped: boolean
-    //debugGraphics: Phaser.GameObjects.Graphics
+    fov: Phaser.GameObjects.Rectangle
+    debugGraphics: Phaser.GameObjects.Graphics
 
-    constructor(scene: Phaser.Scene, points: Phaser.Math.Vector2[], x: number, y: number, raycaster: Raycaster, litAreaGraphics: Phaser.GameObjects.Graphics) {
+    constructor(scene: Phaser.Scene, points: Phaser.Math.Vector2[], x: number, y: number, litAreaGraphics: Phaser.GameObjects.Graphics, createRaycasterSettings: (arg0: Raycaster) => void) {
         this.scene = scene
         this.sprite = scene.add.follower(new Phaser.Curves.Path(), x, y, PlayerTexture.TextureKey);
         scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY);
@@ -29,6 +30,10 @@ export class GoblinNPC {
         this.endPause = 1000
         this.currentPathPosition = 0
         this.sprite.play(PlayerTexture.Animations.IdleFront, true);
+        this.fov = scene.add.rectangle(x, y, FOV * 2, FOV * 2)
+        let raycaster = scene.raycaster.createRaycaster()
+        createRaycasterSettings(raycaster)
+        raycaster.mapGameObjects(this.fov, true)
         this.ray = raycaster.createRay()
         this.ray.setConeDeg(FOV)
         this.ray.autoSlice = true;
@@ -36,7 +41,7 @@ export class GoblinNPC {
         this.ray.setCollisionRange(1000);
         this.litAreaGraphics = litAreaGraphics
         this.stopped = false
-        //this.debugGraphics = scene.add.graphics({ lineStyle: { width: 1, color: 0x00ff00 }, fillStyle: { color: 0xffffff, alpha: 0.3 } }).setDepth(100)
+        this.debugGraphics = scene.add.graphics({ lineStyle: { width: 1, color: 0x00ff00 }, fillStyle: { color: 0xffffff, alpha: 0.3 } }).setDepth(100)
     }
 
     start() {
@@ -168,8 +173,8 @@ export class GoblinNPC {
     }
 
     drawLight(): void {
-        //this.debugGraphics.clear()
-        this.ray.setOrigin(this.sprite.x, this.sprite.y)
+        this.debugGraphics.clear()
+        this.fov.setPosition(this.sprite.x, this.sprite.y)
 
         let xOffset, yOffset;
         if (this.direction === Direction.LEFT) {
@@ -188,8 +193,8 @@ export class GoblinNPC {
             yOffset = 0
         }
 
-        let intersections = this.ray.castCone()
-        intersections.push(new Phaser.Geom.Point(this.sprite.x + (this.sprite.displayWidth / 2 * xOffset), this.sprite.y + (this.sprite.displayHeight / 2 * yOffset)))
+        this.ray.setOrigin(this.sprite.x + (this.sprite.displayWidth / 2 * xOffset), this.sprite.y + (this.sprite.displayHeight / 2 * yOffset))
+        this.ray.castCone()
 
         for (let slice of this.ray.slicedIntersections) {
             //this.debugGraphics.strokeTriangleShape(slice)

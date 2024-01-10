@@ -21,10 +21,11 @@ export class GoblinMinigameScene extends Phaser.Scene {
 
         this.sprites.initialize(map)
 
-        let raycaster = this.raycaster.createRaycaster()
-        raycaster.mapGameObjects(collisions, false, {
-            collisionTiles: [151]
-        })
+        const createRaycasterSettings = (raycaster: Raycaster) => {
+            raycaster.mapGameObjects(collisions, false, {
+                collisionTiles: [151]
+            })
+        }
 
         this.litAreaGraphics = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 0 } })
         this.litAreaMask = new Phaser.Display.Masks.GeometryMask(this, this.litAreaGraphics)
@@ -38,11 +39,11 @@ export class GoblinMinigameScene extends Phaser.Scene {
         this.player.sprite.setDepth(playerDepth)
 
         let points = [new Phaser.Math.Vector2(100, 130), new Phaser.Math.Vector2(100, 150), new Phaser.Math.Vector2(150, 150), new Phaser.Math.Vector2(150, 130)]
-        let npc = new GoblinNPC(this, points, 100, 130, raycaster, this.litAreaGraphics)
+        let npc = new GoblinNPC(this, points, 100, 130, this.litAreaGraphics, createRaycasterSettings)
         npc.sprite.setDepth(playerDepth)
 
         let points2 = [new Phaser.Math.Vector2(100, 40), new Phaser.Math.Vector2(100, 80), new Phaser.Math.Vector2(150, 80), new Phaser.Math.Vector2(150, 40)]
-        let npc2 = new GoblinNPC(this, points2, 100, 40, raycaster, this.litAreaGraphics)
+        let npc2 = new GoblinNPC(this, points2, 100, 40, this.litAreaGraphics, createRaycasterSettings)
         npc2.sprite.setDepth(playerDepth)
 
         this.npcs = [npc, npc2]
@@ -76,7 +77,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
         for (let npc of this.npcs) {
             npc.drawLight()
             if (npc.ray.overlap(this.player.sprite).length > 0) {
-                //this.endGame()
+                this.endGame()
             }
         }
     }

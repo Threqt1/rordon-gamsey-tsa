@@ -131,7 +131,7 @@ export function switchScenesFadeOut(scene: Phaser.Scene, nextScene: SceneEnums.S
     })
 }
 
-const END_FADE_DURATION = 100
+const END_FADE_DURATION = 500
 const DIALOGUE_DISPLAY_COOLDOWN = 800
 
 export function sceneFadeDialogueSwitch(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames, colorMatrices: Phaser.FX.ColorMatrix[], dialogue: Dialogue, endCallback: () => void) {
