@@ -3,7 +3,6 @@ import { EndDialogue } from "../../dialogue/elf/minigame"
 import { Player } from "../../sprites/game"
 import { GoblinNPC } from "../../sprites/goblin/npc"
 
-let BACKUP_GAME_MASK_DEPTH = 100
 let GAME_MASK_DEPTH = 101
 let PLAYER_MASK_DEPTH = 102
 
