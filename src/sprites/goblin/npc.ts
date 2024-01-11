@@ -4,7 +4,7 @@ import { PlayerTexture } from "../../textures";
 const FOV = 60
 const SWEEPING_DURATION = 750 * 2
 const SWEEPING_PAUSE = 500
-const SWEEPING_ANGLE = 30
+const SWEEPING_ANGLE = 15
 
 export class GoblinNPC {
     scene: Phaser.Scene
@@ -204,7 +204,7 @@ export class GoblinNPC {
 
         for (let slice of this.ray.slicedIntersections) {
             //this.debugGraphics.strokeTriangleShape(slice)
-            this.litAreaGraphics.fillTriangleShape(slice)
+            this.litAreaGraphics.fillStyle(0xffffff, 0.3).fillTriangleShape(slice)
         }
     }
 }

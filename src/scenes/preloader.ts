@@ -19,7 +19,7 @@ export class PreloaderScene extends Scene {
         progressBox.fillRect(pct(cameraWidth, 10), pct(cameraHeight, 50), pct(cameraWidth, 80), pct(cameraHeight, 10))
 
         preloadTilemap(this, SceneEnums.TilemapNames.Game, "map.tmj", "spritesheet.png")
-        preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame, "goblin/minigame.tmj", "spritesheet.png")
+        preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame, "goblin/minigame.tmj", "goblin/goblin.png")
         preloadTilemap(this, SceneEnums.TilemapNames.ElfMinigame, "elf/minigame.tmj", "elf/1.png", "elf/2.png")
 
         PlayerTexture.preload(this)
