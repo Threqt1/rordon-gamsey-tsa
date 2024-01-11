@@ -3,12 +3,18 @@ import { EndDialogue } from "../../dialogue/elf/minigame"
 import { Player } from "../../sprites/game"
 import { GoblinNPC } from "../../sprites/goblin/npc"
 
+let BACKUP_GAME_MASK_DEPTH = 100
+let GAME_MASK_DEPTH = 101
+let PLAYER_MASK_DEPTH = 102
+
 export class GoblinMinigameScene extends Phaser.Scene {
     player!: Player
     litAreaGraphics!: Phaser.GameObjects.Graphics
     litAreaMask!: Phaser.Display.Masks.GeometryMask
+    playerAreaGraphics!: Phaser.GameObjects.Graphics
+    playerAreaMask!: Phaser.Display.Masks.GeometryMask
+    playerRay!: Raycaster.Ray
     npcs!: GoblinNPC[]
-    colorMatrices!: Phaser.FX.ColorMatrix[]
     gameEnded!: boolean
 
 
@@ -27,11 +33,24 @@ export class GoblinMinigameScene extends Phaser.Scene {
             })
         }
 
-        this.litAreaGraphics = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 0 } })
+        let raycaster = this.raycaster.createRaycaster()
+        createRaycasterSettings(raycaster)
+        this.playerRay = raycaster.createRay()
+        this.playerRay.autoSlice = true
+
+        this.playerAreaGraphics = this.add.graphics().removeFromDisplayList()
+        this.playerAreaMask = new Phaser.Display.Masks.GeometryMask(this, this.playerAreaGraphics)
+        this.playerAreaMask.setInvertAlpha(true)
+        let playerAreaMaskInverse = new Phaser.Display.Masks.GeometryMask(this, this.playerAreaGraphics)
+        this.add.graphics({ fillStyle: { color: 0x000000, alpha: 1 } })
+            .setDepth(PLAYER_MASK_DEPTH)
+            .setMask(this.playerAreaMask)
+            .fillRect(0, 0, this.scale.canvas.width, this.scale.canvas.height)
+        this.litAreaGraphics = this.add.graphics().removeFromDisplayList()
         this.litAreaMask = new Phaser.Display.Masks.GeometryMask(this, this.litAreaGraphics)
         this.litAreaMask.setInvertAlpha(true)
         this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.6 } })
-            .setDepth(100)
+            .setDepth(GAME_MASK_DEPTH)
             .setMask(this.litAreaMask)
             .fillRect(0, 0, this.scale.canvas.width, this.scale.canvas.height)
 
@@ -56,24 +75,25 @@ export class GoblinMinigameScene extends Phaser.Scene {
 
         this.sprites.makeCollisionsWithLayer(collisions)
 
-        this.colorMatrices = []
-        this.colorMatrices.push(this.player.sprite.postFX.addColorMatrix())
-        for (let npc of this.npcs) {
-            this.colorMatrices.push(npc.sprite.postFX.addColorMatrix())
-        }
-        for (let layer of map.layers) {
-            if (layer.tilemapLayer != null) this.colorMatrices.push(layer.tilemapLayer.postFX!.addColorMatrix())
-        }
-
         this.gameEnded = false
         for (let npc of this.npcs) {
+            npc.sprite.setMask(playerAreaMaskInverse)
             npc.start()
         }
     }
 
     update() {
         if (this.gameEnded) return
+        this.playerAreaGraphics.clear()
         this.litAreaGraphics.clear()
+
+        this.playerRay.setOrigin(this.player.sprite.x, this.player.sprite.y)
+        this.playerRay.castCircle()
+
+        for (let slice of this.playerRay.slicedIntersections) {
+            this.playerAreaGraphics.fillTriangleShape(slice)
+        }
+
         for (let npc of this.npcs) {
             npc.drawLight()
             if (npc.ray.overlap(this.player.sprite).length > 0) {
@@ -88,6 +108,6 @@ export class GoblinMinigameScene extends Phaser.Scene {
         for (let npc of this.npcs) {
             npc.stop()
         }
-        sceneFadeDialogueSwitch(this, SceneEnums.SceneNames.Menu, this.colorMatrices, EndDialogue, () => { return })
+        sceneFadeDialogueSwitch(this, SceneEnums.SceneNames.Menu, EndDialogue)
     }
 }

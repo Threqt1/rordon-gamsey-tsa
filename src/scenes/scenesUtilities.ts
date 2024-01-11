@@ -134,21 +134,22 @@ export function switchScenesFadeOut(scene: Phaser.Scene, nextScene: SceneEnums.S
 const END_FADE_DURATION = 500
 const DIALOGUE_DISPLAY_COOLDOWN = 800
 
-export function sceneFadeDialogueSwitch(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames, colorMatrices: Phaser.FX.ColorMatrix[], dialogue: Dialogue, endCallback: () => void) {
+export function sceneFadeDialogueSwitch(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames, dialogue: Dialogue, endCallback?: () => void) {
+    let graphics = scene.add.graphics({ fillStyle: { color: 0x000000 } }).setDepth(999).fillRect(0, 0, scene.scale.canvas.width, scene.scale.canvas.height)
+    graphics.setAlpha(0)
     const brightnessTween: Phaser.Types.Tweens.TweenBuilderConfig = {
-        targets: { value: 1 },
-        value: 0,
-        duration: END_FADE_DURATION,
+        targets: { value: 0 },
+        value: 1,
         onUpdate: (tween) => {
-            for (let colorMatrix of colorMatrices) {
-                colorMatrix.brightness(tween.getValue())
-            }
+            graphics.setAlpha(tween.getValue())
         },
+        duration: END_FADE_DURATION,
         onComplete: () => {
             scene.time.delayedCall(DIALOGUE_DISPLAY_COOLDOWN, () => {
                 let dialogueScene = (scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
                 dialogueScene.start(scene, dialogue, () => {
-                    endCallback()
+                    if (endCallback != undefined) endCallback()
+                    graphics.destroy()
                     switchScenesFadeOut(scene, nextScene)
                 })
             })

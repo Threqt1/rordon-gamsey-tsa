@@ -213,7 +213,7 @@ export class ElfMinigameScene extends Phaser.Scene {
     }
 
     endGame() {
-        sceneFadeDialogueSwitch(this, SceneEnums.SceneNames.Menu, this.colorMatrices, EndDialogue, () => {
+        sceneFadeDialogueSwitch(this, SceneEnums.SceneNames.Menu, EndDialogue, () => {
             this.gameEnded = true
         })
     }

@@ -1,7 +1,7 @@
 import { Direction } from "..";
 import { PlayerTexture } from "../../textures";
 
-const FOV = 50
+const FOV = 60
 const SWEEPING_DURATION = 750 * 2
 const SWEEPING_PAUSE = 500
 const SWEEPING_ANGLE = 30
@@ -73,6 +73,12 @@ export class GoblinNPC {
             case Direction.DOWN:
                 this.ray.setAngleDeg(90)
                 break;
+        }
+
+        if (this.direction === Direction.UP || this.direction === Direction.DOWN) {
+            this.fov.setSize(this.scene.sprites.map!.widthInPixels, FOV * 2)
+        } else {
+            this.fov.setSize(FOV * 2, this.scene.sprites.map!.heightInPixels)
         }
 
         this.sprite.setPath(currentPath)
