@@ -8,12 +8,14 @@ export namespace SceneEnums {
         Game = "game",
         ElfMinigame = "elfminigame",
         GoblinMinigame = "goblinminigame",
+        ElfHub = "elfhub",
         GUI = "gui"
     }
     export enum TilemapNames {
         Game = "game",
         GoblinMinigame = "goblinminigame",
-        ElfMinigame = "elfminigame"
+        ElfMinigame = "elfminigame",
+        ElfHub = "elfhub"
     }
     export enum CollisionCategories {
         MAP = 1,

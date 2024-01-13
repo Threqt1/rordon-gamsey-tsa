@@ -1,5 +1,5 @@
-import { Direction } from "..";
-import { PlayerTexture } from "../../textures";
+import { Direction } from "../..";
+import { PlayerTexture } from "../../../textures";
 
 const FOV = 60
 const SWEEPING_DURATION = 750 * 2

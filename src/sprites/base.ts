@@ -119,6 +119,7 @@ export class BaseDialogue implements Controllable {
         this.controllable = true
         this.dialogueSprite.setVisible(true)
         this.scene.sprites.setGameControllable(false)
+        this.input.input.resetKeys()
         this.display()
     }
 

@@ -1,15 +1,17 @@
 import { GameObjects } from "phaser";
-import { Zone, checkIfInZone } from "..";
-import { Interactable } from "../../plugins/sprites";
-import { KeyboardTexture } from "../../textures/keyboard";
-import { PlayerTexture } from "../../textures/player";
-import { BaseInput, Keybinds } from "../base";
+import { Zone, checkIfInZone } from "../../";
+import { Interactable } from "../../../plugins/sprites";
+import { GUIScene, SceneEnums, switchScenesFadeOut } from "../../../scenes";
+import { KeyboardTexture } from "../../../textures/keyboard";
+import { PlayerTexture } from "../../../textures/player";
+import { BaseInput, Keybinds } from "../../base";
+import { TeleportDialogue } from "../../../dialogue/goblin/hub";
 
 enum Interaction {
     INTERACT
 }
 
-export class NPC implements Interactable {
+export class GoblinTeleporterNPC implements Interactable {
     static keybinds: Keybinds = {
         [Interaction.INTERACT]:
             "E",
@@ -24,7 +26,7 @@ export class NPC implements Interactable {
     constructor(scene: Phaser.Scene, x: number, y: number) {
         this.sprite = scene.physics.add.sprite(x, y, PlayerTexture.TextureKey)
         this.scene = scene
-        this.input = new BaseInput(scene, NPC.keybinds)
+        this.input = new BaseInput(scene, GoblinTeleporterNPC.keybinds)
 
         this.sprite.setPushable(false)
 
@@ -60,6 +62,11 @@ export class NPC implements Interactable {
         if (this.interactable && this.input.checkIfKeyDown(Interaction.INTERACT) && this.interactionPrompt.visible) {
             this.input.input.resetKeys()
             this.interactionPrompt.setVisible(false)
+            let dialogue = (this.scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
+            dialogue.start(this.scene, TeleportDialogue, () => {
+                this.interactable = false
+                switchScenesFadeOut(this.scene, SceneEnums.SceneNames.GoblinMinigame)
+            })
         }
     }
 }

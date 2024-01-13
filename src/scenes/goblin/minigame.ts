@@ -1,7 +1,7 @@
 import { PointObject, SceneEnums, loadTilemap, scaleAndConfigureCamera, sceneFadeDialogueSwitch } from ".."
-import { EndDialogue } from "../../dialogue/elf/minigame"
+import { EndDialogue } from "../../dialogue/goblin/minigame"
 import { Player } from "../../sprites/game"
-import { GoblinNPC } from "../../sprites/goblin/npc"
+import { GoblinNPC } from "../../sprites/goblin/minigame/npc"
 
 let GAME_MASK_DEPTH = 101
 let PLAYER_MASK_DEPTH = 102

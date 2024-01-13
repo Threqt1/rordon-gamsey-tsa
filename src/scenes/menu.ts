@@ -35,7 +35,7 @@ export class MenuScene extends Scene {
         creditsSprite.setScale(buttonScale)
         creditsSprite.setInteractive()
 
-
+        let switching = false
 
         startSprite.on("pointerover", () => {
             startSprite.anims.play("startButton_animate")
@@ -46,7 +46,6 @@ export class MenuScene extends Scene {
             startSprite.setFrame(this.anims.get("startButton_animate").frames[0].textureFrame)
         })
 
-        let switching = false
         startSprite.on("pointerup", () => {
             if (!switching) {
                 switching = true
@@ -62,5 +61,12 @@ export class MenuScene extends Scene {
             creditsSprite.anims.stop()
             creditsSprite.setFrame(this.anims.get("creditsButton_animate").frames[0].textureFrame)
         })
+
+        // creditsSprite.on("pointerup", () => {
+        //     if (!switching) {
+        //         switching = true 
+        //         switchScenesFadeOut(this, SceneEnums.SceneNames.GO)
+        //     }
+        // })
     }
 }

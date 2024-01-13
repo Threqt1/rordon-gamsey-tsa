@@ -21,6 +21,7 @@ export class PreloaderScene extends Scene {
         preloadTilemap(this, SceneEnums.TilemapNames.Game, "map.tmj", "spritesheet.png")
         preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame, "goblin/minigame.tmj", "goblin/goblin.png")
         preloadTilemap(this, SceneEnums.TilemapNames.ElfMinigame, "elf/minigame.tmj", "elf/1.png", "elf/2.png")
+        preloadTilemap(this, SceneEnums.TilemapNames.ElfHub, "elf/hub.tmj", "elf/2.png")
 
         PlayerTexture.preload(this)
         KeyboardTexture.preload(this)
@@ -47,6 +48,6 @@ export class PreloaderScene extends Scene {
         TorchesTexture.load(this)
 
         this.scene.launch(SceneEnums.SceneNames.GUI)
-        this.scene.start(SceneEnums.SceneNames.GoblinMinigame)
+        this.scene.start(SceneEnums.SceneNames.Game)
     }
 }

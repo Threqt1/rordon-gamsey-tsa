@@ -2,7 +2,7 @@ import './style.css'
 
 import { Game } from 'phaser';
 import { PreloaderScene, MenuScene, GameScene, GUIScene } from './scenes';
-import { ElfMinigameScene } from './scenes/elf';
+import { ElfHubScene, ElfMinigameScene } from './scenes/elf';
 import { DebugPlugin, SpritesPlugin, PluginEnums } from './plugins';
 import PhaserRaycaster from "phaser-raycaster"
 import { GoblinMinigameScene } from './scenes/goblin';
@@ -25,7 +25,9 @@ const config: Phaser.Types.Core.GameConfig = {
         GameScene,
         ElfMinigameScene,
         GoblinMinigameScene,
-        GUIScene
+        GUIScene,
+        ElfHubScene
+
     ],
     plugins: {
         scene: [{
