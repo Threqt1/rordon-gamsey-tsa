@@ -1,5 +1,5 @@
 import { Scene } from "phaser"
-import { Player, NPC } from "../sprites/game"
+import { Player } from "../sprites/game"
 import { loadTilemap, SceneEnums, scaleAndConfigureCamera } from "."
 import { ElfTeleporterNPC } from "../sprites/elf/hub"
 import { GoblinTeleporterNPC } from "../sprites/goblin/hub"
