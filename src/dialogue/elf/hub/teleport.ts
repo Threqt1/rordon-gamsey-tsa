@@ -1,14 +1,11 @@
 import { Dialogue } from "../../"
 
-export enum TeleporterDialogueEventNames {
+enum Events {
 }
 
-export type TeleporterDialogueEvents = {
-}
-
-let Base: Dialogue = {
+let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
-    getDialogueText() {
+    getContentText() {
         return [
             "I see.",
             "You've decided to take my challenge.",
@@ -16,22 +13,22 @@ let Base: Dialogue = {
             "Do you have any questions before I send you?"
         ]
     },
-    next: []
+    nextOptions: []
 }
 
-let Teleport: Dialogue = {
+let Teleport: Dialogue.Dialogue = {
     getOptionText() { return "No, teleport me!" },
-    getDialogueText() {
+    getContentText() {
         return [
             "Alright, safe travels."
         ]
     },
-    next: []
+    nextOptions: []
 }
 
-let MoreElfInfo: Dialogue = {
+let MoreElfInfo: Dialogue.Dialogue = {
     getOptionText() { return "Tell me more about Elf Land. " },
-    getDialogueText() {
+    getContentText() {
         return [
             "Elf Land is a lush grassland that has been our home for decades.",
             "We elves enjoy farming the rich soil for various crops.",
@@ -39,10 +36,14 @@ let MoreElfInfo: Dialogue = {
             "I hope you enjoy the highest quality vegetables in Elf Land."
         ]
     },
-    next: []
+    nextOptions: []
 }
 
-Base.next = [Teleport, MoreElfInfo]
-Teleport.next = []
-MoreElfInfo.next = [Teleport]
-export const TeleportDialogue = Base
+Base.nextOptions = [Teleport, MoreElfInfo]
+Teleport.nextOptions = []
+MoreElfInfo.nextOptions = [Teleport]
+
+export default {
+    Dialogue: Base,
+    Events
+}

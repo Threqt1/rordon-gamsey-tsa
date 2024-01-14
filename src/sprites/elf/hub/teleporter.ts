@@ -4,8 +4,8 @@ import { Interactable } from "../../../plugins/sprites";
 import { GUIScene, SceneEnums, fadeSceneTransition } from "../../../scenes";
 import { KeyboardTexture } from "../../../textures/keyboard";
 import { PlayerTexture } from "../../../textures/player";
-import { BaseInput, Keybinds } from "../../base";
-import { TeleportDialogue } from "../../../dialogue/elf/hub";
+import { BaseInput, Keybinds } from "../../input";
+import { TeleportDialogue } from "../../../dialogue/elf";
 
 enum Interaction {
     INTERACT

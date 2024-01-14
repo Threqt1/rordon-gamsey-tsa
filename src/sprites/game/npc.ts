@@ -3,7 +3,7 @@ import { Zone, checkIfInZone } from "..";
 import { Interactable } from "../../plugins/sprites";
 import { KeyboardTexture } from "../../textures/keyboard";
 import { PlayerTexture } from "../../textures/player";
-import { BaseInput, Keybinds } from "../base";
+import { BaseInput, Keybinds } from "../input";
 
 enum Interaction {
     INTERACT

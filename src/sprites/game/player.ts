@@ -1,7 +1,7 @@
 import { Direction } from ".."
 import { Controllable } from "../../plugins/sprites"
 import { PlayerTexture } from "../../textures/player"
-import { BaseInput, Keybinds } from "../base"
+import { BaseInput, Keybinds } from "../input"
 
 const DIAGONAL_BOOST_FACTOR = 1.2
 

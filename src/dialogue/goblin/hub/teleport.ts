@@ -1,36 +1,33 @@
 import { Dialogue } from "../../"
 
-export enum TeleporterDialogueEventNames {
+export enum Events {
 }
 
-export type TeleporterDialogueEvents = {
-}
-
-let Base: Dialogue = {
+let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
-    getDialogueText() {
+    getContentText() {
         return [
             "Ah, so you want to retrieve the fruit those goblins stole from me?",
             "Beware, their cave is full of the trickery expected of their kind",
             "Are you sure you want to go?"
         ]
     },
-    next: []
+    nextOptions: []
 }
 
-let Teleport: Dialogue = {
+let Teleport: Dialogue.Dialogue = {
     getOptionText() { return "Yes, teleport me!" },
-    getDialogueText() {
+    getContentText() {
         return [
             "Good luck, Mr. Chef."
         ]
     },
-    next: []
+    nextOptions: []
 }
 
-let MoreGoblinInfo: Dialogue = {
+let MoreGoblinInfo: Dialogue.Dialogue = {
     getOptionText() { return "Tell me more about the Goblin Cave. " },
-    getDialogueText() {
+    getContentText() {
         return [
             "The Goblins have been the scourge of this planet for ages.",
             "They steal food from all the other tribes, hiding it away.",
@@ -39,10 +36,14 @@ let MoreGoblinInfo: Dialogue = {
             "Don't underestimate the difficuly though."
         ]
     },
-    next: []
+    nextOptions: []
 }
 
-Base.next = [Teleport, MoreGoblinInfo]
-Teleport.next = []
-MoreGoblinInfo.next = [Teleport]
-export const TeleportDialogue = Base
+Base.nextOptions = [Teleport, MoreGoblinInfo]
+Teleport.nextOptions = []
+MoreGoblinInfo.nextOptions = [Teleport]
+
+export default {
+    Dialogue: Base,
+    Events
+}

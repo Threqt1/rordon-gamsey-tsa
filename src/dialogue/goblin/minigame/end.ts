@@ -1,25 +1,24 @@
 import { Dialogue } from "../../"
 
-export enum EndDialogueEventNames {
+export enum Events {
     END = "end"
 }
 
-export type EndDialogueEvents = {
-    [EndDialogueEventNames.END]: [],
-}
-
-let Base: Dialogue = {
+let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
-    getDialogueText() {
+    getContentText() {
         return [
             "Hey, you! What are you doing here!",
             "You're coming with us..."
         ]
     },
-    choose(_, emitter) {
-        emitter.emit(EndDialogueEventNames.END)
+    dialogueFinished(_, emitter) {
+        emitter.emit(Events.END)
     },
-    next: []
+    nextOptions: []
 }
 
-export const EndDialogue = Base
+export default {
+    Dialogue: Base,
+    Events
+}

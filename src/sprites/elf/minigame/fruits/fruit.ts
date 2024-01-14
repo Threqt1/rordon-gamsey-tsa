@@ -1,7 +1,7 @@
 import { Controllable } from "../../../../plugins"
 import { KeyboardTexture } from "../../../../textures"
 import { SlashesTexture, FruitsTexture } from "../../../../textures/elf/minigame"
-import { BaseInput, Keybinds } from "../../../base"
+import { BaseInput, Keybinds } from "../../../input"
 
 export enum Fruits {
     APPLE,
