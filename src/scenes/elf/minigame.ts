@@ -60,14 +60,16 @@ export class ElfMinigameScene extends Phaser.Scene {
         SlashesTexture.preload(this)
         ElvesTexture.preload(this)
         FruitsTexture.preload(this)
+        TorchesTexture.preload(this)
     }
 
     create() {
         SlashesTexture.load(this)
         ElvesTexture.load(this)
         FruitsTexture.load(this)
+        TorchesTexture.load(this)
 
-        let { map, playerDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.ElfMinigame)
+        let { map, playerSpriteDepth: playerDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.ElfMinigame)
         this.markers = objects as ElfMinigameMarkers
 
         this.sprites.initialize(map);

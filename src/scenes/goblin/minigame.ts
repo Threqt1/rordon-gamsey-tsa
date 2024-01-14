@@ -41,7 +41,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
     create() {
         FruitsTexture.load(this)
 
-        let { collisionsLayer: collisions, map, playerDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame)
+        let { collisionsLayer: collisions, map, playerSpriteDepth: playerDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame)
 
         const markers: GoblinMinigameObjects = objects as GoblinMinigameObjects
 

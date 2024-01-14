@@ -1,6 +1,9 @@
 import { Scene } from "phaser";
-import { SceneEnums, fadeSceneTransition } from ".";
+import { SceneEnums, fadeSceneTransition } from "..";
 
+/**
+ * TODO: REDO THIS GARBAGE SHIT, WHY IS THIS A THING
+ */
 export class MenuScene extends Scene {
     constructor() {
         super(SceneEnums.SceneNames.Menu)

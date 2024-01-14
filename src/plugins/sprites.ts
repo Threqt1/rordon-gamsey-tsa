@@ -76,7 +76,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
     }
 
     /**
-     * Make collisions with all the sprites registered and a collision layer
+     * Make collisions with all the registered sprites and a collision layer
      * @param layer 
      */
     makeCollisionsWithLayer(layer: Phaser.Tilemaps.TilemapLayer) {

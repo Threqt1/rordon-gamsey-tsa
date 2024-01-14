@@ -1,9 +1,10 @@
-import { Scene } from "phaser";
 import { DialogueTexture, KeyboardTexture, PlayerTexture } from "../textures";
 import { pct, preloadTilemap, SceneEnums } from ".";
-import { TorchesTexture } from "../textures/elf/minigame";
 
-export class PreloaderScene extends Scene {
+/**
+ * Preloads necessary assets before running the game
+ */
+export class PreloaderScene extends Phaser.Scene {
     constructor() {
         super(SceneEnums.SceneNames.Preloader)
     }
@@ -12,11 +13,14 @@ export class PreloaderScene extends Scene {
         const cameraWidth = this.cameras.main.width
         const cameraHeight = this.cameras.main.height
 
+        // Create the progress bar graphics
         let progressBox = this.add.graphics()
         let progressBar = this.add.graphics()
 
         progressBox.fillStyle(0x222222, 0.8);
         progressBox.fillRect(pct(cameraWidth, 10), pct(cameraHeight, 50), pct(cameraWidth, 80), pct(cameraHeight, 10))
+
+        /* BEGIN LOADING */
 
         preloadTilemap(this, SceneEnums.TilemapNames.Game, "map.tmj", "spritesheet.png")
         preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame, "goblin/minigame.tmj", "goblin/goblin.png")
@@ -26,11 +30,13 @@ export class PreloaderScene extends Scene {
         PlayerTexture.preload(this)
         KeyboardTexture.preload(this)
         DialogueTexture.preload(this)
-        TorchesTexture.preload(this)
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
 
+        /* END LOADING */
+
         this.load.on("progress", (value: number) => {
+            // Update progress bar as the game loads
             progressBar.clear()
             progressBar.fillStyle(0xF2F3F5, 1)
             progressBar.fillRect(pct(cameraWidth, 11), pct(cameraHeight, 51), pct(cameraWidth, 78) * value, pct(cameraHeight, 8))
@@ -45,7 +51,7 @@ export class PreloaderScene extends Scene {
     create() {
         PlayerTexture.load(this)
         KeyboardTexture.load(this)
-        TorchesTexture.load(this)
+        DialogueTexture.load(this)
 
         this.scene.launch(SceneEnums.SceneNames.GUI)
         this.scene.start(SceneEnums.SceneNames.GoblinMinigame)
