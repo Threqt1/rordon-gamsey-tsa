@@ -8,9 +8,6 @@ export namespace SlashesTexture {
         Vertical: TextureKey + "-slash-2",
         Diagonal: TextureKey + "-slash-3",
         SideCurved: TextureKey + "-slash-4"
-        // Hit1: TextureKey + "-hit-1",
-        // Hit2: TextureKey + "-hit-2",
-        // Hit3: TextureKey + "-hit-3"
     }
     export const Frames = {
         Empty: "slash_37"

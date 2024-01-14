@@ -1,4 +1,5 @@
 import { Direction } from "../..";
+import { GameState, GoblinMinigameScene } from "../../../scenes/goblin";
 import { PlayerTexture } from "../../../textures";
 
 const FOV = 60
@@ -7,7 +8,7 @@ const SWEEPING_PAUSE = 500
 const SWEEPING_ANGLE = 15
 
 export class GoblinNPC {
-    scene: Phaser.Scene
+    scene: GoblinMinigameScene
     sprite: Phaser.GameObjects.PathFollower
     speed: number
     endPause: number
@@ -18,9 +19,10 @@ export class GoblinNPC {
     direction!: Direction
     stopped: boolean
     fov: Phaser.GameObjects.Rectangle
-    debugGraphics: Phaser.GameObjects.Graphics
+    state: GameState
+    alertedTween: Phaser.Tweens.Tween
 
-    constructor(scene: Phaser.Scene, points: Phaser.Math.Vector2[], x: number, y: number, litAreaGraphics: Phaser.GameObjects.Graphics, createRaycasterSettings: (arg0: Raycaster) => void) {
+    constructor(scene: GoblinMinigameScene, points: Phaser.Math.Vector2[], x: number, y: number, litAreaGraphics: Phaser.GameObjects.Graphics, createRaycasterSettings: (arg0: Raycaster) => void) {
         this.scene = scene
         this.sprite = scene.add.follower(new Phaser.Curves.Path(), x, y, PlayerTexture.TextureKey);
         scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY);
@@ -41,7 +43,18 @@ export class GoblinNPC {
         this.ray.setCollisionRange(1000);
         this.litAreaGraphics = litAreaGraphics
         this.stopped = false
-        this.debugGraphics = scene.add.graphics({ lineStyle: { width: 1, color: 0x00ff00 }, fillStyle: { color: 0xffffff, alpha: 0.3 } }).setDepth(100)
+        this.state = GameState.NORMAL
+        let alertedTweenInfo: Phaser.Types.Tweens.TweenBuilderConfig = {
+            targets: { value: 0 },
+            value: 360,
+            repeat: -1,
+            duration: 5000,
+            onUpdate: (info) => {
+                this.ray.setAngleDeg(info.getValue())
+            },
+            paused: true
+        }
+        this.alertedTween = scene.tweens.add(alertedTweenInfo)
     }
 
     start() {
@@ -50,6 +63,7 @@ export class GoblinNPC {
 
     stop() {
         this.stopped = true
+        this.alertedTween.destroy()
         this.sprite.stopFollow()
     }
 
@@ -60,25 +74,21 @@ export class GoblinNPC {
         let currentPath = new Phaser.Curves.Path(this.fullPath[this.currentPathPosition].x, this.fullPath[this.currentPathPosition].y).lineTo(this.fullPath[nextPathPosition])
         this.direction = this.getCurrentDirection(currentSegment)
 
-        switch (this.direction) {
-            case Direction.UP:
-                this.ray.setAngleDeg(-90)
-                break;
-            case Direction.LEFT:
-                this.ray.setAngleDeg(-180)
-                break;
-            case Direction.RIGHT:
-                this.ray.setAngleDeg(0)
-                break;
-            case Direction.DOWN:
-                this.ray.setAngleDeg(90)
-                break;
-        }
-
-        if (this.direction === Direction.UP || this.direction === Direction.DOWN) {
-            this.fov.setSize(this.scene.sprites.map!.widthInPixels, FOV * 2)
-        } else {
-            this.fov.setSize(FOV * 2, this.scene.sprites.map!.heightInPixels)
+        if (this.state === GameState.NORMAL) {
+            switch (this.direction) {
+                case Direction.UP:
+                    this.ray.setAngleDeg(-90)
+                    break;
+                case Direction.LEFT:
+                    this.ray.setAngleDeg(-180)
+                    break;
+                case Direction.RIGHT:
+                    this.ray.setAngleDeg(0)
+                    break;
+                case Direction.DOWN:
+                    this.ray.setAngleDeg(90)
+                    break;
+            }
         }
 
         this.sprite.setPath(currentPath)
@@ -86,11 +96,26 @@ export class GoblinNPC {
             duration: currentSegment.getLength() / this.speed * 1000,
             onComplete: () => {
                 this.currentPathPosition = nextPathPosition
-                this.midSegmentPause()
+                if (this.state === GameState.NORMAL) {
+                    this.midSegmentPause()
+                } else {
+                    this.startNextSegment()
+                }
             }
         })
 
         this.playWalkAnimation(this.direction)
+    }
+
+    setState(state: GameState) {
+        this.state = state
+        if (this.state === GameState.NORMAL) {
+            this.speed /= 2;
+            this.alertedTween.pause()
+        } else {
+            this.speed *= 2
+            this.alertedTween.resume()
+        }
     }
 
     midSegmentPause() {
@@ -179,7 +204,6 @@ export class GoblinNPC {
     }
 
     drawLight(): void {
-        this.debugGraphics.clear()
         this.fov.setPosition(this.sprite.x, this.sprite.y)
 
         let xOffset, yOffset;
@@ -200,11 +224,42 @@ export class GoblinNPC {
         }
 
         this.ray.setOrigin(this.sprite.x + (this.sprite.displayWidth / 2 * xOffset), this.sprite.y + (this.sprite.displayHeight / 2 * yOffset))
-        this.ray.castCone()
 
-        for (let slice of this.ray.slicedIntersections) {
-            //this.debugGraphics.strokeTriangleShape(slice)
-            this.litAreaGraphics.fillStyle(0xffffff, 0.3).fillTriangleShape(slice)
+        if (this.state === GameState.NORMAL) {
+            this.ray.castCone()
+
+            for (let slice of this.ray.slicedIntersections) {
+                this.litAreaGraphics.fillStyle(0xffffff, 0.3).fillTriangleShape(slice)
+            }
+
+            if (this.ray.overlap(this.scene.player.sprite).length > 0) {
+                this.scene.gameEvents.emit("found")
+            }
+        } else {
+            this.ray.castCone()
+
+            if (this.ray.overlap(this.scene.player.sprite).length > 0) {
+                this.scene.gameEvents.emit("found")
+            }
+
+            for (let slice of this.ray.slicedIntersections) {
+                this.litAreaGraphics.fillStyle(0xffffff, 0.3).fillTriangleShape(slice)
+            }
+
+            this.ray.setAngleDeg(Phaser.Math.RadToDeg(this.ray.angle) - 180)
+
+            this.ray.castCone()
+
+            if (this.ray.overlap(this.scene.player.sprite).length > 0) {
+                this.scene.gameEvents.emit("found")
+            }
+
+            for (let slice of this.ray.slicedIntersections) {
+                this.litAreaGraphics.fillStyle(0xffffff, 0.3).fillTriangleShape(slice)
+            }
+
+            this.ray.setAngleDeg(Phaser.Math.RadToDeg(this.ray.angle) + 180)
         }
+
     }
 }

@@ -1,13 +1,21 @@
-import { PointObject, SceneEnums, loadTilemap, scaleAndConfigureCamera, sceneFadeDialogueSwitch } from ".."
+import { PointObject, SceneEnums, fadeOut, fadeSceneTransition, getGUIScene, loadTilemap, scaleAndConfigureCamera } from ".."
 import { EndDialogue } from "../../dialogue/goblin/minigame"
 import { Player } from "../../sprites/game"
+import { GoblinObjective } from "../../sprites/goblin/minigame"
 import { GoblinNPC } from "../../sprites/goblin/minigame/npc"
+import { FruitsTexture } from "../../textures/elf/minigame"
 
+let BASE_MASK_DEPTH = 100
 let GAME_MASK_DEPTH = 101
 let PLAYER_MASK_DEPTH = 102
 
 type GoblinMinigameObjects = {
     [key: string]: PointObject
+}
+
+export enum GameState {
+    NORMAL,
+    ALERTED
 }
 
 export class GoblinMinigameScene extends Phaser.Scene {
@@ -19,18 +27,36 @@ export class GoblinMinigameScene extends Phaser.Scene {
     playerRay!: Raycaster.Ray
     npcs!: GoblinNPC[]
     gameEnded!: boolean
-
+    gameEvents!: Phaser.Events.EventEmitter
+    gameState!: GameState
 
     constructor() {
         super(SceneEnums.SceneNames.GoblinMinigame)
     }
 
+    preload() {
+        FruitsTexture.preload(this)
+    }
+
     create() {
+        FruitsTexture.load(this)
+
         let { collisionsLayer: collisions, map, playerDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame)
 
         const markers: GoblinMinigameObjects = objects as GoblinMinigameObjects
 
         this.sprites.initialize(map)
+
+        this.gameState = GameState.NORMAL
+
+        this.gameEvents = new Phaser.Events.EventEmitter()
+        this.gameEvents.on("mode", () => {
+            this.gameState = GameState.ALERTED
+            this.updateNPCs()
+        })
+        this.gameEvents.once("found", () => {
+            this.endGame()
+        })
 
         const createRaycasterSettings = (raycaster: Raycaster) => {
             raycaster.mapGameObjects(collisions, false, {
@@ -56,11 +82,15 @@ export class GoblinMinigameScene extends Phaser.Scene {
             .setMask(playerAreaMaskInverse)
             .fillRect(0, 0, this.scale.canvas.width, this.scale.canvas.height)
         this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.65 } })
-            .setDepth(100)
+            .setDepth(BASE_MASK_DEPTH)
             .fillRect(0, 0, this.scale.canvas.width, this.scale.canvas.height)
 
         this.player = new Player(this, 470, 155)
         this.player.sprite.setDepth(playerDepth)
+
+        let objective = new GoblinObjective(this, 100, 50)
+        objective.sprite.setDepth(playerDepth)
+        objective.sprite.setMask(playerAreaMaskInverse)
 
         let npcMap: { [key: string]: Phaser.Math.Vector2[] } = {}
         for (let [key, point] of Object.entries(markers)) {
@@ -80,18 +110,10 @@ export class GoblinMinigameScene extends Phaser.Scene {
             this.npcs.push(npc)
         }
 
-        // let points = [new Phaser.Math.Vector2(100, 130), new Phaser.Math.Vector2(100, 150), new Phaser.Math.Vector2(150, 150), new Phaser.Math.Vector2(150, 130)]
-        // let npc = new GoblinNPC(this, points, 100, 130, this.litAreaGraphics, createRaycasterSettings)
-        // npc.sprite.setDepth(playerDepth)
-
-        // let points2 = [new Phaser.Math.Vector2(100, 40), new Phaser.Math.Vector2(100, 80), new Phaser.Math.Vector2(150, 80), new Phaser.Math.Vector2(150, 40)]
-        // let npc2 = new GoblinNPC(this, points2, 100, 40, this.litAreaGraphics, createRaycasterSettings)
-        // npc2.sprite.setDepth(playerDepth)
-
-        //this.npcs = [npc, npc2]
-
         this.sprites.addGameControllables(this.player)
-        this.sprites.addPhysicsBodies(this.player.sprite)
+        this.sprites.addInteractables(objective)
+        this.sprites.addInteractingBodies(this.player.sprite)
+        this.sprites.addPhysicsBodies(this.player.sprite, objective.sprite)
         this.sprites.addPhysicsBodies(...this.npcs.map(r => r.sprite))
 
         scaleAndConfigureCamera(this, map, this.player.sprite)
@@ -102,6 +124,12 @@ export class GoblinMinigameScene extends Phaser.Scene {
         for (let npc of this.npcs) {
             npc.sprite.setMask(playerAreaMaskInverse)
             npc.start()
+        }
+    }
+
+    updateNPCs() {
+        for (let npc of this.npcs) {
+            npc.setState(this.gameState)
         }
     }
 
@@ -119,9 +147,6 @@ export class GoblinMinigameScene extends Phaser.Scene {
 
         for (let npc of this.npcs) {
             npc.drawLight()
-            if (npc.ray.overlap(this.player.sprite).length > 0) {
-                this.endGame()
-            }
         }
     }
 
@@ -131,6 +156,10 @@ export class GoblinMinigameScene extends Phaser.Scene {
         for (let npc of this.npcs) {
             npc.stop()
         }
-        sceneFadeDialogueSwitch(this, SceneEnums.SceneNames.Menu, EndDialogue)
+        fadeOut(this, () => {
+            getGUIScene(this).dialogue.start(this, EndDialogue, () => {
+                fadeSceneTransition(this, SceneEnums.SceneNames.GUI)
+            })
+        })
     }
 }

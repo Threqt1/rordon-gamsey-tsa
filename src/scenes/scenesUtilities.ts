@@ -1,5 +1,4 @@
 import { GUIScene } from ".";
-import { Dialogue } from "../dialogue";
 
 export namespace SceneEnums {
     export enum SceneNames {
@@ -125,44 +124,73 @@ export function loadTilemap(scene: Phaser.Scene, name: string): LoadedTilemap {
 
 const DURATION = 500;
 
-export function switchScenesFadeOut(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames) {
-    (scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue.stop()
+export function fadeOut(scene: Phaser.Scene, callback?: () => void) {
     scene.cameras.main.fadeOut(DURATION, 0, 0, 0)
     scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-        scene.scene.start(nextScene, { fade: true })
+        if (callback != undefined) callback()
     })
 }
 
-const END_FADE_DURATION = 500
-const DIALOGUE_DISPLAY_COOLDOWN = 800
-
-export function sceneFadeDialogueSwitch(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames, dialogue: Dialogue, endCallback?: () => void) {
-    let graphics = scene.add.graphics({ fillStyle: { color: 0x000000 } }).setDepth(999).fillRect(0, 0, scene.scale.canvas.width, scene.scale.canvas.height)
-    graphics.setAlpha(0)
-    const brightnessTween: Phaser.Types.Tweens.TweenBuilderConfig = {
-        targets: { value: 0 },
-        value: 1,
-        onUpdate: (tween) => {
-            graphics.setAlpha(tween.getValue())
-        },
-        duration: END_FADE_DURATION,
-        onComplete: () => {
-            scene.time.delayedCall(DIALOGUE_DISPLAY_COOLDOWN, () => {
-                let dialogueScene = (scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
-                dialogueScene.start(scene, dialogue, () => {
-                    if (endCallback != undefined) endCallback()
-                    graphics.destroy()
-                    switchScenesFadeOut(scene, nextScene)
-                })
-            })
-        }
-    }
-    scene.tweens.add(brightnessTween)
+export function fadeIn(scene: Phaser.Scene, callback?: () => void) {
+    scene.cameras.main.fadeIn(DURATION, 0, 0, 0)
+    scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+        if (callback != undefined) callback()
+    })
 }
 
-export function switchSceneFadeIn(scene: Phaser.Scene) {
-    scene.cameras.main.fadeIn(DURATION, 0, 0, 0);
+export function fadeSceneTransition(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames) {
+    fadeOut(scene, () => {
+        scene.scene.start(nextScene)
+        fadeIn(scene.scene.get(nextScene))
+    })
 }
+
+export function getGUIScene(scene: Phaser.Scene) {
+    return scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene
+}
+
+// export function switchScenesFadeOut(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames) {
+//     (scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue.stop()
+//     scene.cameras.main.fadeOut(DURATION, 0, 0, 0)
+//     scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+//         scene.scene.start(nextScene)
+//     })
+// }
+
+// const DIALOGUE_DISPLAY_COOLDOWN = 800
+
+// export function sceneFadeDialogueSwitch(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames, dialogue: Dialogue, endCallback?: () => void) {
+//     scene.cameras.main.fadeOut(DURATION, 0, 0, 0)
+//     scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+//         scene.time.delayedCall(DIALOGUE_DISPLAY_COOLDOWN, () => {
+//             let dialogueScene = (scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
+//             dialogueScene.start(scene, dialogue, () => {
+//                 if (endCallback != undefined) endCallback()
+//                 switchScenesFadeOut(scene, nextScene)
+//             })
+//         })
+//     })
+//     // let graphics = scene.add.graphics({ fillStyle: { color: 0x000000 } }).setDepth(999).fillRect(0, 0, scene.scale.canvas.width, scene.scale.canvas.height)
+//     // graphics.setAlpha(0)
+//     // const brightnessTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+//     //     targets: { value: 0 },
+//     //     value: 1,
+//     //     onUpdate: (tween) => {
+//     //         graphics.setAlpha(tween.getValue())
+//     //     },
+//     //     duration: END_FADE_DURATION,
+//     //     onComplete: () => {
+//     //         scene.time.delayedCall(DIALOGUE_DISPLAY_COOLDOWN, () => {
+//     //             
+//     //         })
+//     //     }
+//     // }
+//     // scene.tweens.add(brightnessTween)
+// }
+
+// export function switchSceneFadeIn(scene: Phaser.Scene) {
+//     scene.cameras.main.fadeIn(DURATION, 0, 0, 0);
+// }
 
 export function pct(full: number, pct: number) {
     return full * (pct / 100)

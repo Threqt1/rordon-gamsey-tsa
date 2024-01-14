@@ -4,7 +4,7 @@ add gameobjects on tiled to specify where fruits spawn/end/chara positions
 
 import { Fruit, Apple, Pumpkin, Fruits, FruitEventName, FruitInformation } from "../../sprites/elf/minigame/fruits";
 import { NPC, Player } from "../../sprites/elf/minigame"
-import { loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums, switchScenesFadeOut, sceneFadeDialogueSwitch } from "..";
+import { fadeIn, fadeSceneTransition, getGUIScene, loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums } from "..";
 import { SlashesTexture, ElvesTexture, FruitsTexture, TorchesTexture } from "../../textures/elf/minigame";
 import { EndDialogue } from "../../dialogue/elf/minigame";
 
@@ -172,7 +172,7 @@ export class ElfMinigameScene extends Phaser.Scene {
             fruit.eventEmitter.once(FruitEventName.FAIL, () => {
                 if (!this.gameEnded) {
                     this.gameEnded = true
-                    switchScenesFadeOut(this, SceneEnums.SceneNames.Menu)
+                    fadeSceneTransition(this, SceneEnums.SceneNames.Menu)
                 }
             })
 
@@ -213,8 +213,11 @@ export class ElfMinigameScene extends Phaser.Scene {
     }
 
     endGame() {
-        sceneFadeDialogueSwitch(this, SceneEnums.SceneNames.Menu, EndDialogue, () => {
+        fadeIn(this, () => {
             this.gameEnded = true
+            getGUIScene(this).dialogue.start(this, EndDialogue, () => {
+                fadeSceneTransition(this, SceneEnums.SceneNames.Menu)
+            })
         })
     }
 }

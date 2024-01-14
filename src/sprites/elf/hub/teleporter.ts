@@ -1,7 +1,7 @@
 import { GameObjects } from "phaser";
 import { Zone, checkIfInZone } from "../../";
 import { Interactable } from "../../../plugins/sprites";
-import { GUIScene, SceneEnums, switchScenesFadeOut } from "../../../scenes";
+import { GUIScene, SceneEnums, fadeSceneTransition } from "../../../scenes";
 import { KeyboardTexture } from "../../../textures/keyboard";
 import { PlayerTexture } from "../../../textures/player";
 import { BaseInput, Keybinds } from "../../base";
@@ -65,7 +65,7 @@ export class ElfTeleporterNPC implements Interactable {
             let dialogue = (this.scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
             dialogue.start(this.scene, TeleportDialogue, () => {
                 this.interactable = false
-                switchScenesFadeOut(this.scene, SceneEnums.SceneNames.ElfMinigame)
+                fadeSceneTransition(this.scene, SceneEnums.SceneNames.ElfMinigame)
             })
         }
     }

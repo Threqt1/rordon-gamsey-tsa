@@ -48,6 +48,6 @@ export class PreloaderScene extends Scene {
         TorchesTexture.load(this)
 
         this.scene.launch(SceneEnums.SceneNames.GUI)
-        this.scene.start(SceneEnums.SceneNames.Game)
+        this.scene.start(SceneEnums.SceneNames.GoblinMinigame)
     }
 }

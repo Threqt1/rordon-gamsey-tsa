@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import { SceneEnums, switchScenesFadeOut } from ".";
+import { SceneEnums, fadeSceneTransition } from ".";
 
 export class MenuScene extends Scene {
     constructor() {
@@ -49,7 +49,7 @@ export class MenuScene extends Scene {
         startSprite.on("pointerup", () => {
             if (!switching) {
                 switching = true
-                switchScenesFadeOut(this, SceneEnums.SceneNames.Game)
+                fadeSceneTransition(this, SceneEnums.SceneNames.Game)
             }
         })
 
