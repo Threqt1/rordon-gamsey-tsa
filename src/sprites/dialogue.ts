@@ -35,7 +35,7 @@ export class BaseDialogue implements Controllable {
         this.dialogueWalker = new Dialogue.Walker(scene.registry)
         this.controllable = false
 
-        scene.sprites.addGUIControllables(this)
+        scene.sprites.controllables.push(this)
     }
 
     /**
@@ -53,7 +53,7 @@ export class BaseDialogue implements Controllable {
 
         this.dialogueWalker.startWithNewDialogue(dialogue, emitter)
         this.dialogueSprite.setVisible(true)
-        this.activeScene.sprites.setGameControllable(false)
+        this.activeScene.sprites.setControllable(false)
         this.input.input.resetKeys()
         this.controllable = true
         this.displayCurrentDialogue()
@@ -129,7 +129,7 @@ export class BaseDialogue implements Controllable {
     stop(): void {
         this.controllable = false
         this.dialogueSprite.setVisible(false)
-        this.activeScene.sprites.setGameControllable(true)
+        this.activeScene.sprites.setControllable(true)
     }
 
     setControllable(controllable: boolean): void {

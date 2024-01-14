@@ -1,7 +1,7 @@
 export namespace PluginEnums {
     export enum PluginNames {
         DebugPlugin = "debugPlugin",
-        SpritePlugin = "spritePlugin",
+        SpritePlugin = "spritesPlugin",
         RaycasterPlugin = "raycasterPlugin"
     }
 

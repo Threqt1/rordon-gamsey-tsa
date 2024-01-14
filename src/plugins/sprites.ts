@@ -1,33 +1,44 @@
 import { PluginEnums } from "."
 
+/**
+ * Represents a class that is able to be controlled
+ */
 export interface Controllable {
     setControllable(controllable: boolean): void
     control(): void
 }
 
+/**
+ * Represents a class that is able to be interacted with
+ */
 export interface Interactable {
     getInteractableZone(): Phaser.GameObjects.Zone
     setInteractable(interactable: boolean): void
     interact(): void
 }
 
+/**
+ * Serves as a layer between the scene and the game to handle all scene-wide sprites
+ */
 export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
-    map!: Phaser.Tilemaps.Tilemap | undefined
-    gameControllables!: Controllable[]
+    map?: Phaser.Tilemaps.Tilemap
+    controllables!: Controllable[]
     interactables!: Interactable[]
-    guiControllables!: Controllable[]
     physicsBodies!: Phaser.Physics.Arcade.Group
+    /**
+     * Physics bodies that are allowed to interact with the interactables
+     */
     interactingBodies!: Phaser.Physics.Arcade.Group
     interactableZones!: Phaser.Physics.Arcade.Group
-    gameControllablesEnabled!: boolean
-    guiControllablesEnabled!: boolean
+    controllablesEnabled!: boolean
     interactablesEnabled!: boolean
 
     constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager) {
         super(scene, pluginManager, PluginEnums.PluginNames.SpritePlugin);
     }
 
-    initialize(map?: Phaser.Tilemaps.Tilemap) {
+    initialize(map?: Phaser.Tilemaps.Tilemap): void {
+        // Listen to scene-specific events for cleanup
         var eventEmitter = this.systems!.events
         eventEmitter.on("update", () => { this.update() })
         eventEmitter.once("destroy", () => { eventEmitter.off("update", this.update) })
@@ -35,89 +46,45 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
 
         this.map = map
         this.interactables = []
-        this.gameControllables = []
-        this.guiControllables = []
+        this.controllables = []
         this.physicsBodies = this.scene!.physics.add.group()
         this.interactingBodies = this.scene!.physics.add.group()
         this.interactableZones = this.scene!.physics.add.group()
-        this.gameControllablesEnabled = true
-        this.guiControllablesEnabled = true
+        this.controllablesEnabled = true
         this.interactablesEnabled = true
     }
 
-    addInteractables(...interactables: Interactable[]) {
+    /**
+     * Utility method to add interactables to the plugin
+     */
+    addInteractables(...interactables: Interactable[]): void {
         this.interactables.push(...interactables)
         this.interactableZones.addMultiple(interactables.map(r => r.getInteractableZone()))
     }
 
-    removeInteractables(...interactables: Interactable[]) {
-        this.interactables = this.interactables.filter(r => interactables.indexOf(r) === -1);
-    }
-
-    addGameControllables(...controllables: Controllable[]) {
-        this.gameControllables.push(...controllables)
-    }
-
-    removeGameControllables(...controllables: Controllable[]) {
-        this.gameControllables = this.gameControllables.filter(r => controllables.indexOf(r) === -1);
-    }
-
-    addGUIControllables(...controllables: Controllable[]) {
-        this.guiControllables.push(...controllables)
-    }
-
-    removeGUIControllables(...controllables: Controllable[]) {
-        this.guiControllables = this.guiControllables.filter(r => controllables.indexOf(r) === -1);
-    }
-
-    addPhysicsBodies<T extends Phaser.GameObjects.GameObject>(...sprites: T[]) {
-        this.physicsBodies.addMultiple(sprites)
-    }
-
-    removePhysicsBodies<T extends Phaser.GameObjects.GameObject>(...sprites: T[]) {
-        for (let sprite of sprites) {
-            this.physicsBodies.remove(sprite)
+    setControllable(isControllable: boolean): void {
+        for (let controllable of this.controllables) {
+            controllable.setControllable(isControllable)
         }
     }
 
-    addInteractingBodies<T extends Phaser.GameObjects.GameObject>(...sprites: T[]) {
-        this.interactingBodies.addMultiple(sprites)
-    }
-
-    removeInteractingBodies<T extends Phaser.GameObjects.GameObject>(...sprites: T[]) {
-        for (let sprite of sprites) {
-            this.interactingBodies.remove(sprite)
-        }
-    }
-
-    setGUIControllable(isControllable: boolean) {
-        for (let guiControllable of this.guiControllables) {
-            guiControllable.setControllable(isControllable)
-        }
-    }
-
-    setGameControllable(isControllable: boolean) {
-        for (let gameControllable of this.gameControllables) {
-            gameControllable.setControllable(isControllable)
-        }
-    }
-
-    setInteractable(isInteractable: boolean) {
+    setInteractable(isInteractable: boolean): void {
         for (let interactable of this.interactables) {
             interactable.setInteractable(isInteractable)
         }
     }
 
+    /**
+     * Make collisions with all the sprites registered and a collision layer
+     * @param layer 
+     */
     makeCollisionsWithLayer(layer: Phaser.Tilemaps.TilemapLayer) {
+        // Make all physics bodies collide with each other
         this.scene!.physics.add.collider(this.physicsBodies, this.physicsBodies);
+        // Make all physics bodies collide with the collisions layer
         this.scene!.physics.add.collider(this.physicsBodies, layer);
+        // Allow interacting bodie to overlap (not collide) with interactable zones
         this.scene!.physics.add.overlap(this.interactingBodies, this.interactableZones);
-    }
-
-    cleanup() {
-        this.gameControllables = []
-        this.interactables = []
-        this.physicsBodies.destroy(true, true)
     }
 
     update() {
@@ -126,15 +93,21 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
                 interactable.interact()
             }
         }
-        if (this.gameControllablesEnabled) {
-            for (let controllable of this.gameControllables) {
+        if (this.controllables) {
+            for (let controllable of this.controllables) {
                 controllable.control();
             }
         }
-        if (this.guiControllablesEnabled) {
-            for (let controllable of this.guiControllables) {
-                controllable.control();
-            }
-        }
+    }
+
+    /**
+     * Clean up the plugin data
+     */
+    cleanup() {
+        this.controllables = []
+        this.interactables = []
+        this.physicsBodies.destroy(true, true)
+        this.interactingBodies.destroy(true, true)
+        this.interactableZones.destroy(true, true)
     }
 }
