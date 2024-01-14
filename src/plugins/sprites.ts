@@ -44,6 +44,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         eventEmitter.once("destroy", () => { eventEmitter.off("update", this.update) })
         eventEmitter.on("shutdown", () => { this.cleanup() })
 
+        // Store the map so sprites can reference it
         this.map = map
         this.interactables = []
         this.controllables = []

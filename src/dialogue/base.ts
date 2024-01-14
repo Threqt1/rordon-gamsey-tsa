@@ -4,7 +4,6 @@
  * Content - The actual content of the dialogue, displayed in succession when it's chosen
  * Options - THe rest of the options avaliable after all the content is displayed
  */
-
 export namespace Dialogue {
     export type Dialogue = {
         canBeChosen?: (registry: Phaser.Data.DataManager) => boolean
