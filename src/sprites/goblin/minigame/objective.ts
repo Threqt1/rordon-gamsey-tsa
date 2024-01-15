@@ -1,6 +1,6 @@
 import { GameObjects } from "phaser"
 import { Interactable } from "../../../plugins"
-import { FruitsTexture } from "../../../textures/elf/minigame"
+import { FruitsTexture } from "../../../textures/elf"
 import { KeyboardTexture } from "../../../textures"
 import { BaseInput, Keybinds, Zone, checkIfInZone } from "../.."
 import { GoblinMinigameScene } from "../../../scenes/goblin"

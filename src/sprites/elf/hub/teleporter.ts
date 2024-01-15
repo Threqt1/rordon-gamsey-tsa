@@ -1,17 +1,23 @@
-import { GameObjects } from "phaser";
-import { Zone, checkIfInZone } from "../../";
+import { Zone, checkIfInZone, BaseInput, Keybinds } from "../../";
 import { Interactable } from "../../../plugins/sprites";
-import { GUIScene, SceneEnums, fadeSceneTransition } from "../../../scenes";
-import { KeyboardTexture } from "../../../textures/keyboard";
-import { PlayerTexture } from "../../../textures/player";
-import { BaseInput, Keybinds } from "../../input";
-import { TeleportDialogue } from "../../../dialogue/elf";
+import { SceneEnums, fadeSceneTransition, getGUIScene } from "../../../scenes";
+import { KeyboardTexture, PlayerTexture } from "../../../textures/";
+import { ElfHubTeleporterDialogue } from "../../../dialogue/elf";
 
+/**
+ * Represents all possible interactions with the NPC
+ */
 enum Interaction {
     INTERACT
 }
 
+/**
+ * The NPC that teleports you to the Elf Hub
+ */
 export class ElfTeleporterNPC implements Interactable {
+    /**
+     * Bind Interactions to keys
+     */
     static keybinds: Keybinds = {
         [Interaction.INTERACT]:
             "E",
@@ -27,7 +33,6 @@ export class ElfTeleporterNPC implements Interactable {
         this.sprite = scene.physics.add.sprite(x, y, PlayerTexture.TextureKey)
         this.scene = scene
         this.input = new BaseInput(scene, ElfTeleporterNPC.keybinds)
-
         this.sprite.setPushable(false)
 
         this.interactable = true
@@ -40,7 +45,7 @@ export class ElfTeleporterNPC implements Interactable {
         this.sprite.anims.play(PlayerTexture.Animations.IdleFront)
     }
 
-    getInteractableZone(): GameObjects.Zone {
+    getInteractableZone(): Phaser.GameObjects.Zone {
         return this.zone
     }
 
@@ -59,12 +64,13 @@ export class ElfTeleporterNPC implements Interactable {
                 this.interactionPrompt.setVisible(false)
                 break;
         }
-        if (this.interactable && this.input.checkIfKeyDown(Interaction.INTERACT) && this.interactionPrompt.visible) {
+        if (this.interactable && this.input.checkIfKeyDown(Interaction.INTERACT)) {
+            this.interactable = false
             this.input.input.resetKeys()
             this.interactionPrompt.setVisible(false)
-            let dialogue = (this.scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
-            dialogue.start(this.scene, TeleportDialogue, () => {
-                this.interactable = false
+
+            let dialogueEventEmitter = new Phaser.Events.EventEmitter()
+            getGUIScene(this.scene).dialogue.start(this.scene, ElfHubTeleporterDialogue.Dialogue, dialogueEventEmitter, () => {
                 fadeSceneTransition(this.scene, SceneEnums.SceneNames.ElfMinigame)
             })
         }

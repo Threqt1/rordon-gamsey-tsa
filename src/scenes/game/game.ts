@@ -10,10 +10,12 @@ export class GameScene extends Scene {
     }
 
     create() {
+        /* MAP INITIALIZATION */
         let { collisionsLayer, map, playerSpriteDepth } = loadTilemap(this, SceneEnums.TilemapNames.Game)
 
         this.sprites.initialize(map)
 
+        /* SPRITE INITIALIZATION */
         let player = new Player(this, 30, 130)
         let npc1 = new ElfTeleporterNPC(this, 80, 100)
         let npc2 = new GoblinTeleporterNPC(this, 190, 150)
@@ -25,9 +27,12 @@ export class GameScene extends Scene {
 
         this.sprites.physicsBodies.setDepth(playerSpriteDepth)
 
+        this.sprites.makeCollisionsWithLayer(collisionsLayer)
+
+        /* CAMERA CONFIGURATION*/
         scaleAndConfigureCamera(this, map, player.sprite)
 
-        this.sprites.makeCollisionsWithLayer(collisionsLayer)
+        /* VARIABLE INITIALIZATION */
     }
 
     update() {

@@ -1,6 +1,6 @@
 import { Dialogue } from "../../"
 
-export enum Events {
+enum Events {
     END = "end"
 }
 
@@ -18,7 +18,7 @@ let Base: Dialogue.Dialogue = {
     nextOptions: []
 }
 
-export default {
+export const GoblinMinigameEndDialogue = {
     Dialogue: Base,
     Events
 }

@@ -1,4 +1,2 @@
-import * as ElfHubTeleporterDialogue from "./hub/teleport"
-import * as ElfMinigameEndDialogue from "./minigame/end"
-
-export { ElfHubTeleporterDialogue, ElfMinigameEndDialogue }
+export * from "./hub/teleport"
+export * from "./minigame/end"

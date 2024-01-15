@@ -1,6 +1,6 @@
 import { Dialogue } from "../../"
 
-export enum Events {
+enum Events {
 }
 
 let Base: Dialogue.Dialogue = {
@@ -43,7 +43,7 @@ Base.nextOptions = [Teleport, MoreGoblinInfo]
 Teleport.nextOptions = []
 MoreGoblinInfo.nextOptions = [Teleport]
 
-export default {
+export const GoblinHubTeleporterDialogue = {
     Dialogue: Base,
     Events
 }

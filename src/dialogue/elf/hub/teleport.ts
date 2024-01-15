@@ -43,7 +43,7 @@ Base.nextOptions = [Teleport, MoreElfInfo]
 Teleport.nextOptions = []
 MoreElfInfo.nextOptions = [Teleport]
 
-export default {
+export const ElfHubTeleporterDialogue = {
     Dialogue: Base,
     Events
 }

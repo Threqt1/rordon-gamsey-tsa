@@ -1,29 +1,49 @@
 import { Controllable } from "../../../../plugins"
+import { ElfMinigameScene } from "../../../../scenes/elf"
 import { KeyboardTexture } from "../../../../textures"
-import { SlashesTexture, FruitsTexture } from "../../../../textures/elf/minigame"
+import { SlashesTexture, FruitsTexture } from "../../../../textures/elf"
 import { BaseInput, Keybinds } from "../../../input"
 
-export enum Fruits {
+/**
+ * Represents all possible types of fruit
+ */
+export enum FruitType {
     APPLE,
     PUMPKIN,
 }
 
 export interface Fruit extends Controllable {
-    prepare(): void
-    start(): void
+    /**
+     * Initialize the fruit, displaying it and setting it up.
+     * Not able to be interacted with though.
+     */
+    initialize(): void
+    /**
+     * Enable the fruit for interaction
+     */
+    enable(): void
 }
 
+/**
+ * Represents information necessary for fruit initialization
+ */
 export type FruitInformation = {
     spriteDepth: number
     endX: number
     lifetime: number
 }
 
-export enum FruitEventName {
+/**
+ * Represents all possible fruit event emiiter events
+ */
+export enum FruitEvents {
     SUCCESS = "success",
     FAIL = "fail"
 }
 
+/**
+ * Represents all possible fruit interactions
+ */
 export enum FruitInteraction {
     SliceUp,
     SliceDown,
@@ -31,6 +51,9 @@ export enum FruitInteraction {
     SliceRight
 }
 
+/**
+ * Bind interactions to keybinds
+ */
 export const FruitInteractionKeybinds: Keybinds = {
     [FruitInteraction.SliceUp]: "W",
     [FruitInteraction.SliceDown]: "S",
@@ -38,64 +61,82 @@ export const FruitInteractionKeybinds: Keybinds = {
     [FruitInteraction.SliceRight]: "D",
 }
 
-
+/**
+ * The time it takes for the fruit to fade out once completed
+ */
 const END_FADE_DURATION = 500;
+/**
+ * Cooldown between failed hits
+ */
 const HIT_COOLDOWN = 100;
 const SCREEN_SHAKE_DURATION = 100
 const SCREEN_SHAKE_FACTOR = 0.0003
 const ROTATION_VELOCITY = 300;
+const CHUNK_SPEED = 30
+/**
+ * Size of the slash
+ */
 const SLASH_SCALE = 1;
 
-//const SLASH_ANIMATIONS = [SlashesTexture.Animations.Slash1, SlashesTexture.Animations.Slash2, SlashesTexture.Animations.Slash3, SlashesTexture.Animations.Slash4]
-//const HIT_ANIMATIONS = [SlashesTexture.Animations.Hit1, SlashesTexture.Animations.Hit2, SlashesTexture.Animations.Hit3]
-
+/**
+ * An abstract fruit class, handles all logic behind the individual fruits
+ */
 export abstract class BaseFruit implements Fruit {
-    pattern: FruitInteraction[]
-    patternTextures: [string, string][]
-    slashes: string[]
+    slicePattern: FruitInteraction[]
+    sliceTextures: [string, string][]
+    slashPattern: string[]
     currentPatternLocation: number;
+
     started: boolean;
     finished: boolean;
+
     scene: Phaser.Scene;
     baseInput: BaseInput
     controllable: boolean
-    mainBody: Phaser.Physics.Arcade.Sprite
+
+    mainBodySprites: Phaser.Physics.Arcade.Sprite
     slashSprite: Phaser.Physics.Arcade.Sprite
-    fruitChunks: Phaser.Physics.Arcade.Sprite[]
+    fruitChunkSprites: Phaser.Physics.Arcade.Sprite[]
+
     colorMatrix: Phaser.FX.ColorMatrix
     tweens: Phaser.Tweens.Tween[]
-    interactionPrompt: Phaser.GameObjects.Sprite
-    eventEmitter: Phaser.Events.EventEmitter
 
-    constructor(scene: Phaser.Scene, x: number, y: number, info: FruitInformation, pattern: FruitInteraction[], patternTextures: [string, string][], slashes: string[]) {
-        this.pattern = pattern;
-        this.patternTextures = patternTextures
-        this.slashes = slashes
+    interactionPrompt: Phaser.GameObjects.Sprite
+    fruitEvents: Phaser.Events.EventEmitter
+
+    constructor(scene: ElfMinigameScene, x: number, y: number, info: FruitInformation, slicePattern: FruitInteraction[], sliceTextures: [string, string][], slashPattern: string[]) {
+        this.slicePattern = slicePattern;
+        this.sliceTextures = sliceTextures
+        this.slashPattern = slashPattern
         this.scene = scene
         this.baseInput = new BaseInput(scene, FruitInteractionKeybinds)
         this.controllable = false;
         this.started = false;
         this.finished = false;
-        this.mainBody = scene.physics.add.sprite(x, y, FruitsTexture.TextureKey, this.patternTextures[0][0]).setDepth(info.spriteDepth).setVisible(false)
-        this.colorMatrix = this.mainBody.postFX!.addColorMatrix()
-        this.fruitChunks = []
+        this.mainBodySprites = scene.physics.add.sprite(x, y, FruitsTexture.TextureKey, this.sliceTextures[0][0]).setDepth(info.spriteDepth).setVisible(false)
+        this.colorMatrix = this.mainBodySprites.postFX!.addColorMatrix()
+        this.fruitChunkSprites = []
         this.slashSprite = scene.physics.add.sprite(x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(SLASH_SCALE)
-        this.eventEmitter = new Phaser.Events.EventEmitter()
+        this.fruitEvents = new Phaser.Events.EventEmitter()
         this.interactionPrompt = scene.add.sprite(x, y, KeyboardTexture.TextureKey)
         this.interactionPrompt.setDepth(100).setScale(0.3).setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight + 5).setVisible(false)
         this.currentPatternLocation = 0;
 
+        // Tween for moving the fruit
         let movementTween = scene.tweens.add({
-            targets: [this.mainBody, this.slashSprite, this.interactionPrompt],
+            targets: [this.mainBodySprites, this.slashSprite, this.interactionPrompt],
             x: info.endX,
             duration: info.lifetime,
             onComplete: () => {
+                // If the tween ends, the iterm has failed
+                // Make sure the item has either started and not finished or not started
                 if (this.started && !this.finished || !this.started) this.onItemFail()
             },
             paused: true,
         })
-        this.mainBody.setAngularVelocity(ROTATION_VELOCITY)
+        this.mainBodySprites.setAngularVelocity(ROTATION_VELOCITY)
 
+        // Once slash sprite is done animating, reset to invisible frame
         this.slashSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.slashSprite.setFrame(SlashesTexture.Frames.Empty)
         })
@@ -103,113 +144,75 @@ export abstract class BaseFruit implements Fruit {
         this.tweens = [movementTween]
     }
 
-    setControllable(controllable: boolean): void {
-        this.controllable = controllable
+    initialize(): void {
+        this.mainBodySprites.setVisible(true)
+        for (let tween of this.tweens) tween.resume()
     }
 
-    onItemFail() {
-        this.eventEmitter.emit(FruitEventName.FAIL)
-        this.cleanup()
+    enable(): void {
+        this.progressSlicePattern()
+        this.scene.sprites.controllables.push(this)
+        this.controllable = true
+        this.started = true;
+        this.interactionPrompt.setVisible(true)
     }
 
-    onItemSuccess() {
-        this.finished = true
-        this.eventEmitter.emit(FruitEventName.SUCCESS)
-        this.cleanup()
-    }
+    /**
+     * Continue to the next position in the current slice pattern
+     */
+    progressSlicePattern(): void {
+        // Update to appropriate key picture
+        this.interactionPrompt.setFrame(KeyboardTexture.KeyPictures[FruitInteractionKeybinds[this.slicePattern[this.currentPatternLocation]]])
 
-    createNewFruitChunk() {
-        let newTextures = this.patternTextures[this.currentPatternLocation]
-        let newChunk = this.scene.physics.add.sprite(this.mainBody.x, this.mainBody.y, FruitsTexture.TextureKey, newTextures[1]).setDepth(this.mainBody.depth)
-        newChunk.postFX!.addColorMatrix().grayscale(0.6)
-
-        let vector = new Phaser.Math.Vector2(0, 1).rotate(this.mainBody.rotation - Phaser.Math.DegToRad(90)).scale(30)
-        newChunk.setVelocity(vector.x, vector.y)
-        newChunk.setAngularVelocity(ROTATION_VELOCITY)
-
-        this.fruitChunks.push(newChunk)
-    }
-
-    progressPattern() {
-        this.interactionPrompt.setFrame(KeyboardTexture.KeyPictures[FruitInteractionKeybinds[this.pattern[this.currentPatternLocation]]])
-
-        let newTextures = this.patternTextures[this.currentPatternLocation]
-        this.mainBody.setFrame(newTextures[0])
+        // Set new textures
+        let newTextures = this.sliceTextures[this.currentPatternLocation]
+        this.mainBodySprites.setFrame(newTextures[0])
 
         if (this.currentPatternLocation > 0) this.createNewFruitChunk()
 
         this.scene.input.keyboard!.resetKeys()
     }
 
-    // playSliceAnimation() {
-    //     let randomSlash = Phaser.Math.RND.integerInRange(0, SLASH_ANIMATIONS.length - 1)
-    //     this.slashSprite.anims.play(SLASH_ANIMATIONS[randomSlash], true)
-    // }
+    /**
+     * Create a new fruit chunk from the main body
+     */
+    createNewFruitChunk(): void {
+        // Get the current textures, creatte the sprite, and update its post FX
+        let newTextures = this.sliceTextures[this.currentPatternLocation]
+        let newChunk = this.scene.physics.add.sprite(this.mainBodySprites.x, this.mainBodySprites.y, FruitsTexture.TextureKey, newTextures[1]).setDepth(this.mainBodySprites.depth)
+        newChunk.postFX!.addColorMatrix().grayscale(0.6)
 
-    prepare() {
-        // let emitter = this.scene.add.particles(this.mainBody.x, this.mainBody.y, "purple", {
-        //     lifespan: 750,
-        //     radial: true,
-        //     speed: 20,
-        //     quantity: 40,
-        // }).setDepth(100).stop()
-        // emitter.explode()
+        // Launch the chunk perpendicular to the main body at the same rotational velocity
+        let vector = new Phaser.Math.Vector2(0, 1).rotate(this.mainBodySprites.rotation - Phaser.Math.DegToRad(90)).scale(CHUNK_SPEED)
+        newChunk.setVelocity(vector.x, vector.y)
+        newChunk.setAngularVelocity(ROTATION_VELOCITY)
 
-        // let temp = () => {
-        //     if (emitter.getAliveParticleCount() === 0) this.scene.sys.events.off("update", temp)
-        //     emitter.forEachAlive((p) => {
-        //         p.alpha = p.lifeCurrent / (emitter.lifespan as number)
-        //         p.angle += 5
-        //     }, this)
-        // }
-
-        //this.scene.sys.events.on("update", temp, this)
-        this.mainBody.setVisible(true)
-        for (let tween of this.tweens) tween.resume()
+        this.fruitChunkSprites.push(newChunk)
     }
 
-    start() {
-        this.progressPattern()
-        this.scene.sprites.addGameControllables(this)
-        this.controllable = true
-        this.started = true;
-        this.interactionPrompt.setVisible(true)
+    control(): void {
+        if (!this.controllable) return
+        this.handlePlayerInput()
     }
 
-    cleanup() {
-        this.controllable = false
-        this.scene.sprites.removeGameControllables(this)
-        this.interactionPrompt.destroy()
-
-        const finalCompleteCleanup = () => {
-            this.mainBody.destroy()
-            this.slashSprite.destroy()
-            for (let sprite of this.fruitChunks) sprite.destroy()
-            for (let tween of this.tweens) {
-                if (tween != null) tween.destroy()
-            }
-        }
-
-        this.scene.tweens.add({
-            targets: [...this.fruitChunks, this.mainBody],
-            alpha: 0,
-            duration: END_FADE_DURATION,
-            onComplete: finalCompleteCleanup
-        })
-    }
-
-    slice() {
-        if (this.baseInput.checkIfKeyDown(this.pattern[this.currentPatternLocation])) {
+    /**
+     * Handle player input and update interactions accordingly
+     */
+    handlePlayerInput(): void {
+        if (this.baseInput.checkIfKeyDown(this.slicePattern[this.currentPatternLocation])) {
             this.scene.cameras.main.shake(SCREEN_SHAKE_DURATION, SCREEN_SHAKE_FACTOR)
             this.currentPatternLocation++;
-            this.progressPattern()
-            this.slashSprite.anims.play(this.slashes[this.currentPatternLocation - 1], true)
-            //this.playSliceAnimation()
+            this.progressSlicePattern()
+            // Play the appropriate slash animation
+            this.slashSprite.anims.play(this.slashPattern[this.currentPatternLocation - 1], true)
             this.baseInput.input.resetKeys()
-            if (this.currentPatternLocation >= this.pattern.length) {
+            // If pattern is finished, the item was completed successfully
+            if (this.currentPatternLocation >= this.slicePattern.length) {
                 this.onItemSuccess()
             }
         } else if (Object.values(this.baseInput.keyMap).find(r => r != null && r.isDown)) {
+            // If any other registered key was down, wrong key input, player should be penalized
+            // with hit cooldown
             this.controllable = false
             this.scene.time.delayedCall(HIT_COOLDOWN, () => {
                 this.controllable = true
@@ -218,8 +221,55 @@ export abstract class BaseFruit implements Fruit {
         }
     }
 
-    control(): void {
-        if (!this.controllable) return
-        this.slice()
+    /**
+     * Emit the successful event and cleanup
+     */
+    onItemSuccess() {
+        this.finished = true
+        this.fruitEvents.emit(FruitEvents.SUCCESS)
+        this.cleanup()
     }
+
+    /**
+     * Emit the fail event and cleanup
+     */
+    onItemFail() {
+        this.finished = true
+        this.fruitEvents.emit(FruitEvents.FAIL)
+        this.cleanup()
+    }
+
+    /**
+     * CLeanup the fruit
+     */
+    cleanup() {
+        this.controllable = false
+        this.scene.sprites.controllables.filter(r => r != this)
+        this.interactionPrompt.destroy()
+
+        /**
+         * CLeanup to do after the fade out tween
+         */
+        const cleanupAfterTween = () => {
+            this.mainBodySprites.destroy()
+            this.slashSprite.destroy()
+            for (let sprite of this.fruitChunkSprites) sprite.destroy()
+            for (let tween of this.tweens) {
+                if (tween != null) tween.destroy()
+            }
+        }
+
+        // Fade out tween
+        this.scene.tweens.add({
+            targets: [...this.fruitChunkSprites, this.mainBodySprites],
+            alpha: 0,
+            duration: END_FADE_DURATION,
+            onComplete: cleanupAfterTween
+        })
+    }
+
+    setControllable(controllable: boolean): void {
+        this.controllable = controllable
+    }
+
 }

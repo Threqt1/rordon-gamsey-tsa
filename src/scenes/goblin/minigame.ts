@@ -3,7 +3,7 @@ import { EndDialogue } from "../../dialogue/goblin/minigame"
 import { Player } from "../../sprites/game"
 import { GoblinObjective } from "../../sprites/goblin/minigame"
 import { GoblinNPC } from "../../sprites/goblin/minigame/npc"
-import { FruitsTexture } from "../../textures/elf/minigame"
+import { FruitsTexture } from "../../textures/elf"
 
 let BASE_MASK_DEPTH = 100
 let GAME_MASK_DEPTH = 101

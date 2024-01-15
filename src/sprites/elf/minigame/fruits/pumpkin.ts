@@ -1,7 +1,10 @@
-import { SlashesTexture } from "../../../../textures/elf/minigame";
-import { FruitsTexture } from "../../../../textures/elf/minigame/fruits";
-import { BaseFruit, FruitInformation, FruitInteraction } from "./fruit";
+import { SlashesTexture, FruitsTexture } from "../../../../textures/elf";
+import { BaseFruit, FruitInformation, FruitInteraction } from "../../";
+import { ElfMinigameScene } from "../../../../scenes/elf";
 
+/**
+ * A pumpkin fruit
+ */
 export class Pumpkin extends BaseFruit {
     private static pattern = [
         FruitInteraction.SliceUp,
@@ -23,7 +26,7 @@ export class Pumpkin extends BaseFruit {
         SlashesTexture.Animations.SideStraight,
     ]
 
-    constructor(scene: Phaser.Scene, x: number, y: number, info: FruitInformation) {
+    constructor(scene: ElfMinigameScene, x: number, y: number, info: FruitInformation) {
         super(scene, x, y, info, Pumpkin.pattern, Pumpkin.patternTextures, Pumpkin.slashes)
     }
 }
