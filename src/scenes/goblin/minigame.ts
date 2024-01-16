@@ -104,16 +104,16 @@ export class GoblinMinigameScene extends Phaser.Scene {
             this.launchNewLevel(this.currentLevelIndex)
         })
 
-        this.launchNewLevel(0)
+        this.launchNewLevel(0, false)
     }
 
     /**
      * Launch a new level of the Goblin Minigame
      * @param levelIndex The index of the level to start
+     * @param shouldFadeOut Whether to fade out at first or not
      */
-    launchNewLevel(levelIndex: number): void {
-        this.gameInProgress = false
-        fadeOut(this, () => {
+    launchNewLevel(levelIndex: number, shouldFadeOut?: boolean): void {
+        const afterFadeOutFunctionality = () => {
             if (this.scene.isActive(SceneEnums.SceneNames.GoblinMinigameLevel)) {
                 this.scene.stop(SceneEnums.SceneNames.GoblinMinigameLevel)
             }
@@ -128,7 +128,14 @@ export class GoblinMinigameScene extends Phaser.Scene {
                 this.gameInProgress = true
                 fadeIn(this)
             })
-        })
+        }
+
+        this.gameInProgress = false
+        if (shouldFadeOut) {
+            fadeOut(this, afterFadeOutFunctionality)
+        } else {
+            afterFadeOutFunctionality()
+        }
     }
 
     update() {
@@ -156,8 +163,8 @@ export class GoblinMinigameScene extends Phaser.Scene {
      * End the game
      */
     endGame(): void {
-        this.gameInProgress = true
-        this.sprites.setControllable(false)
+        this.gameInProgress = false
+        this.currentLevel.sprites.setControllable(false)
         for (let npc of this.currentLevel.npcs) {
             npc.stop()
         }

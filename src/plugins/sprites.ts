@@ -32,9 +32,11 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
     interactableZones!: Phaser.Physics.Arcade.Group
     controllablesEnabled!: boolean
     interactablesEnabled!: boolean
+    initialized!: boolean
 
     constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager) {
         super(scene, pluginManager, PluginEnums.PluginNames.SpritePlugin);
+        this.initialized = false
     }
 
     initialize(map?: Phaser.Tilemaps.Tilemap): void {
@@ -43,6 +45,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         eventEmitter.on("update", () => { this.update() })
         eventEmitter.once("destroy", () => { eventEmitter.off("update", this.update) })
         eventEmitter.on("shutdown", () => { this.cleanup() })
+        this.initialized = true
 
         this.reset(map)
     }
@@ -51,11 +54,13 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
      * Utility method to add interactables to the plugin
      */
     addInteractables(...interactables: Interactable[]): void {
+        if (!this.initialized) return
         this.interactables.push(...interactables)
         this.interactableZones.addMultiple(interactables.map(r => r.getInteractableZone()))
     }
 
     setControllable(isControllable: boolean): void {
+        if (!this.initialized) return
         this.controllablesEnabled = isControllable
         for (let controllable of this.controllables) {
             controllable.setControllable(isControllable)
@@ -63,6 +68,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
     }
 
     setInteractable(isInteractable: boolean): void {
+        if (!this.initialized) return
         this.interactablesEnabled = isInteractable
         for (let interactable of this.interactables) {
             interactable.setInteractable(isInteractable)
@@ -74,6 +80,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
      * @param layer 
      */
     makeCollisionsWithLayer(layer: Phaser.Tilemaps.TilemapLayer) {
+        if (!this.initialized) return
         // Make all physics bodies collide with each other
         this.scene!.physics.add.collider(this.physicsBodies, this.physicsBodies);
         // Make all physics bodies collide with the collisions layer
@@ -99,6 +106,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
      * Reset the data to its initial state
      */
     reset(map?: Phaser.Tilemaps.Tilemap): void {
+        if (!this.initialized) return
         // Store the map so sprites can reference it
         this.map = map
         this.interactables = []
@@ -114,6 +122,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
      * Clean up the plugin data
      */
     cleanup() {
+        if (!this.initialized) return
         this.controllables = []
         this.interactables = []
         this.physicsBodies.destroy(true, true)
