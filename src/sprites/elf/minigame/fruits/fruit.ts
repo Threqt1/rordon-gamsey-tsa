@@ -98,7 +98,7 @@ export abstract class ElfMinigameBaseFruit implements ElfMinigameFruit {
     slashSprite: Phaser.Physics.Arcade.Sprite
     fruitChunkSprites: Phaser.Physics.Arcade.Sprite[]
 
-    colorMatrix: Phaser.FX.ColorMatrix
+    //colorMatrix: Phaser.FX.ColorMatrix
     tweens: Phaser.Tweens.Tween[]
 
     interactionPrompt: Phaser.GameObjects.Sprite
@@ -114,7 +114,7 @@ export abstract class ElfMinigameBaseFruit implements ElfMinigameFruit {
         this.started = false;
         this.finished = false;
         this.mainBodySprites = scene.physics.add.sprite(x, y, FruitsTexture.TextureKey, this.sliceTextures[0][0]).setDepth(info.spriteDepth).setVisible(false)
-        this.colorMatrix = this.mainBodySprites.postFX!.addColorMatrix()
+        //this.colorMatrix = this.mainBodySprites.postFX!.addColorMatrix()
         this.fruitChunkSprites = []
         this.slashSprite = scene.physics.add.sprite(x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(SLASH_SCALE)
         this.fruitEvents = new Phaser.Events.EventEmitter()
@@ -180,7 +180,7 @@ export abstract class ElfMinigameBaseFruit implements ElfMinigameFruit {
         // Get the current textures, creatte the sprite, and update its post FX
         let newTextures = this.sliceTextures[this.currentPatternLocation]
         let newChunk = this.scene.physics.add.sprite(this.mainBodySprites.x, this.mainBodySprites.y, FruitsTexture.TextureKey, newTextures[1]).setDepth(this.mainBodySprites.depth)
-        newChunk.postFX!.addColorMatrix().grayscale(0.6)
+        //newChunk.postFX!.addColorMatrix().grayscale(0.6)
 
         // Launch the chunk perpendicular to the main body at the same rotational velocity
         let vector = new Phaser.Math.Vector2(0, 1).rotate(this.mainBodySprites.rotation - Phaser.Math.DegToRad(90)).scale(CHUNK_SPEED)
