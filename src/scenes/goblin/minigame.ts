@@ -112,7 +112,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
      * @param levelIndex The index of the level to start
      * @param shouldFadeOut Whether to fade out at first or not
      */
-    launchNewLevel(levelIndex: number, shouldFadeOut?: boolean): void {
+    launchNewLevel(levelIndex: number, shouldFadeOut: boolean = true): void {
         const afterFadeOutFunctionality = () => {
             if (this.scene.isActive(SceneEnums.SceneNames.GoblinMinigameLevel)) {
                 this.scene.stop(SceneEnums.SceneNames.GoblinMinigameLevel)
