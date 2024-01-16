@@ -1,6 +1,6 @@
 import { ElfMinigameNPC, ElfMinigamePlayer, ElfMinigameFruit, ElfMinigameApple, ElfMinigamePumpkin, ElfMinigameFruitType, ElfMinigameFruitEvents, ElfMinigameFruitInformation } from "../../sprites/elf"
 import { fadeOut, fadeSceneTransition, getGUIScene, loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums } from "..";
-import { SlashesTexture, ElvesTexture, FruitsTexture, TorchesTexture } from "../../textures/elf";
+import { TorchesTexture } from "../../textures/elf";
 import { ElfMinigameEndDialogue } from "../../dialogue/elf";
 
 enum ElfMinigameEvents {
@@ -67,21 +67,7 @@ export class ElfMinigameScene extends Phaser.Scene {
         super(SceneEnums.SceneNames.ElfMinigame)
     }
 
-    preload() {
-        SlashesTexture.preload(this)
-        ElvesTexture.preload(this)
-        FruitsTexture.preload(this)
-        TorchesTexture.preload(this)
-    }
-
     create() {
-        /* TEXTURE LOADING */
-        SlashesTexture.load(this)
-        ElvesTexture.load(this)
-        FruitsTexture.load(this)
-        TorchesTexture.load(this)
-
-
         /* MAP LOADING */
         let { map, playerSpriteDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.ElfMinigame)
         this.markers = objects as ElfMinigameMarkers

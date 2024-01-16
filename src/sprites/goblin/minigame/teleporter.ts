@@ -1,11 +1,13 @@
 import { SceneEnums, fadeSceneTransition, getGUIScene } from "../../../scenes";
-import { PlayerTexture } from "../../../textures";
 import { GoblinHubTeleporterDialogue } from "../../../dialogue/goblin";
 import { BaseNPC } from "../..";
+import { GoblinTexture } from "../../../textures/goblin";
 
 export class GoblinMinigameTeleporterNPC extends BaseNPC {
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, PlayerTexture.TextureKey, 50, undefined, PlayerTexture.Animations.IdleFront)
+        super(scene, x, y, GoblinTexture.TextureKey, 50, undefined, GoblinTexture.Animations.IdleFront);
+
+        GoblinTexture.configureGoblinPhysicsBody(this.sprite.body as Phaser.Physics.Arcade.Body)
     }
 
     onInteract(): void {

@@ -1,11 +1,11 @@
 import { BaseNPC } from "../..";
 import { SceneEnums, fadeSceneTransition, getGUIScene } from "../../../scenes";
-import { PlayerTexture } from "../../../textures";
 import { ElfHubTeleporterDialogue } from "../../../dialogue/elf";
+import { ElfTexture } from "../../../textures/elf";
 
 export class ElfMinigameTeleporterNPC extends BaseNPC {
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, PlayerTexture.TextureKey, 50, undefined, PlayerTexture.Animations.IdleFront)
+        super(scene, x, y, ElfTexture.TextureKey, 50, undefined, ElfTexture.Animations.IdleFront)
     }
 
     onInteract(): void {

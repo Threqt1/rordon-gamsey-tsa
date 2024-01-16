@@ -1,6 +1,6 @@
 import { Direction } from "../..";
 import { GoblinMinigameState, GoblinMinigameScene, GoblinMinigameEvents } from "../../../scenes/goblin";
-import { PlayerTexture } from "../../../textures";
+import { GoblinTexture } from "../../../textures/goblin";
 
 const BOUNDING_BOX_DIMENSION = 60
 const RAY_CONE_DEG = 60
@@ -32,7 +32,7 @@ export class GoblinMinigameNPC {
 
     constructor(scene: GoblinMinigameScene, pathPoints: Phaser.Math.Vector2[], x: number, y: number) {
         this.scene = scene
-        this.sprite = scene.add.follower(new Phaser.Curves.Path(), x, y, PlayerTexture.TextureKey);
+        this.sprite = scene.add.follower(new Phaser.Curves.Path(), x, y, GoblinTexture.TextureKey);
         this.speed = NPC_SPEED
         this.pathPoints = pathPoints
         this.currentPathIndex = 0
@@ -64,9 +64,11 @@ export class GoblinMinigameNPC {
         this.alertedTween = scene.tweens.add(alertedTweenInfo)
 
         scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY);
-        (this.sprite.body as Phaser.Physics.Arcade.Body).pushable = false
+        let body = this.sprite.body as Phaser.Physics.Arcade.Body
+        body.pushable = false
+        GoblinTexture.configureGoblinPhysicsBody(body)
 
-        this.sprite.play(PlayerTexture.Animations.IdleFront, true);
+        this.sprite.play(GoblinTexture.Animations.IdleFront, true);
     }
 
     /**
@@ -202,18 +204,16 @@ export class GoblinMinigameNPC {
     playIdleAnimation() {
         switch (this.direction) {
             case Direction.UP:
-                this.sprite.play(PlayerTexture.Animations.IdleBack, true);
+                this.sprite.play(GoblinTexture.Animations.IdleBack, true);
                 break;
             case Direction.RIGHT:
-                this.sprite.setFlipX(false)
-                this.sprite.play(PlayerTexture.Animations.IdleSide, true);
+                this.sprite.play(GoblinTexture.Animations.IdleRight, true);
                 break;
             case Direction.LEFT:
-                this.sprite.setFlipX(true)
-                this.sprite.play(PlayerTexture.Animations.IdleSide, true)
+                this.sprite.play(GoblinTexture.Animations.IdleLeft, true)
                 break;
             case Direction.DOWN:
-                this.sprite.play(PlayerTexture.Animations.IdleFront, true)
+                this.sprite.play(GoblinTexture.Animations.IdleFront, true)
                 break;
         }
     }
@@ -224,18 +224,16 @@ export class GoblinMinigameNPC {
     playWalkAnimation() {
         switch (this.direction) {
             case Direction.UP:
-                this.sprite.play(PlayerTexture.Animations.WalkBack, true);
+                this.sprite.play(GoblinTexture.Animations.WalkBack, true);
                 break;
             case Direction.RIGHT:
-                this.sprite.setFlipX(false)
-                this.sprite.play(PlayerTexture.Animations.WalkSide, true);
+                this.sprite.play(GoblinTexture.Animations.WalkRight, true);
                 break;
             case Direction.LEFT:
-                this.sprite.setFlipX(true)
-                this.sprite.play(PlayerTexture.Animations.WalkSide, true)
+                this.sprite.play(GoblinTexture.Animations.WalkLeft, true)
                 break;
             case Direction.DOWN:
-                this.sprite.play(PlayerTexture.Animations.WalkFront, true)
+                this.sprite.play(GoblinTexture.Animations.WalkFront, true)
                 break;
         }
     }
@@ -247,28 +245,7 @@ export class GoblinMinigameNPC {
         // Make the bounding box move with the sprite
         this.boundingBox.setPosition(this.sprite.x, this.sprite.y)
 
-        // Calculate x and y offsets to place the light in front
-        // of the npc sprite not inside of it
-        let xOffset, yOffset;
-        if (this.direction === Direction.LEFT) {
-            xOffset = -1
-        } else if (this.direction === Direction.RIGHT) {
-            xOffset = 1
-        } else {
-            xOffset = 0
-        }
-
-        if (this.direction === Direction.UP) {
-            yOffset = -1
-        } else if (this.direction === Direction.DOWN) {
-            yOffset = 1
-        } else {
-            yOffset = 0
-        }
-
-        let xOrigin = this.sprite.x + (this.sprite.displayWidth / 2 * xOffset)
-        let yOrigin = this.sprite.y + (this.sprite.displayHeight / 2 * yOffset)
-        this.ray.setOrigin(xOrigin, yOrigin)
+        this.ray.setOrigin(this.sprite.x, this.sprite.y)
 
         this.ray.castCone()
 

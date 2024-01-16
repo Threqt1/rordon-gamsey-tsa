@@ -2,7 +2,6 @@ import { PointObject, SceneEnums, fadeOut, fadeSceneTransition, getGUIScene, loa
 import { GoblinMinigameEndDialogue } from "../../dialogue/goblin"
 import { Player } from "../../sprites/game"
 import { GoblinMinigameObjective, GoblinMinigameNPC } from "../../sprites/goblin"
-import { FruitsTexture } from "../../textures/elf"
 
 let BASE_MASK_DEPTH = 100
 let NPC_LIGHT_MASK_DEPTH = 101
@@ -52,10 +51,6 @@ export class GoblinMinigameScene extends Phaser.Scene {
         super(SceneEnums.SceneNames.GoblinMinigame)
     }
 
-    preload() {
-        FruitsTexture.preload(this)
-    }
-
     /**
      * Configure a given raycaster
      * @param raycaster The raycaster to configure
@@ -67,9 +62,6 @@ export class GoblinMinigameScene extends Phaser.Scene {
     }
 
     create() {
-        /* TEXTURE LOADING */
-        FruitsTexture.load(this)
-
         /* MAP LOADING */
         let { collisionsLayer, map, playerSpriteDepth: playerDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame)
         const markers: GoblinMinigameObjects = objects as GoblinMinigameObjects
@@ -211,7 +203,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
             this.scene.stop()
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
             getGUIScene(this).dialogue.start(this, GoblinMinigameEndDialogue.Dialogue, dialogueEventEmitter, () => {
-                fadeSceneTransition(this, SceneEnums.SceneNames.GUI)
+                fadeSceneTransition(this, SceneEnums.SceneNames.Menu)
             })
         })
     }

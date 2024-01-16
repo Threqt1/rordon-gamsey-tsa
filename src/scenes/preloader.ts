@@ -1,5 +1,7 @@
 import { DialogueTexture, KeyboardTexture, PlayerTexture } from "../textures";
 import { pct, preloadTilemap, SceneEnums } from ".";
+import { SlashesTexture, ElfTexture, FruitsTexture, TorchesTexture } from "../textures/elf";
+import { GoblinTexture } from "../textures/goblin";
 
 /**
  * Preloads necessary assets before running the game
@@ -30,6 +32,11 @@ export class PreloaderScene extends Phaser.Scene {
         PlayerTexture.preload(this)
         KeyboardTexture.preload(this)
         DialogueTexture.preload(this)
+        SlashesTexture.preload(this)
+        ElfTexture.preload(this)
+        FruitsTexture.preload(this)
+        TorchesTexture.preload(this)
+        GoblinTexture.preload(this)
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
 
@@ -52,6 +59,11 @@ export class PreloaderScene extends Phaser.Scene {
         PlayerTexture.load(this)
         KeyboardTexture.load(this)
         DialogueTexture.load(this)
+        SlashesTexture.load(this)
+        ElfTexture.load(this)
+        FruitsTexture.load(this)
+        TorchesTexture.load(this)
+        GoblinTexture.load(this)
 
         this.scene.launch(SceneEnums.SceneNames.GUI)
         this.scene.start(SceneEnums.SceneNames.Menu)
