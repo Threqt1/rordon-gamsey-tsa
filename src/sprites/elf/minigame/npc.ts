@@ -6,6 +6,6 @@ export class ElfMinigameNPC {
     constructor(scene: Phaser.Scene, x: number, y: number) {
         this.sprite = scene.add.sprite(x, y, ElfTexture.TextureKey)
 
-        this.sprite.anims.play(ElfTexture.Animations.IdleFront, true);
+        this.sprite.anims.play(ElfTexture.Animations.IdleSide, true);
     }
 }
