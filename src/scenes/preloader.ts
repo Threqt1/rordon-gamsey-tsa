@@ -68,6 +68,6 @@ export class PreloaderScene extends Phaser.Scene {
         GoblinTexture.load(this)
 
         this.scene.launch(SceneEnums.SceneNames.GUI)
-        this.scene.start(SceneEnums.SceneNames.GoblinMinigame)
+        this.scene.start(SceneEnums.SceneNames.Menu)
     }
 }
