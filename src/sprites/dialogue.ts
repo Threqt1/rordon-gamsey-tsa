@@ -89,7 +89,6 @@ export class BaseDialogue implements Controllable {
      * Handle input while the state is on options
      */
     handleOptionsInput(): void {
-        this.input.input.resetKeys()
         if (this.input.checkIfKeyDown(DialogueInteractions.OPTION_1)) {
             this.dialogueWalker.chooseOption(0)
         } else if (this.input.checkIfKeyDown(DialogueInteractions.OPTION_2)) {

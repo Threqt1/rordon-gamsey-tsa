@@ -105,7 +105,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
         }
 
         this.sprites.controllables.push(this.player)
-        this.sprites.interactables.push(objective)
+        this.sprites.addInteractables(objective)
         this.sprites.interactingBodies.add(this.player.sprite)
         this.sprites.physicsBodies.addMultiple([this.player.sprite, objective.sprite, ...this.npcs.map(r => r.sprite)])
         this.sprites.makeCollisionsWithLayer(collisionsLayer)
@@ -203,7 +203,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
      */
     endGame(): void {
         this.gameEnded = true
-        this.sprites.controllablesEnabled = false
+        this.sprites.setControllable(false)
         for (let npc of this.npcs) {
             npc.stop()
         }

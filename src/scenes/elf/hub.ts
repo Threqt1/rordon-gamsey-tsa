@@ -16,7 +16,7 @@ export class ElfHubScene extends Scene {
         let npc1 = new NPC(this, 100, 150)
 
         this.sprites.controllables.push(player)
-        this.sprites.interactables.push(npc1)
+        this.sprites.addInteractables(npc1)
         this.sprites.physicsBodies.addMultiple([player.sprite, npc1.sprite])
         this.sprites.interactingBodies.add(player.sprite)
         this.sprites.physicsBodies.setDepth(playerDepth)

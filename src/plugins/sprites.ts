@@ -64,12 +64,14 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
     }
 
     setControllable(isControllable: boolean): void {
+        this.controllablesEnabled = isControllable
         for (let controllable of this.controllables) {
             controllable.setControllable(isControllable)
         }
     }
 
     setInteractable(isInteractable: boolean): void {
+        this.interactablesEnabled = isInteractable
         for (let interactable of this.interactables) {
             interactable.setInteractable(isInteractable)
         }
@@ -94,7 +96,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
                 interactable.interact()
             }
         }
-        if (this.controllables) {
+        if (this.controllablesEnabled) {
             for (let controllable of this.controllables) {
                 controllable.control();
             }

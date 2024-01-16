@@ -1,5 +1,5 @@
 import { ElfMinigameNPC, ElfMinigamePlayer, ElfMinigameFruit, ElfMinigameApple, ElfMinigamePumpkin, ElfMinigameFruitType, ElfMinigameFruitEvents, ElfMinigameFruitInformation } from "../../sprites/elf"
-import { fadeIn, fadeSceneTransition, getGUIScene, loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums } from "..";
+import { fadeIn, fadeOut, fadeSceneTransition, getGUIScene, loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums } from "..";
 import { SlashesTexture, ElvesTexture, FruitsTexture, TorchesTexture } from "../../textures/elf";
 import { ElfMinigameEndDialogue } from "../../dialogue/elf";
 
@@ -170,7 +170,7 @@ export class ElfMinigameScene extends Phaser.Scene {
         // Store level-specific tweens
         let tweens: Phaser.Tweens.Tween[] = []
         // Clone level color matrices to include fruits' temporary color matrices
-        let colorMatrices = [...this.colorMatrices]
+        let localColorMatrices = [...this.colorMatrices]
         let fruitObjects: ElfMinigameFruit[] = []
 
         // How far each fruit should be spaced apart on the Y-axis
@@ -214,7 +214,7 @@ export class ElfMinigameScene extends Phaser.Scene {
             })
 
             tweens.push(...fruit.tweens)
-            colorMatrices.push(fruit.colorMatrix)
+            localColorMatrices.push(fruit.colorMatrix)
             fruitObjects.push(fruit)
         }
 
@@ -233,14 +233,14 @@ export class ElfMinigameScene extends Phaser.Scene {
             // Delay the time transition appropriately and start the first fruit after
             // the transition is done
             this.time.delayedCall(MINIGAME_START_TIME - MINIGAME_FADE_DURATION, () => {
-                this.focusTransition(true, tweens, colorMatrices, () => {
+                this.focusTransition(true, tweens, localColorMatrices, () => {
                     fruitObjects[0].enable()
                 })
             })
 
             // Once the game is done, transition again and start the next level
             this.gameEvents.once(ElfMinigameEvents.DONE, () => {
-                this.focusTransition(false, [], colorMatrices, () => {
+                this.focusTransition(false, [], this.colorMatrices, () => {
                     this.time.delayedCall(MINIGAME_LEVEL_COOLDOWN, () => {
                         this.startNextLevel()
                     })
@@ -307,7 +307,7 @@ export class ElfMinigameScene extends Phaser.Scene {
      */
     endGame(): void {
         // Fade in, run dialogue, switch scenes
-        fadeIn(this, () => {
+        fadeOut(this, () => {
             this.gameEnded = true
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
             getGUIScene(this).dialogue.start(this, ElfMinigameEndDialogue.Dialogue, dialogueEventEmitter, () => {

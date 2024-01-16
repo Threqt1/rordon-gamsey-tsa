@@ -21,7 +21,7 @@ export class GameScene extends Scene {
         let npc2 = new GoblinHubTeleporterNPC(this, 190, 150)
 
         this.sprites.controllables.push(player)
-        this.sprites.interactables.push(npc1, npc2)
+        this.sprites.addInteractables(npc1, npc2)
         this.sprites.physicsBodies.addMultiple([player.sprite, npc1.sprite, npc2.sprite])
         this.sprites.interactingBodies.add(player.sprite)
 

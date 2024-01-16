@@ -54,7 +54,7 @@ export class ElfHubTeleporterNPC implements Interactable {
                 this.interactionPrompt.setVisible(false)
                 break;
         }
-        if (this.interactable && this.input.checkIfKeyDown(Interaction.INTERACT)) {
+        if (this.interactable && this.input.checkIfKeyDown(Interaction.INTERACT) && this.interactionPrompt.visible) {
             this.interactable = false
             this.input.input.resetKeys()
             this.interactionPrompt.setVisible(false)
