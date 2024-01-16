@@ -1,5 +1,5 @@
 import { GameObjects } from "phaser";
-import { Zone, checkIfInZone, BaseInput, Keybinds } from ".";
+import { isInsideZone, BaseInput, Keybinds } from ".";
 import { Interactable } from "../plugins/sprites";
 import { KeyboardTexture } from "../textures/keyboard";
 
@@ -60,15 +60,7 @@ export abstract class BaseNPC implements Interactable {
 
     interact() {
         if (!this.interactable) return
-        let inZone = checkIfInZone(this.zone)
-        switch (inZone) {
-            case Zone.IN:
-                this.interactionPrompt.setVisible(true)
-                break;
-            case Zone.OUT:
-                this.interactionPrompt.setVisible(false)
-                break;
-        }
+        this.interactionPrompt.setVisible(isInsideZone(this.zone))
         if (this.interactable && this.input.checkIfKeyDown(Interaction.INTERACT) && this.interactionPrompt.visible) {
             this.input.input.resetKeys()
             this.interactionPrompt.setVisible(false)

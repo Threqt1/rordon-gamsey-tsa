@@ -11,9 +11,6 @@ const NPC_SPEED = 20
 const LIGHT_COLOR = 0xffffff
 const LIGHT_OPACITY = 0.3
 
-/**
- * A NPC in the Goblin game
- */
 export class GoblinMinigameNPC {
     scene: GoblinMinigameScene
     sprite: Phaser.GameObjects.PathFollower

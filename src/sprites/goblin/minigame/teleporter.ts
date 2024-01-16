@@ -3,9 +3,6 @@ import { PlayerTexture } from "../../../textures";
 import { GoblinHubTeleporterDialogue } from "../../../dialogue/goblin";
 import { BaseNPC } from "../..";
 
-/**
- * The NPC that teleports you to the Goblin Minigame
- */
 export class GoblinMinigameTeleporterNPC extends BaseNPC {
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, PlayerTexture.TextureKey, 50, undefined, PlayerTexture.Animations.IdleFront)

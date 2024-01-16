@@ -2,9 +2,6 @@ import { SlashesTexture, FruitsTexture } from "../../../../textures/elf";
 import { ElfMinigameBaseFruit, ElfMinigameFruitInformation, ElfMinigameFruitInteraction } from "./fruit";
 import { ElfMinigameScene } from "../../../../scenes/elf";
 
-/**
- * An apple fruit
- */
 export class ElfMinigameApple extends ElfMinigameBaseFruit {
     private static pattern = [ElfMinigameFruitInteraction.SliceUp, ElfMinigameFruitInteraction.SliceDown]
     private static patternTextures: [string, string][] = [

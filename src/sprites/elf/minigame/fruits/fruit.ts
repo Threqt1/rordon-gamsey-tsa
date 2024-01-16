@@ -4,9 +4,6 @@ import { KeyboardTexture } from "../../../../textures"
 import { SlashesTexture, FruitsTexture } from "../../../../textures/elf"
 import { BaseInput, Keybinds } from "../../../input"
 
-/**
- * Represents all possible types of fruit
- */
 export enum ElfMinigameFruitType {
     APPLE,
     PUMPKIN,
@@ -33,17 +30,11 @@ export type ElfMinigameFruitInformation = {
     lifetime: number
 }
 
-/**
- * Represents all possible fruit event emiiter events
- */
 export enum ElfMinigameFruitEvents {
     SUCCESS = "success",
     FAIL = "fail"
 }
 
-/**
- * Represents all possible fruit interactions
- */
 export enum ElfMinigameFruitInteraction {
     SliceUp,
     SliceDown,
@@ -51,9 +42,6 @@ export enum ElfMinigameFruitInteraction {
     SliceRight
 }
 
-/**
- * Bind interactions to keybinds
- */
 export const ElfMinigameFruitInteractionKeybinds: Keybinds = {
     [ElfMinigameFruitInteraction.SliceUp]: "W",
     [ElfMinigameFruitInteraction.SliceDown]: "S",
@@ -78,9 +66,6 @@ const CHUNK_SPEED = 30
  */
 const SLASH_SCALE = 1;
 
-/**
- * An abstract fruit class, handles all logic behind the individual fruits
- */
 export abstract class ElfMinigameBaseFruit implements ElfMinigameFruit {
     slicePattern: ElfMinigameFruitInteraction[]
     sliceTextures: [string, string][]
