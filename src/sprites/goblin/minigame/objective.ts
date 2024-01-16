@@ -1,4 +1,3 @@
-import { GameObjects } from "phaser"
 import { Interactable } from "../../../plugins"
 import { FruitsTexture } from "../../../textures/elf"
 import { KeyboardTexture } from "../../../textures"
@@ -9,7 +8,10 @@ enum Interaction {
     INTERACT
 }
 
-export class GoblinObjective implements Interactable {
+/**
+ * The objective for the goblin game
+ */
+export class GoblinMinigameObjective implements Interactable {
     static keybinds: Keybinds = {
         [Interaction.INTERACT]:
             "E",
@@ -26,7 +28,7 @@ export class GoblinObjective implements Interactable {
         this.sprite = scene.physics.add.sprite(x, y, FruitsTexture.TextureKey, FruitsTexture.Frames.Apple.Base)
         this.sprite.setPushable(false)
 
-        this.input = new BaseInput(scene, GoblinObjective.keybinds)
+        this.input = new BaseInput(scene, GoblinMinigameObjective.keybinds)
 
         this.interactable = true
         this.interactionPrompt = this.scene.add.sprite(this.sprite.x, this.sprite.y + this.sprite.displayOriginY, KeyboardTexture.TextureKey, KeyboardTexture.KeyPictures["W"]).setDepth(100).setVisible(false).setScale(0.3)
@@ -35,7 +37,7 @@ export class GoblinObjective implements Interactable {
         this.interactionZone = this.scene.add.zone(this.sprite.x, this.sprite.y, 50, 50)
         this.scene.physics.world.enable(this.interactionZone, Phaser.Physics.Arcade.DYNAMIC_BODY);
     }
-    getInteractableZone(): GameObjects.Zone {
+    getInteractableZone(): Phaser.GameObjects.Zone {
         return this.interactionZone
     }
     setInteractable(interactable: boolean): void {

@@ -1,49 +1,59 @@
 import { Direction } from "../..";
-import { GameState, GoblinMinigameScene } from "../../../scenes/goblin";
+import { GoblinMinigameState, GoblinMinigameScene, GoblinMinigameEvents } from "../../../scenes/goblin";
 import { PlayerTexture } from "../../../textures";
 
-const FOV = 60
+const BOUNDING_BOX_DIMENSION = 60
+const RAY_CONE_DEG = 60
 const SWEEPING_DURATION = 750 * 2
 const SWEEPING_PAUSE = 500
 const SWEEPING_ANGLE = 15
+const NPC_SPEED = 20
+const LIGHT_COLOR = 0xffffff
+const LIGHT_OPACITY = 0.3
 
-export class GoblinNPC {
+/**
+ * A NPC in the Goblin game
+ */
+export class GoblinMinigameNPC {
     scene: GoblinMinigameScene
     sprite: Phaser.GameObjects.PathFollower
     speed: number
-    endPause: number
-    fullPath: Phaser.Math.Vector2[]
-    currentPathPosition: number
+    pathPoints: Phaser.Math.Vector2[]
+    currentPathIndex: number
+    /**
+     * The box that limits raycasting to a certain distance around the player
+     */
+    boundingBox: Phaser.GameObjects.Rectangle
     ray: Raycaster.Ray
-    litAreaGraphics: Phaser.GameObjects.Graphics
-    direction!: Direction
+    direction: Direction
     stopped: boolean
-    fov: Phaser.GameObjects.Rectangle
-    state: GameState
+    /**
+     * Tween that animates cones when the game state is
+     * alerted
+     */
     alertedTween: Phaser.Tweens.Tween
 
-    constructor(scene: GoblinMinigameScene, points: Phaser.Math.Vector2[], x: number, y: number, litAreaGraphics: Phaser.GameObjects.Graphics, createRaycasterSettings: (arg0: Raycaster) => void) {
+    constructor(scene: GoblinMinigameScene, pathPoints: Phaser.Math.Vector2[], x: number, y: number) {
         this.scene = scene
         this.sprite = scene.add.follower(new Phaser.Curves.Path(), x, y, PlayerTexture.TextureKey);
-        scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY);
-        (this.sprite.body as Phaser.Physics.Arcade.Body).pushable = false
-        this.fullPath = points
-        this.speed = 20
-        this.endPause = 1000
-        this.currentPathPosition = 0
-        this.sprite.play(PlayerTexture.Animations.IdleFront, true);
-        this.fov = scene.add.rectangle(x, y, FOV * 2, FOV * 2)
+        this.speed = NPC_SPEED
+        this.pathPoints = pathPoints
+        this.currentPathIndex = 0
+
+        this.boundingBox = scene.add.rectangle(x, y, BOUNDING_BOX_DIMENSION * 2, BOUNDING_BOX_DIMENSION * 2)
         let raycaster = scene.raycaster.createRaycaster()
-        createRaycasterSettings(raycaster)
-        raycaster.mapGameObjects(this.fov, true)
+        scene.createRaycasterSettings(raycaster)
+        raycaster.mapGameObjects(this.boundingBox, true)
         this.ray = raycaster.createRay()
-        this.ray.setConeDeg(FOV)
+        this.ray.setConeDeg(RAY_CONE_DEG)
         this.ray.autoSlice = true;
         this.ray.enablePhysics();
         this.ray.setCollisionRange(1000);
-        this.litAreaGraphics = litAreaGraphics
+
+        this.direction = Direction.UP
         this.stopped = false
-        this.state = GameState.NORMAL
+        // Tweens the angle of the ray from 0 to 360, looping as well
+        // Starts off paused
         let alertedTweenInfo: Phaser.Types.Tweens.TweenBuilderConfig = {
             targets: { value: 0 },
             value: 360,
@@ -55,26 +65,38 @@ export class GoblinNPC {
             paused: true
         }
         this.alertedTween = scene.tweens.add(alertedTweenInfo)
+
+        scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY);
+        (this.sprite.body as Phaser.Physics.Arcade.Body).pushable = false
+
+        this.sprite.play(PlayerTexture.Animations.IdleFront, true);
     }
 
-    start() {
-        this.startNextSegment()
+    /**
+     * Starts the NPC
+     */
+    start(): void {
+        this.startNextPathSegment()
     }
 
-    stop() {
-        this.stopped = true
-        this.alertedTween.destroy()
-        this.sprite.stopFollow()
-    }
-
-    startNextSegment() {
+    /**
+     * Start the next segment of the path
+     */
+    startNextPathSegment(): void {
         if (this.stopped) return
-        let nextPathPosition = this.currentPathPosition + 1 >= this.fullPath.length ? 0 : this.currentPathPosition + 1
-        let currentSegment = new Phaser.Curves.Line(this.fullPath[this.currentPathPosition], this.fullPath[nextPathPosition])
-        let currentPath = new Phaser.Curves.Path(this.fullPath[this.currentPathPosition].x, this.fullPath[this.currentPathPosition].y).lineTo(this.fullPath[nextPathPosition])
+        let nextPathIndex = this.currentPathIndex + 1
+        if (nextPathIndex >= this.pathPoints.length) {
+            nextPathIndex = 0
+        }
+        // Create a new path, starting at the current position and ending in the next position
+        let currentPath = new Phaser.Curves.Path(this.pathPoints[this.currentPathIndex].x, this.pathPoints[this.currentPathIndex].y)
+            .lineTo(this.pathPoints[nextPathIndex])
+        // Create a line using the starting and ending points of the path
+        let currentSegment = new Phaser.Curves.Line(this.pathPoints[this.currentPathIndex], this.pathPoints[nextPathIndex])
         this.direction = this.getCurrentDirection(currentSegment)
 
-        if (this.state === GameState.NORMAL) {
+        // Don't modify angles in alerted state because of the tween
+        if (this.scene.state === GoblinMinigameState.NORMAL) {
             switch (this.direction) {
                 case Direction.UP:
                     this.ray.setAngleDeg(-90)
@@ -93,35 +115,50 @@ export class GoblinNPC {
 
         this.sprite.setPath(currentPath)
         this.sprite.startFollow({
+            // Make duration based on speed
             duration: currentSegment.getLength() / this.speed * 1000,
             onComplete: () => {
-                this.currentPathPosition = nextPathPosition
-                if (this.state === GameState.NORMAL) {
-                    this.midSegmentPause()
+                this.currentPathIndex = nextPathIndex
+                // If the game's on normal state, have the pause and sweep behavior
+                if (this.scene.state === GoblinMinigameState.NORMAL) {
+                    this.pauseAndSweep()
                 } else {
-                    this.startNextSegment()
+                    this.startNextPathSegment()
                 }
             }
         })
 
-        this.playWalkAnimation(this.direction)
+        this.playWalkAnimation()
     }
 
-    setState(state: GameState) {
-        this.state = state
-        if (this.state === GameState.NORMAL) {
-            this.speed /= 2;
-            this.alertedTween.pause()
+    /**
+     * Get the direction a line is facing
+     * @param line The line in question
+     * @returns The direction
+     */
+    getCurrentDirection(line: Phaser.Curves.Line): Direction {
+        if (line.p0.x === line.p1.x) {
+            if (line.p0.y > line.p1.y) {
+                return Direction.UP
+            } else {
+                return Direction.DOWN
+            }
         } else {
-            this.speed *= 2
-            this.alertedTween.resume()
+            if (line.p0.x > line.p1.x) {
+                return Direction.LEFT
+            } else {
+                return Direction.RIGHT
+            }
         }
     }
 
-    midSegmentPause() {
-        this.playIdleAnimation(this.direction)
+    /**
+     * Pause the NPC, sweeping the cone before resuming
+     */
+    pauseAndSweep(): void {
+        this.playIdleAnimation()
         let currentAngle = Phaser.Math.RadToDeg(this.ray.angle)
-        let upwardTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+        let sweepConeUpwardTween: Phaser.Types.Tweens.TweenBuilderConfig = {
             targets: { value: currentAngle },
             value: currentAngle - SWEEPING_ANGLE,
             duration: SWEEPING_DURATION / 2,
@@ -130,7 +167,7 @@ export class GoblinNPC {
             },
             yoyo: true
         }
-        let downwardTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+        let sweepConeDownwardTween: Phaser.Types.Tweens.TweenBuilderConfig = {
             targets: { value: currentAngle },
             value: currentAngle + SWEEPING_ANGLE,
             duration: SWEEPING_DURATION / 2,
@@ -140,17 +177,33 @@ export class GoblinNPC {
             yoyo: true
         }
         this.scene.tweens.chain({
-            tweens: [upwardTween, downwardTween],
+            tweens: [sweepConeUpwardTween, sweepConeDownwardTween],
             onComplete: () => {
                 this.scene.time.delayedCall(SWEEPING_PAUSE, () => {
-                    this.startNextSegment()
+                    this.startNextPathSegment()
                 })
             }
         })
     }
 
-    playIdleAnimation(direction: Direction) {
-        switch (direction) {
+    /**
+     * Read the current game state and update NPC accordingly
+     */
+    updateState() {
+        if (this.scene.state === GoblinMinigameState.NORMAL) {
+            this.speed = NPC_SPEED
+            this.alertedTween.pause()
+        } else {
+            this.speed = NPC_SPEED * 2
+            this.alertedTween.resume()
+        }
+    }
+
+    /**
+     * Play the correct idle animation based on direction
+     */
+    playIdleAnimation() {
+        switch (this.direction) {
             case Direction.UP:
                 this.sprite.play(PlayerTexture.Animations.IdleBack, true);
                 break;
@@ -168,8 +221,11 @@ export class GoblinNPC {
         }
     }
 
-    playWalkAnimation(direction: Direction) {
-        switch (direction) {
+    /**
+     * Play the correct walking animation based on direction
+     */
+    playWalkAnimation() {
+        switch (this.direction) {
             case Direction.UP:
                 this.sprite.play(PlayerTexture.Animations.WalkBack, true);
                 break;
@@ -187,25 +243,15 @@ export class GoblinNPC {
         }
     }
 
-    getCurrentDirection(line: Phaser.Curves.Line) {
-        if (line.p0.x === line.p1.x) {
-            if (line.p0.y > line.p1.y) {
-                return Direction.UP
-            } else {
-                return Direction.DOWN
-            }
-        } else {
-            if (line.p0.x > line.p1.x) {
-                return Direction.LEFT
-            } else {
-                return Direction.RIGHT
-            }
-        }
-    }
+    /**
+     * Raycast and update intersections/light accordingly
+     */
+    raycastAndUpdate(): void {
+        // Make the bounding box move with the sprite
+        this.boundingBox.setPosition(this.sprite.x, this.sprite.y)
 
-    drawLight(): void {
-        this.fov.setPosition(this.sprite.x, this.sprite.y)
-
+        // Calculate x and y offsets to place the light in front
+        // of the npc sprite not inside of it
         let xOffset, yOffset;
         if (this.direction === Direction.LEFT) {
             xOffset = -1
@@ -223,43 +269,46 @@ export class GoblinNPC {
             yOffset = 0
         }
 
-        this.ray.setOrigin(this.sprite.x + (this.sprite.displayWidth / 2 * xOffset), this.sprite.y + (this.sprite.displayHeight / 2 * yOffset))
+        let xOrigin = this.sprite.x + (this.sprite.displayWidth / 2 * xOffset)
+        let yOrigin = this.sprite.y + (this.sprite.displayHeight / 2 * yOffset)
+        this.ray.setOrigin(xOrigin, yOrigin)
 
-        if (this.state === GameState.NORMAL) {
-            this.ray.castCone()
+        this.ray.castCone()
 
-            for (let slice of this.ray.slicedIntersections) {
-                this.litAreaGraphics.fillStyle(0xffffff, 0.3).fillTriangleShape(slice)
-            }
+        for (let slice of this.ray.slicedIntersections) {
+            this.scene.npcVisibleArea.fillStyle(LIGHT_COLOR, LIGHT_OPACITY).fillTriangleShape(slice)
+        }
 
-            if (this.ray.overlap(this.scene.player.sprite).length > 0) {
-                this.scene.gameEvents.emit("found")
-            }
-        } else {
-            this.ray.castCone()
+        if (this.ray.overlap(this.scene.player.sprite).length > 0) {
+            this.scene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
+        }
 
-            if (this.ray.overlap(this.scene.player.sprite).length > 0) {
-                this.scene.gameEvents.emit("found")
-            }
-
-            for (let slice of this.ray.slicedIntersections) {
-                this.litAreaGraphics.fillStyle(0xffffff, 0.3).fillTriangleShape(slice)
-            }
-
+        // Do an additional cast with the cone rotated 180 degree to
+        // get the rotating cones effect if alerted
+        if (this.scene.state === GoblinMinigameState.ALERTED) {
             this.ray.setAngleDeg(Phaser.Math.RadToDeg(this.ray.angle) - 180)
 
             this.ray.castCone()
 
             if (this.ray.overlap(this.scene.player.sprite).length > 0) {
-                this.scene.gameEvents.emit("found")
+                this.scene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
             }
 
             for (let slice of this.ray.slicedIntersections) {
-                this.litAreaGraphics.fillStyle(0xffffff, 0.3).fillTriangleShape(slice)
+                this.scene.npcVisibleArea.fillStyle(LIGHT_COLOR, LIGHT_OPACITY).fillTriangleShape(slice)
             }
 
             this.ray.setAngleDeg(Phaser.Math.RadToDeg(this.ray.angle) + 180)
         }
 
+    }
+
+    /**
+     * Stop the NPC
+     */
+    stop(): void {
+        this.stopped = true
+        this.alertedTween.destroy()
+        this.sprite.stopFollow()
     }
 }

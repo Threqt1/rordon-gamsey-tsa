@@ -1,4 +1,4 @@
-import { NPC, Player, Fruit, Apple, Pumpkin, FruitType, FruitEvents, FruitInformation } from "../../sprites/elf"
+import { ElfMinigameNPC, ElfMinigamePlayer, ElfMinigameFruit, ElfMinigameApple, ElfMinigamePumpkin, ElfMinigameFruitType, ElfMinigameFruitEvents, ElfMinigameFruitInformation } from "../../sprites/elf"
 import { fadeIn, fadeSceneTransition, getGUIScene, loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums } from "..";
 import { SlashesTexture, ElvesTexture, FruitsTexture, TorchesTexture } from "../../textures/elf";
 import { ElfMinigameEndDialogue } from "../../dialogue/elf";
@@ -31,12 +31,12 @@ type ElfMinigameMarkers = {
 /**
  * What combination of fruits will be thrown every level
  */
-const LEVEL_LAYOUTS: FruitType[][] = [
-    [FruitType.APPLE],
-    [FruitType.PUMPKIN, FruitType.APPLE],
-    [FruitType.APPLE, FruitType.PUMPKIN, FruitType.APPLE],
-    [FruitType.PUMPKIN, FruitType.APPLE, FruitType.PUMPKIN],
-    [FruitType.PUMPKIN, FruitType.PUMPKIN, FruitType.APPLE, FruitType.PUMPKIN, FruitType.PUMPKIN]
+const LEVEL_LAYOUTS: ElfMinigameFruitType[][] = [
+    [ElfMinigameFruitType.APPLE],
+    [ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.APPLE],
+    [ElfMinigameFruitType.APPLE, ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.APPLE],
+    [ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.APPLE, ElfMinigameFruitType.PUMPKIN],
+    [ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.APPLE, ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.PUMPKIN]
 ]
 
 /**
@@ -108,20 +108,11 @@ export class ElfMinigameScene extends Phaser.Scene {
         this.sprites.initialize(map);
 
         /* SPRITES LOADING */
-        let player = new Player(this, this.markers.Player.x, this.markers.Player.y)
+        let player = new ElfMinigamePlayer(this, this.markers.Player.x, this.markers.Player.y)
         player.sprite.setDepth(playerSpriteDepth)
-        let npc = new NPC(this, this.markers.Elf.x, this.markers.Elf.y)
+
+        let npc = new ElfMinigameNPC(this, this.markers.Elf.x, this.markers.Elf.y)
         npc.sprite.setDepth(playerSpriteDepth)
-
-        /* CAMERA CONFIGURATION */
-        scaleAndConfigureCamera(this, map)
-
-        /* VARIABLE INITIALIZATION */
-        this.currentLevelIndex = -1
-        this.gameEnded = false
-        this.gameEvents = new Phaser.Events.EventEmitter()
-        this.playerSpriteDepth = playerSpriteDepth
-        this.colorMatrices = []
 
         let torch1 = this.add
             .sprite(this.markers.Torch1.x, this.markers.Torch1.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch1)
@@ -140,6 +131,16 @@ export class ElfMinigameScene extends Phaser.Scene {
             .setDepth(playerSpriteDepth)
 
         this.torches = [torch1, torch2, torch3, torch4, torch5]
+
+        /* CAMERA CONFIGURATION */
+        scaleAndConfigureCamera(this, map)
+
+        /* VARIABLE INITIALIZATION */
+        this.currentLevelIndex = -1
+        this.gameEnded = false
+        this.gameEvents = new Phaser.Events.EventEmitter()
+        this.playerSpriteDepth = playerSpriteDepth
+        this.colorMatrices = []
 
         this.colorMatrices.push(player.sprite.postFX!.addColorMatrix())
         this.colorMatrices.push(npc.sprite.postFX!.addColorMatrix())
@@ -170,7 +171,7 @@ export class ElfMinigameScene extends Phaser.Scene {
         let tweens: Phaser.Tweens.Tween[] = []
         // Clone level color matrices to include fruits' temporary color matrices
         let colorMatrices = [...this.colorMatrices]
-        let fruitObjects: Fruit[] = []
+        let fruitObjects: ElfMinigameFruit[] = []
 
         // How far each fruit should be spaced apart on the Y-axis
         let yIncrement = (this.markers.MaxY.y - this.markers.MinY.y) / (fruitsInLevel.length + 1)
@@ -201,10 +202,10 @@ export class ElfMinigameScene extends Phaser.Scene {
             let y = this.markers.MinY.y + yIncrement * (i + 1)
             let fruit = this.getFruitObject(fruitsInLevel[i], y, fruitInfo)
 
-            fruit.fruitEvents.once(FruitEvents.SUCCESS, () => {
+            fruit.fruitEvents.once(ElfMinigameFruitEvents.SUCCESS, () => {
                 progressFruits(i)
             })
-            fruit.fruitEvents.once(FruitEvents.FAIL, () => {
+            fruit.fruitEvents.once(ElfMinigameFruitEvents.FAIL, () => {
                 // Prevent double game endeds
                 if (!this.gameEnded) {
                     this.gameEnded = true
@@ -265,12 +266,12 @@ export class ElfMinigameScene extends Phaser.Scene {
      * @param info The fruit info
      * @returns The fruit object
      */
-    getFruitObject(fruit: FruitType, y: number, info: FruitInformation): Apple | Pumpkin {
+    getFruitObject(fruit: ElfMinigameFruitType, y: number, info: ElfMinigameFruitInformation): ElfMinigameApple | ElfMinigamePumpkin {
         switch (fruit) {
-            case FruitType.APPLE:
-                return new Apple(this, this.markers.StartX.x, y, info)
-            case FruitType.PUMPKIN:
-                return new Pumpkin(this, this.markers.StartX.x, y, info)
+            case ElfMinigameFruitType.APPLE:
+                return new ElfMinigameApple(this, this.markers.StartX.x, y, info)
+            case ElfMinigameFruitType.PUMPKIN:
+                return new ElfMinigamePumpkin(this, this.markers.StartX.x, y, info)
         }
     }
 

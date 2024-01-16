@@ -12,9 +12,9 @@ enum Interaction {
 }
 
 /**
- * The NPC that teleports you to the Elf Hub
+ * The NPC that teleports you to the Elf Minigame
  */
-export class ElfTeleporterNPC implements Interactable {
+export class ElfHubTeleporterNPC implements Interactable {
     /**
      * Bind Interactions to keys
      */
@@ -32,25 +32,15 @@ export class ElfTeleporterNPC implements Interactable {
     constructor(scene: Phaser.Scene, x: number, y: number) {
         this.sprite = scene.physics.add.sprite(x, y, PlayerTexture.TextureKey)
         this.scene = scene
-        this.input = new BaseInput(scene, ElfTeleporterNPC.keybinds)
-        this.sprite.setPushable(false)
-
+        this.input = new BaseInput(scene, ElfHubTeleporterNPC.keybinds)
         this.interactable = true
         this.interactionPrompt = this.scene.add.sprite(this.sprite.x, this.sprite.y + this.sprite.displayOriginY, KeyboardTexture.TextureKey, KeyboardTexture.KeyPictures["W"]).setDepth(100).setVisible(false).setScale(0.3)
-        this.interactionPrompt.setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight / 2)
-
         this.zone = this.scene.add.zone(this.sprite.x, this.sprite.y, 50, 50)
+
         this.scene.physics.world.enable(this.zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
-
+        this.sprite.setPushable(false)
+        this.interactionPrompt.setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight / 2)
         this.sprite.anims.play(PlayerTexture.Animations.IdleFront)
-    }
-
-    getInteractableZone(): Phaser.GameObjects.Zone {
-        return this.zone
-    }
-
-    setInteractable(interactable: boolean): void {
-        this.interactable = interactable
     }
 
     interact() {
@@ -74,5 +64,13 @@ export class ElfTeleporterNPC implements Interactable {
                 fadeSceneTransition(this.scene, SceneEnums.SceneNames.ElfMinigame)
             })
         }
+    }
+
+    getInteractableZone(): Phaser.GameObjects.Zone {
+        return this.zone
+    }
+
+    setInteractable(interactable: boolean): void {
+        this.interactable = interactable
     }
 }

@@ -1,17 +1,23 @@
-import { GameObjects } from "phaser";
-import { Zone, checkIfInZone } from "../../";
-import { Interactable } from "../../../plugins/sprites";
-import { GUIScene, SceneEnums, fadeSceneTransition } from "../../../scenes";
-import { KeyboardTexture } from "../../../textures/keyboard";
-import { PlayerTexture } from "../../../textures/player";
-import { BaseInput, Keybinds } from "../../input";
-import { TeleportDialogue } from "../../../dialogue/goblin";
+import { Zone, checkIfInZone, BaseInput, Keybinds } from "../../";
+import { Interactable } from "../../../plugins";
+import { SceneEnums, fadeSceneTransition, getGUIScene } from "../../../scenes";
+import { KeyboardTexture, PlayerTexture } from "../../../textures";
+import { GoblinHubTeleporterDialogue } from "../../../dialogue/goblin";
 
+/**
+ * Represents all possible interactions with the NPC
+ */
 enum Interaction {
     INTERACT
 }
 
-export class GoblinTeleporterNPC implements Interactable {
+/**
+ * The NPC that teleports you to the Goblin Minigame
+ */
+export class GoblinHubTeleporterNPC implements Interactable {
+    /**
+     * Bind Interactions to keys
+     */
     static keybinds: Keybinds = {
         [Interaction.INTERACT]:
             "E",
@@ -26,26 +32,15 @@ export class GoblinTeleporterNPC implements Interactable {
     constructor(scene: Phaser.Scene, x: number, y: number) {
         this.sprite = scene.physics.add.sprite(x, y, PlayerTexture.TextureKey)
         this.scene = scene
-        this.input = new BaseInput(scene, GoblinTeleporterNPC.keybinds)
-
-        this.sprite.setPushable(false)
-
+        this.input = new BaseInput(scene, GoblinHubTeleporterNPC.keybinds)
         this.interactable = true
         this.interactionPrompt = this.scene.add.sprite(this.sprite.x, this.sprite.y + this.sprite.displayOriginY, KeyboardTexture.TextureKey, KeyboardTexture.KeyPictures["W"]).setDepth(100).setVisible(false).setScale(0.3)
-        this.interactionPrompt.setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight / 2)
-
         this.zone = this.scene.add.zone(this.sprite.x, this.sprite.y, 50, 50)
+
         this.scene.physics.world.enable(this.zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
-
+        this.sprite.setPushable(false)
+        this.interactionPrompt.setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight / 2)
         this.sprite.anims.play(PlayerTexture.Animations.IdleFront)
-    }
-
-    getInteractableZone(): GameObjects.Zone {
-        return this.zone
-    }
-
-    setInteractable(interactable: boolean): void {
-        this.interactable = interactable
     }
 
     interact() {
@@ -60,13 +55,23 @@ export class GoblinTeleporterNPC implements Interactable {
                 break;
         }
         if (this.interactable && this.input.checkIfKeyDown(Interaction.INTERACT) && this.interactionPrompt.visible) {
+            this.interactable = false
             this.input.input.resetKeys()
             this.interactionPrompt.setVisible(false)
-            let dialogue = (this.scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene).dialogue
-            dialogue.start(this.scene, TeleportDialogue, () => {
-                this.interactable = false
+
+            let dialogueEventEmitter = new Phaser.Events.EventEmitter()
+            getGUIScene(this.scene).dialogue.start(this.scene, GoblinHubTeleporterDialogue.Dialogue, dialogueEventEmitter, () => {
                 fadeSceneTransition(this.scene, SceneEnums.SceneNames.GoblinMinigame)
             })
         }
     }
+
+    getInteractableZone(): Phaser.GameObjects.Zone {
+        return this.zone
+    }
+
+    setInteractable(interactable: boolean): void {
+        this.interactable = interactable
+    }
+
 }

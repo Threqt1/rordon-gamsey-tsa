@@ -1,6 +1,6 @@
 import { PlayerTexture } from "../../../textures/player";
 
-export class Player {
+export class ElfMinigamePlayer {
     sprite: Phaser.GameObjects.Sprite
 
     constructor(scene: Phaser.Scene, x: number, y: number) {

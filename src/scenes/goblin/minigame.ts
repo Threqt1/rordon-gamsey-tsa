@@ -1,34 +1,52 @@
 import { PointObject, SceneEnums, fadeOut, fadeSceneTransition, getGUIScene, loadTilemap, scaleAndConfigureCamera } from ".."
-import { EndDialogue } from "../../dialogue/goblin/minigame"
+import { GoblinMinigameEndDialogue } from "../../dialogue/goblin"
 import { Player } from "../../sprites/game"
-import { GoblinObjective } from "../../sprites/goblin/minigame"
-import { GoblinNPC } from "../../sprites/goblin/minigame/npc"
+import { GoblinMinigameObjective, GoblinMinigameNPC } from "../../sprites/goblin"
 import { FruitsTexture } from "../../textures/elf"
 
 let BASE_MASK_DEPTH = 100
-let GAME_MASK_DEPTH = 101
-let PLAYER_MASK_DEPTH = 102
+let NPC_LIGHT_MASK_DEPTH = 101
+let PLAYER_LIGHT_MASK_DEPTH = 102
 
 type GoblinMinigameObjects = {
     [key: string]: PointObject
 }
 
-export enum GameState {
+/**
+ * All possible events for the game
+ */
+export enum GoblinMinigameEvents {
+    ALERT = "alert",
+    CAUGHT = "caught"
+}
+
+/**
+ * All possible states of the game
+ */
+export enum GoblinMinigameState {
     NORMAL,
     ALERTED
 }
 
+/**
+ * Scene for the goblin minigame
+ */
 export class GoblinMinigameScene extends Phaser.Scene {
+    collisionsLayer!: Phaser.Tilemaps.TilemapLayer
     player!: Player
-    litAreaGraphics!: Phaser.GameObjects.Graphics
-    litAreaMask!: Phaser.Display.Masks.GeometryMask
-    playerAreaGraphics!: Phaser.GameObjects.Graphics
-    playerAreaMask!: Phaser.Display.Masks.GeometryMask
+    npcs!: GoblinMinigameNPC[]
+    /**
+     * Area visible to the player
+     */
+    playerVisibleArea!: Phaser.GameObjects.Graphics
+    /**
+     * Area visible to the NPCs
+     */
+    npcVisibleArea!: Phaser.GameObjects.Graphics
     playerRay!: Raycaster.Ray
-    npcs!: GoblinNPC[]
+    state!: GoblinMinigameState
     gameEnded!: boolean
     gameEvents!: Phaser.Events.EventEmitter
-    gameState!: GameState
 
     constructor() {
         super(SceneEnums.SceneNames.GoblinMinigame)
@@ -38,126 +56,160 @@ export class GoblinMinigameScene extends Phaser.Scene {
         FruitsTexture.preload(this)
     }
 
+    /**
+     * Configure a given raycaster
+     * @param raycaster The raycaster to configure
+     */
+    createRaycasterSettings(raycaster: Raycaster): void {
+        raycaster.mapGameObjects(this.collisionsLayer, false, {
+            collisionTiles: [41]
+        })
+    }
+
     create() {
+        /* TEXTURE LOADING */
         FruitsTexture.load(this)
 
-        let { collisionsLayer: collisions, map, playerSpriteDepth: playerDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame)
-
+        /* MAP LOADING */
+        let { collisionsLayer, map, playerSpriteDepth: playerDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame)
         const markers: GoblinMinigameObjects = objects as GoblinMinigameObjects
 
+        this.collisionsLayer = collisionsLayer
         this.sprites.initialize(map)
 
-        this.gameState = GameState.NORMAL
-
-        this.gameEvents = new Phaser.Events.EventEmitter()
-        this.gameEvents.on("mode", () => {
-            this.gameState = GameState.ALERTED
-            this.updateNPCs()
-        })
-        this.gameEvents.once("found", () => {
-            this.endGame()
-        })
-
-        const createRaycasterSettings = (raycaster: Raycaster) => {
-            raycaster.mapGameObjects(collisions, false, {
-                collisionTiles: [41]
-            })
-        }
-
-        let raycaster = this.raycaster.createRaycaster()
-        createRaycasterSettings(raycaster)
-        this.playerRay = raycaster.createRay()
-        this.playerRay.autoSlice = true
-
-        this.playerAreaGraphics = this.add.graphics().removeFromDisplayList()
-        this.playerAreaMask = new Phaser.Display.Masks.GeometryMask(this, this.playerAreaGraphics)
-        this.playerAreaMask.setInvertAlpha(true)
-        let playerAreaMaskInverse = new Phaser.Display.Masks.GeometryMask(this, this.playerAreaGraphics)
-        this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.45 } })
-            .setDepth(PLAYER_MASK_DEPTH)
-            .setMask(this.playerAreaMask)
-            .fillRect(0, 0, this.scale.canvas.width, this.scale.canvas.height)
-        this.litAreaGraphics = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.6 } })
-            .setDepth(GAME_MASK_DEPTH)
-            .setMask(playerAreaMaskInverse)
-            .fillRect(0, 0, this.scale.canvas.width, this.scale.canvas.height)
-        this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.65 } })
-            .setDepth(BASE_MASK_DEPTH)
-            .fillRect(0, 0, this.scale.canvas.width, this.scale.canvas.height)
-
+        /* SPRITES LOADING */
         this.player = new Player(this, 470, 155)
         this.player.sprite.setDepth(playerDepth)
 
-        let objective = new GoblinObjective(this, 100, 50)
+        let objective = new GoblinMinigameObjective(this, 100, 50)
         objective.sprite.setDepth(playerDepth)
-        objective.sprite.setMask(playerAreaMaskInverse)
 
+        this.npcs = []
         let npcMap: { [key: string]: Phaser.Math.Vector2[] } = {}
+        // Parse markers and assign each point to the appropriate NPC number in the map
         for (let [key, point] of Object.entries(markers)) {
+            // key format: path_{goblin_number}_{path_point_number}
             let splitKey = key.split("_")
             let npcNumber = splitKey[1]
             let pointNumber = parseInt(splitKey[2])
             if (!npcMap[npcNumber]) npcMap[npcNumber] = []
             npcMap[npcNumber][pointNumber] = new Phaser.Math.Vector2(point.x, point.y)
         }
-
-        this.npcs = []
-
+        // Parse the map, creating and initializing the NPC classes
         for (let points of Object.values(npcMap)) {
+            // Filter out bad parses
             points = points.filter(r => r !== undefined)
-            let npc = new GoblinNPC(this, points, points[0].x, points[0].y, this.litAreaGraphics, createRaycasterSettings)
+            let npc = new GoblinMinigameNPC(this, points, points[0].x, points[0].y)
             npc.sprite.setDepth(playerDepth)
             this.npcs.push(npc)
         }
 
-        this.sprites.addGameControllables(this.player)
-        this.sprites.addInteractables(objective)
-        this.sprites.addInteractingBodies(this.player.sprite)
-        this.sprites.addPhysicsBodies(this.player.sprite, objective.sprite)
-        this.sprites.addPhysicsBodies(...this.npcs.map(r => r.sprite))
+        this.sprites.controllables.push(this.player)
+        this.sprites.interactables.push(objective)
+        this.sprites.interactingBodies.add(this.player.sprite)
+        this.sprites.physicsBodies.addMultiple([this.player.sprite, objective.sprite, ...this.npcs.map(r => r.sprite)])
+        this.sprites.makeCollisionsWithLayer(collisionsLayer)
 
+        /* CAMERA CONFIGURATION */
         scaleAndConfigureCamera(this, map, this.player.sprite)
 
-        this.sprites.makeCollisionsWithLayer(collisions)
+        /* VARIABLE INITIALIZATION */
 
+        // Create the graphics that will represent the area the player can see
+        this.playerVisibleArea = this.add.graphics().removeFromDisplayList()
+        // Create a mask with the player visible area
+        let playerVisibleAreaMask = new Phaser.Display.Masks.GeometryMask(this, this.playerVisibleArea)
+        let playerVisibleAreaMaskInverse = new Phaser.Display.Masks.GeometryMask(this, this.playerVisibleArea)
+        playerVisibleAreaMaskInverse.setInvertAlpha(true)
+
+        // Create the first layer of graphics which dims the entire map
+        this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.65 } })
+            .setDepth(BASE_MASK_DEPTH)
+            .fillRect(0, 0, this.scale.canvas.width, this.scale.canvas.height)
+        // Add second layer which represents the area the NPCs can see
+        // Put the player area mask on it so only the light that the player can see
+        // is rendered b
+        this.npcVisibleArea = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.6 } })
+            .setDepth(NPC_LIGHT_MASK_DEPTH)
+            .setMask(playerVisibleAreaMask)
+            .fillRect(0, 0, this.scale.canvas.width, this.scale.canvas.height)
+        // Add the final layer, where everything the player can see will be displayed
+        // Apply the inverse of player mask because we want to hide this layer
+        // Wherever the mask has visible pixels (the fill is just a greater dim)
+        this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.45 } })
+            .setDepth(PLAYER_LIGHT_MASK_DEPTH)
+            .setMask(playerVisibleAreaMaskInverse)
+            .fillRect(0, 0, this.scale.canvas.width, this.scale.canvas.height)
+
+        let raycaster = this.raycaster.createRaycaster()
+        this.createRaycasterSettings(raycaster)
+        this.playerRay = raycaster.createRay()
+        this.playerRay.autoSlice = true
+
+        this.state = GoblinMinigameState.NORMAL
         this.gameEnded = false
+        this.gameEvents = new Phaser.Events.EventEmitter()
+
+        // Once the change mode signal is heard, change game mode to alerted
+        this.gameEvents.once(GoblinMinigameEvents.ALERT, () => {
+            this.state = GoblinMinigameState.ALERTED
+            this.updateNPCStates()
+        })
+        // Once the player is caught, end the game
+        this.gameEvents.once(GoblinMinigameEvents.CAUGHT, () => {
+            this.endGame()
+        })
+
+        // Add the correct mask to every sprite and start NPCs
+        objective.sprite.setMask(playerVisibleAreaMask)
         for (let npc of this.npcs) {
-            npc.sprite.setMask(playerAreaMaskInverse)
+            npc.sprite.setMask(playerVisibleAreaMask)
             npc.start()
         }
     }
 
-    updateNPCs() {
+    /**
+     * Update NPCs when the game state changes
+     */
+    updateNPCStates(): void {
         for (let npc of this.npcs) {
-            npc.setState(this.gameState)
+            npc.updateState()
         }
     }
 
     update() {
+        // Raycast for the player and handle clearing the lit area graphics
         if (this.gameEnded) return
-        this.playerAreaGraphics.clear()
-        this.litAreaGraphics.clear()
+        this.playerVisibleArea.clear()
+        this.npcVisibleArea.clear()
 
+        // Cast in a circle and follow the player
         this.playerRay.setOrigin(this.player.sprite.x, this.player.sprite.y)
         this.playerRay.castCircle()
 
+        // Fill all intersections on the player visible area mask
         for (let slice of this.playerRay.slicedIntersections) {
-            this.playerAreaGraphics.fillTriangleShape(slice)
+            this.playerVisibleArea.fillTriangleShape(slice)
         }
 
+        // Raycast for all the NPCs
         for (let npc of this.npcs) {
-            npc.drawLight()
+            npc.raycastAndUpdate()
         }
     }
 
-    endGame() {
+    /**
+     * End the game
+     */
+    endGame(): void {
         this.gameEnded = true
-        this.sprites.setGameControllable(false)
+        this.sprites.controllablesEnabled = false
         for (let npc of this.npcs) {
             npc.stop()
         }
         fadeOut(this, () => {
-            getGUIScene(this).dialogue.start(this, EndDialogue, () => {
+            let dialogueEventEmitter = new Phaser.Events.EventEmitter()
+            getGUIScene(this).dialogue.start(this, GoblinMinigameEndDialogue.Dialogue, dialogueEventEmitter, () => {
                 fadeSceneTransition(this, SceneEnums.SceneNames.GUI)
             })
         })

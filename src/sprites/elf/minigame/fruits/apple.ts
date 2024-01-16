@@ -1,12 +1,12 @@
 import { SlashesTexture, FruitsTexture } from "../../../../textures/elf";
-import { BaseFruit, FruitInformation, FruitInteraction } from "../../";
+import { ElfMinigameBaseFruit, ElfMinigameFruitInformation, ElfMinigameFruitInteraction } from "./fruit";
 import { ElfMinigameScene } from "../../../../scenes/elf";
 
 /**
  * An apple fruit
  */
-export class Apple extends BaseFruit {
-    private static pattern = [FruitInteraction.SliceUp, FruitInteraction.SliceDown]
+export class ElfMinigameApple extends ElfMinigameBaseFruit {
+    private static pattern = [ElfMinigameFruitInteraction.SliceUp, ElfMinigameFruitInteraction.SliceDown]
     private static patternTextures: [string, string][] = [
         [FruitsTexture.Frames.Apple.Base, FruitsTexture.Frames.Apple.Base],
         [FruitsTexture.Frames.Apple.Core1, FruitsTexture.Frames.Apple.Chunk1],
@@ -17,7 +17,7 @@ export class Apple extends BaseFruit {
         SlashesTexture.Animations.SideCurved,
     ]
 
-    constructor(scene: ElfMinigameScene, x: number, y: number, info: FruitInformation) {
-        super(scene, x, y, info, Apple.pattern, Apple.patternTextures, Apple.slashes)
+    constructor(scene: ElfMinigameScene, x: number, y: number, info: ElfMinigameFruitInformation) {
+        super(scene, x, y, info, ElfMinigameApple.pattern, ElfMinigameApple.patternTextures, ElfMinigameApple.slashes)
     }
 }

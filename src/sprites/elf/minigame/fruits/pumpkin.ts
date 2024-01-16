@@ -1,16 +1,16 @@
 import { SlashesTexture, FruitsTexture } from "../../../../textures/elf";
-import { BaseFruit, FruitInformation, FruitInteraction } from "../../";
+import { ElfMinigameBaseFruit, ElfMinigameFruitInformation, ElfMinigameFruitInteraction } from "./fruit";
 import { ElfMinigameScene } from "../../../../scenes/elf";
 
 /**
  * A pumpkin fruit
  */
-export class Pumpkin extends BaseFruit {
+export class ElfMinigamePumpkin extends ElfMinigameBaseFruit {
     private static pattern = [
-        FruitInteraction.SliceUp,
-        FruitInteraction.SliceDown,
-        FruitInteraction.SliceLeft,
-        FruitInteraction.SliceRight
+        ElfMinigameFruitInteraction.SliceUp,
+        ElfMinigameFruitInteraction.SliceDown,
+        ElfMinigameFruitInteraction.SliceLeft,
+        ElfMinigameFruitInteraction.SliceRight
     ]
     private static patternTextures: [string, string][] = [
         [FruitsTexture.Frames.Pumpkin.Base, FruitsTexture.Frames.Pumpkin.Base],
@@ -26,7 +26,7 @@ export class Pumpkin extends BaseFruit {
         SlashesTexture.Animations.SideStraight,
     ]
 
-    constructor(scene: ElfMinigameScene, x: number, y: number, info: FruitInformation) {
-        super(scene, x, y, info, Pumpkin.pattern, Pumpkin.patternTextures, Pumpkin.slashes)
+    constructor(scene: ElfMinigameScene, x: number, y: number, info: ElfMinigameFruitInformation) {
+        super(scene, x, y, info, ElfMinigamePumpkin.pattern, ElfMinigamePumpkin.patternTextures, ElfMinigamePumpkin.slashes)
     }
 }

@@ -7,12 +7,12 @@ import { BaseInput, Keybinds } from "../../../input"
 /**
  * Represents all possible types of fruit
  */
-export enum FruitType {
+export enum ElfMinigameFruitType {
     APPLE,
     PUMPKIN,
 }
 
-export interface Fruit extends Controllable {
+export interface ElfMinigameFruit extends Controllable {
     /**
      * Initialize the fruit, displaying it and setting it up.
      * Not able to be interacted with though.
@@ -27,7 +27,7 @@ export interface Fruit extends Controllable {
 /**
  * Represents information necessary for fruit initialization
  */
-export type FruitInformation = {
+export type ElfMinigameFruitInformation = {
     spriteDepth: number
     endX: number
     lifetime: number
@@ -36,7 +36,7 @@ export type FruitInformation = {
 /**
  * Represents all possible fruit event emiiter events
  */
-export enum FruitEvents {
+export enum ElfMinigameFruitEvents {
     SUCCESS = "success",
     FAIL = "fail"
 }
@@ -44,7 +44,7 @@ export enum FruitEvents {
 /**
  * Represents all possible fruit interactions
  */
-export enum FruitInteraction {
+export enum ElfMinigameFruitInteraction {
     SliceUp,
     SliceDown,
     SliceLeft,
@@ -54,11 +54,11 @@ export enum FruitInteraction {
 /**
  * Bind interactions to keybinds
  */
-export const FruitInteractionKeybinds: Keybinds = {
-    [FruitInteraction.SliceUp]: "W",
-    [FruitInteraction.SliceDown]: "S",
-    [FruitInteraction.SliceLeft]: "A",
-    [FruitInteraction.SliceRight]: "D",
+export const ElfMinigameFruitInteractionKeybinds: Keybinds = {
+    [ElfMinigameFruitInteraction.SliceUp]: "W",
+    [ElfMinigameFruitInteraction.SliceDown]: "S",
+    [ElfMinigameFruitInteraction.SliceLeft]: "A",
+    [ElfMinigameFruitInteraction.SliceRight]: "D",
 }
 
 /**
@@ -81,8 +81,8 @@ const SLASH_SCALE = 1;
 /**
  * An abstract fruit class, handles all logic behind the individual fruits
  */
-export abstract class BaseFruit implements Fruit {
-    slicePattern: FruitInteraction[]
+export abstract class ElfMinigameBaseFruit implements ElfMinigameFruit {
+    slicePattern: ElfMinigameFruitInteraction[]
     sliceTextures: [string, string][]
     slashPattern: string[]
     currentPatternLocation: number;
@@ -104,12 +104,12 @@ export abstract class BaseFruit implements Fruit {
     interactionPrompt: Phaser.GameObjects.Sprite
     fruitEvents: Phaser.Events.EventEmitter
 
-    constructor(scene: ElfMinigameScene, x: number, y: number, info: FruitInformation, slicePattern: FruitInteraction[], sliceTextures: [string, string][], slashPattern: string[]) {
+    constructor(scene: ElfMinigameScene, x: number, y: number, info: ElfMinigameFruitInformation, slicePattern: ElfMinigameFruitInteraction[], sliceTextures: [string, string][], slashPattern: string[]) {
         this.slicePattern = slicePattern;
         this.sliceTextures = sliceTextures
         this.slashPattern = slashPattern
         this.scene = scene
-        this.baseInput = new BaseInput(scene, FruitInteractionKeybinds)
+        this.baseInput = new BaseInput(scene, ElfMinigameFruitInteractionKeybinds)
         this.controllable = false;
         this.started = false;
         this.finished = false;
@@ -162,7 +162,7 @@ export abstract class BaseFruit implements Fruit {
      */
     progressSlicePattern(): void {
         // Update to appropriate key picture
-        this.interactionPrompt.setFrame(KeyboardTexture.KeyPictures[FruitInteractionKeybinds[this.slicePattern[this.currentPatternLocation]]])
+        this.interactionPrompt.setFrame(KeyboardTexture.KeyPictures[ElfMinigameFruitInteractionKeybinds[this.slicePattern[this.currentPatternLocation]]])
 
         // Set new textures
         let newTextures = this.sliceTextures[this.currentPatternLocation]
@@ -226,7 +226,7 @@ export abstract class BaseFruit implements Fruit {
      */
     onItemSuccess() {
         this.finished = true
-        this.fruitEvents.emit(FruitEvents.SUCCESS)
+        this.fruitEvents.emit(ElfMinigameFruitEvents.SUCCESS)
         this.cleanup()
     }
 
@@ -235,7 +235,7 @@ export abstract class BaseFruit implements Fruit {
      */
     onItemFail() {
         this.finished = true
-        this.fruitEvents.emit(FruitEvents.FAIL)
+        this.fruitEvents.emit(ElfMinigameFruitEvents.FAIL)
         this.cleanup()
     }
 
