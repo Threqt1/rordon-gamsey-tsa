@@ -4,9 +4,8 @@ import { Game } from 'phaser';
 import PhaserRaycaster from "phaser-raycaster"
 import { PreloaderScene, MenuScene, GameScene, GUIScene } from './scenes';
 import { ElfHubScene, ElfMinigameScene } from './scenes/elf';
-import { GoblinMinigameScene } from './scenes/goblin';
+import { GoblinMinigameScene, GoblinMinigameLevelScene } from './scenes/goblin';
 import { SpritesPlugin, PluginEnums, AnimatedTiles } from './plugins';
-import { GoblinMinigameLevelScene } from './scenes/goblin/level';
 
 
 const config: Phaser.Types.Core.GameConfig = {

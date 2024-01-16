@@ -1,7 +1,6 @@
 import { FruitsTexture } from "../../../textures/elf"
 import { BaseNPC } from "../.."
-import { GoblinMinigameEvents } from "../../../scenes/goblin"
-import { GoblinMinigameLevelScene } from "../../../scenes/goblin/level"
+import { GoblinMinigameEvents, GoblinMinigameLevelScene } from "../../../scenes/goblin"
 
 export class GoblinMinigameObjective extends BaseNPC {
     scene: GoblinMinigameLevelScene

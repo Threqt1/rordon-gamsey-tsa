@@ -1,7 +1,7 @@
 import { fadeOut, fadeSceneTransition, getGUIScene } from ".."
 import { SceneEnums, fadeIn, scaleAndConfigureCamera } from "../scenesUtilities"
 import { GoblinMinigameEndDialogue } from "../../dialogue/goblin"
-import { GoblinMinigameLevelScene } from "./level"
+import { GoblinMinigameLevelScene } from "."
 
 let BASE_MASK_DEPTH = 100
 let NPC_LIGHT_MASK_DEPTH = 101

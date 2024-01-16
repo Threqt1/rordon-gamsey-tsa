@@ -1,6 +1,5 @@
 import { Direction } from "../..";
-import { GoblinMinigameState, GoblinMinigameEvents } from "../../../scenes/goblin";
-import { GoblinMinigameLevelScene } from "../../../scenes/goblin/level";
+import { GoblinMinigameState, GoblinMinigameEvents, GoblinMinigameLevelScene } from "../../../scenes/goblin";
 import { GoblinTexture } from "../../../textures/goblin";
 
 const BOUNDING_BOX_DIMENSION = 60
@@ -12,7 +11,6 @@ const NPC_SPEED = 20
 const LIGHT_COLOR = 0xffffff
 const LIGHT_OPACITY = 0.09
 const ALERTED_SPIN_DURATION = 5000
-const STATIC_SPIN_DURATION = 15000
 
 /**
  * Represents the types of paths
