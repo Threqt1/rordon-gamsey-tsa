@@ -1,11 +1,10 @@
 import './style.css'
 
-import { Game } from 'phaser';
+import PhaserRaycaster from "phaser-raycaster"
 import { PreloaderScene, MenuScene, GameScene, GUIScene } from './scenes';
 import { ElfHubScene, ElfMinigameScene } from './scenes/elf';
-import { SpritesPlugin, PluginEnums } from './plugins';
-import PhaserRaycaster from "phaser-raycaster"
 import { GoblinMinigameScene } from './scenes/goblin';
+import { SpritesPlugin, PluginEnums } from './plugins';
 
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -45,4 +44,4 @@ const config: Phaser.Types.Core.GameConfig = {
     antialias: false
 }
 
-new Game(config);
+new Phaser.Game(config);
