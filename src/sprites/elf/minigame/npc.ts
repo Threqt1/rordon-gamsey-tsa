@@ -1,4 +1,4 @@
-import { ElvesTexture } from "../../../textures/elf/elves";
+import { ElvesTexture } from "../../../textures/elf";
 
 export class ElfMinigameNPC {
     sprite: Phaser.GameObjects.Sprite

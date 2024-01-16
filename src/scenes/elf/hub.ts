@@ -1,8 +1,7 @@
-import { Scene } from "phaser"
 import { Player } from "../../sprites/game"
 import { loadTilemap, SceneEnums, scaleAndConfigureCamera } from "../"
 
-export class ElfHubScene extends Scene {
+export class ElfHubScene extends Phaser.Scene {
     constructor() {
         super(SceneEnums.SceneNames.ElfHub)
     }

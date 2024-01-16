@@ -1,4 +1,4 @@
-import { PlayerTexture } from "../../../textures/player";
+import { PlayerTexture } from "../../../textures";
 
 export class ElfMinigamePlayer {
     sprite: Phaser.GameObjects.Sprite

@@ -3,17 +3,10 @@ import { fadeOut, fadeSceneTransition, getGUIScene, loadTilemap, PointObject, sc
 import { SlashesTexture, ElvesTexture, FruitsTexture, TorchesTexture } from "../../textures/elf";
 import { ElfMinigameEndDialogue } from "../../dialogue/elf";
 
-/**
- * All events for the minigame event emitter
- */
 enum ElfMinigameEvents {
     DONE = "done"
 }
 
-/**
- * All the markers stored in the object layer for this game's 
- * tilemap
- */
 type ElfMinigameMarkers = {
     Torch1: PointObject
     Torch2: PointObject
@@ -43,9 +36,6 @@ const LEVEL_LAYOUTS: ElfMinigameFruitType[][] = [
  * How long it should take for the fade and grayscale transitions to work
  */
 const MINIGAME_FADE_DURATION = 500
-/**
- * Total duration of the minigame
- */
 const MINIGAME_TOTAL_DURATION = 5000
 /**
  * At what time the minigame should allow player input
@@ -55,25 +45,15 @@ const MINIGAME_START_TIME = MINIGAME_TOTAL_DURATION / 2.5
  * At what time the fruits should be displayed
  */
 const MINIGAME_DISPLAY_FRUITS_TIME = MINIGAME_START_TIME - 30
-/**
- * Cooldown between levels
- */
 const MINIGAME_LEVEL_COOLDOWN = 1300
 /**
  * Delay after the torch for the level has been lit before the minigame
  * begins
  */
 const MINIGAME_TORCH_DELAY = 500
-/**
- * How slow the game should go once the transition has ended (decimal percentage)
- */
 const MINIGAME_TIME_SCALE = 0.8
 const MINIGAME_GRAYSCALE_SCALE = 0.6
-//const DIMMING_GRAPHICS_DEPTH = 100
 
-/**
- * Handles running the Elf Minigame
- */
 export class ElfMinigameScene extends Phaser.Scene {
     currentLevelIndex!: number
     cameraColorMatrix!: Phaser.FX.ColorMatrix

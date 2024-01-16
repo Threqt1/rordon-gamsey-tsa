@@ -1,10 +1,9 @@
-import { Scene } from "phaser"
 import { Player } from "../../sprites/game"
 import { loadTilemap, SceneEnums, scaleAndConfigureCamera } from ".."
 import { ElfMinigameTeleporterNPC } from "../../sprites/elf"
 import { GoblinMinigameTeleporterNPC } from "../../sprites/goblin"
 
-export class GameScene extends Scene {
+export class GameScene extends Phaser.Scene {
     constructor() {
         super(SceneEnums.SceneNames.Game)
     }

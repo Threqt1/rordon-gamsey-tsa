@@ -1,5 +1,6 @@
 import './style.css'
 
+import { Game } from 'phaser';
 import PhaserRaycaster from "phaser-raycaster"
 import { PreloaderScene, MenuScene, GameScene, GUIScene } from './scenes';
 import { ElfHubScene, ElfMinigameScene } from './scenes/elf';
@@ -44,4 +45,4 @@ const config: Phaser.Types.Core.GameConfig = {
     antialias: false
 }
 
-new Phaser.Game(config);
+new Game(config);

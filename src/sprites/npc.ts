@@ -1,7 +1,6 @@
-import { GameObjects } from "phaser";
 import { isInsideZone, BaseInput, Keybinds } from ".";
-import { Interactable } from "../plugins/sprites";
-import { KeyboardTexture } from "../textures/keyboard";
+import { Interactable } from "../plugins";
+import { KeyboardTexture } from "../textures";
 
 const INTERACTION_PROMPT_DEPTH = 100
 const INTERACTION_PROMPT_SCALE = 0.3
@@ -50,7 +49,7 @@ export abstract class BaseNPC implements Interactable {
 
     abstract onInteract(): void
 
-    getInteractableZone(): GameObjects.Zone {
+    getInteractableZone(): Phaser.GameObjects.Zone {
         return this.zone
     }
 

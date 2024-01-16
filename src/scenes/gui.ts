@@ -1,11 +1,10 @@
-import { Scene } from "phaser"
 import { SceneEnums } from "."
 import { BaseDialogue } from "../sprites"
 
 /**
  * Handles all GUI aspects on top of another scene
  */
-export class GUIScene extends Scene {
+export class GUIScene extends Phaser.Scene {
     dialogue!: BaseDialogue
 
     constructor() {

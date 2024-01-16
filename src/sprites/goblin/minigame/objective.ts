@@ -1,6 +1,6 @@
 import { FruitsTexture } from "../../../textures/elf"
 import { BaseNPC } from "../.."
-import { GoblinMinigameScene } from "../../../scenes/goblin"
+import { GoblinMinigameEvents, GoblinMinigameScene } from "../../../scenes/goblin"
 
 export class GoblinMinigameObjective extends BaseNPC {
     scene: GoblinMinigameScene
@@ -13,6 +13,6 @@ export class GoblinMinigameObjective extends BaseNPC {
 
     onInteract(): void {
         this.interactable = false
-        this.scene.gameEvents.emit("mode")
+        this.scene.gameEvents.emit(GoblinMinigameEvents.ALERT)
     }
 }
