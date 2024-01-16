@@ -1,8 +1,8 @@
 import { Scene } from "phaser"
 import { Player } from "../../sprites/game"
 import { loadTilemap, SceneEnums, scaleAndConfigureCamera } from ".."
-import { ElfHubTeleporterNPC } from "../../sprites/elf"
-import { GoblinHubTeleporterNPC } from "../../sprites/goblin"
+import { ElfMinigameTeleporterNPC } from "../../sprites/elf"
+import { GoblinMinigameTeleporterNPC } from "../../sprites/goblin"
 
 export class GameScene extends Scene {
     constructor() {
@@ -17,8 +17,8 @@ export class GameScene extends Scene {
 
         /* SPRITE INITIALIZATION */
         let player = new Player(this, 30, 130)
-        let npc1 = new ElfHubTeleporterNPC(this, 80, 100)
-        let npc2 = new GoblinHubTeleporterNPC(this, 190, 150)
+        let npc1 = new ElfMinigameTeleporterNPC(this, 80, 100)
+        let npc2 = new GoblinMinigameTeleporterNPC(this, 190, 150)
 
         this.sprites.controllables.push(player)
         this.sprites.addInteractables(npc1, npc2)

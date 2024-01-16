@@ -1,5 +1,5 @@
 import { Scene } from "phaser"
-import { Player, NPC } from "../../sprites/game"
+import { Player } from "../../sprites/game"
 import { loadTilemap, SceneEnums, scaleAndConfigureCamera } from "../"
 
 export class ElfHubScene extends Scene {
@@ -13,11 +13,9 @@ export class ElfHubScene extends Scene {
         this.sprites.initialize(map)
 
         let player = new Player(this, 30, 130)
-        let npc1 = new NPC(this, 100, 150)
 
         this.sprites.controllables.push(player)
-        this.sprites.addInteractables(npc1)
-        this.sprites.physicsBodies.addMultiple([player.sprite, npc1.sprite])
+        this.sprites.physicsBodies.addMultiple([player.sprite])
         this.sprites.interactingBodies.add(player.sprite)
         this.sprites.physicsBodies.setDepth(playerDepth)
 

@@ -20,9 +20,9 @@ export class ElfMinigamePumpkin extends ElfMinigameBaseFruit {
         [FruitsTexture.Frames.Pumpkin.Core4, FruitsTexture.Frames.Pumpkin.Chunk4]
     ]
     private static slashes: string[] = [
-        SlashesTexture.Animations.Diagonal,
-        SlashesTexture.Animations.Vertical,
         SlashesTexture.Animations.SideCurved,
+        SlashesTexture.Animations.Vertical,
+        SlashesTexture.Animations.Diagonal,
         SlashesTexture.Animations.SideStraight,
     ]
 

@@ -13,8 +13,8 @@ export class ElfMinigameApple extends ElfMinigameBaseFruit {
         [FruitsTexture.Frames.Apple.Core2, FruitsTexture.Frames.Apple.Chunk2]
     ]
     private static slashes: string[] = [
-        SlashesTexture.Animations.Diagonal,
         SlashesTexture.Animations.SideCurved,
+        SlashesTexture.Animations.Vertical,
     ]
 
     constructor(scene: ElfMinigameScene, x: number, y: number, info: ElfMinigameFruitInformation) {
