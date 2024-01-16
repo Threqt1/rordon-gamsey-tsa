@@ -1,5 +1,6 @@
 import { Direction } from "../..";
-import { GoblinMinigameState, GoblinMinigameScene, GoblinMinigameEvents } from "../../../scenes/goblin";
+import { GoblinMinigameState, GoblinMinigameEvents } from "../../../scenes/goblin";
+import { GoblinMinigameLevelScene } from "../../../scenes/goblin/level";
 import { GoblinTexture } from "../../../textures/goblin";
 
 const BOUNDING_BOX_DIMENSION = 60
@@ -9,13 +10,46 @@ const SWEEPING_PAUSE = 500
 const SWEEPING_ANGLE = 15
 const NPC_SPEED = 20
 const LIGHT_COLOR = 0xffffff
-const LIGHT_OPACITY = 0.3
+const LIGHT_OPACITY = 0.09
+const ALERTED_SPIN_DURATION = 5000
+const STATIC_SPIN_DURATION = 15000
+
+/**
+ * Represents the types of paths
+ */
+export enum GoblinMinigamePathType {
+    // Where the NPC is still, facing a direction
+    STATIC,
+    // Where the NPC has a path to follow
+    DYNAMIC
+}
+
+export type GoblinMinigameStaticPathData = {
+    type: GoblinMinigamePathType.STATIC,
+    point: Phaser.Math.Vector2,
+    direction: Direction
+}
+
+export type GoblinMinigameDynamicPathData = {
+    type: GoblinMinigamePathType.DYNAMIC,
+    points: Phaser.Math.Vector2[]
+}
+
+/**
+ * Path information for Goblin NPCs, different for both the normal and alerted game states
+ */
+export type GoblinMinigamePathInformation = {
+    normal: GoblinMinigameStaticPathData | GoblinMinigameDynamicPathData,
+    alerted: GoblinMinigameStaticPathData | GoblinMinigameDynamicPathData
+}
 
 export class GoblinMinigameNPC {
-    scene: GoblinMinigameScene
+    scene: GoblinMinigameLevelScene
     sprite: Phaser.GameObjects.PathFollower
     speed: number
-    pathPoints: Phaser.Math.Vector2[]
+    pathInformation: GoblinMinigamePathInformation
+    currentPathType?: GoblinMinigamePathType
+    currentPathPoints: Phaser.Math.Vector2[]
     currentPathIndex: number
     /**
      * The box that limits raycasting to a certain distance around the player
@@ -29,12 +63,14 @@ export class GoblinMinigameNPC {
      * alerted
      */
     alertedTween: Phaser.Tweens.Tween
+    state: GoblinMinigameState
 
-    constructor(scene: GoblinMinigameScene, pathPoints: Phaser.Math.Vector2[], x: number, y: number) {
+    constructor(scene: GoblinMinigameLevelScene, x: number, y: number, pathInformation: GoblinMinigamePathInformation) {
         this.scene = scene
         this.sprite = scene.add.follower(new Phaser.Curves.Path(), x, y, GoblinTexture.TextureKey);
         this.speed = NPC_SPEED
-        this.pathPoints = pathPoints
+        this.pathInformation = pathInformation
+        this.currentPathPoints = []
         this.currentPathIndex = 0
 
         this.boundingBox = scene.add.rectangle(x, y, BOUNDING_BOX_DIMENSION * 2, BOUNDING_BOX_DIMENSION * 2)
@@ -55,13 +91,14 @@ export class GoblinMinigameNPC {
             targets: { value: 0 },
             value: 360,
             repeat: -1,
-            duration: 5000,
+            duration: ALERTED_SPIN_DURATION,
             onUpdate: (info) => {
                 this.ray.setAngleDeg(info.getValue())
             },
             paused: true
         }
         this.alertedTween = scene.tweens.add(alertedTweenInfo)
+        this.state = GoblinMinigameState.NORMAL
 
         scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY);
         let body = this.sprite.body as Phaser.Physics.Arcade.Body
@@ -72,30 +109,62 @@ export class GoblinMinigameNPC {
     }
 
     /**
-     * Starts the NPC
+     * Read the current game state and update NPC accordingly
      */
-    start(): void {
-        this.startNextPathSegment()
+    updateState(newState: GoblinMinigameState): void {
+        this.state = newState
+        this.sprite.stopFollow()
+        if (this.state === GoblinMinigameState.NORMAL) {
+            this.speed = NPC_SPEED
+            this.alertedTween.pause()
+            this.executePathData(this.pathInformation.normal)
+        } else {
+            this.speed = NPC_SPEED * 2
+            this.alertedTween.resume()
+            this.executePathData(this.pathInformation.alerted)
+        }
+    }
+
+    /**
+     * Use path data and execute it on the NPC appropriately
+     * @param pathData The path data to execute
+     */
+    executePathData(pathData: GoblinMinigameStaticPathData | GoblinMinigameDynamicPathData): void {
+        this.currentPathType = pathData.type
+        if (pathData.type === GoblinMinigamePathType.DYNAMIC) {
+            this.currentPathIndex = 0
+            this.currentPathPoints = pathData.points
+            // Reset sprite to first path point
+            this.sprite.setPosition(pathData.points[0].x, pathData.points[0].y)
+            this.startNextPathSegment()
+        } else {
+            this.currentPathPoints = []
+            // Position sprite on the point and play the appropriate idle animation
+            this.sprite.setPosition(pathData.point.x, pathData.point.y)
+            // Update to correct idle animation
+            this.direction = pathData.direction
+            this.playIdleAnimation()
+        }
     }
 
     /**
      * Start the next segment of the path
      */
     startNextPathSegment(): void {
-        if (this.stopped) return
+        if (this.stopped || this.currentPathType !== GoblinMinigamePathType.DYNAMIC) return
         let nextPathIndex = this.currentPathIndex + 1
-        if (nextPathIndex >= this.pathPoints.length) {
+        if (nextPathIndex >= this.currentPathPoints.length) {
             nextPathIndex = 0
         }
         // Create a new path, starting at the current position and ending in the next position
-        let currentPath = new Phaser.Curves.Path(this.pathPoints[this.currentPathIndex].x, this.pathPoints[this.currentPathIndex].y)
-            .lineTo(this.pathPoints[nextPathIndex])
+        let currentPath = new Phaser.Curves.Path(this.currentPathPoints[this.currentPathIndex].x, this.currentPathPoints[this.currentPathIndex].y)
+            .lineTo(this.currentPathPoints[nextPathIndex])
         // Create a line using the starting and ending points of the path
-        let currentSegment = new Phaser.Curves.Line(this.pathPoints[this.currentPathIndex], this.pathPoints[nextPathIndex])
+        let currentSegment = new Phaser.Curves.Line(this.currentPathPoints[this.currentPathIndex], this.currentPathPoints[nextPathIndex])
         this.direction = this.getCurrentDirection(currentSegment)
 
         // Don't modify angles in alerted state because of the tween
-        if (this.scene.state === GoblinMinigameState.NORMAL) {
+        if (this.state === GoblinMinigameState.NORMAL) {
             switch (this.direction) {
                 case Direction.UP:
                     this.ray.setAngleDeg(-90)
@@ -119,7 +188,7 @@ export class GoblinMinigameNPC {
             onComplete: () => {
                 this.currentPathIndex = nextPathIndex
                 // If the game's on normal state, have the pause and sweep behavior
-                if (this.scene.state === GoblinMinigameState.NORMAL) {
+                if (this.state === GoblinMinigameState.NORMAL) {
                     this.pauseAndSweep()
                 } else {
                     this.startNextPathSegment()
@@ -186,19 +255,6 @@ export class GoblinMinigameNPC {
     }
 
     /**
-     * Read the current game state and update NPC accordingly
-     */
-    updateState() {
-        if (this.scene.state === GoblinMinigameState.NORMAL) {
-            this.speed = NPC_SPEED
-            this.alertedTween.pause()
-        } else {
-            this.speed = NPC_SPEED * 2
-            this.alertedTween.resume()
-        }
-    }
-
-    /**
      * Play the correct idle animation based on direction
      */
     playIdleAnimation() {
@@ -247,29 +303,31 @@ export class GoblinMinigameNPC {
 
         this.ray.setOrigin(this.sprite.x, this.sprite.y)
 
-        this.ray.castCone()
-
-        for (let slice of this.ray.slicedIntersections) {
-            this.scene.npcVisibleArea.fillStyle(LIGHT_COLOR, LIGHT_OPACITY).fillTriangleShape(slice)
+        if (this.currentPathType === GoblinMinigamePathType.DYNAMIC) {
+            this.ray.castCone()
         }
 
-        if (this.ray.overlap(this.scene.player.sprite).length > 0) {
-            this.scene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
+        for (let slice of this.ray.slicedIntersections) {
+            this.scene.parentScene.npcVisibleArea.fillStyle(LIGHT_COLOR, LIGHT_OPACITY).fillTriangleShape(slice)
+        }
+
+        if (this.ray.overlap(this.scene.parentScene.currentLevel.player.sprite).length > 0) {
+            this.scene.parentScene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
         }
 
         // Do an additional cast with the cone rotated 180 degree to
         // get the rotating cones effect if alerted
-        if (this.scene.state === GoblinMinigameState.ALERTED) {
+        if (this.state === GoblinMinigameState.ALERTED) {
             this.ray.setAngleDeg(Phaser.Math.RadToDeg(this.ray.angle) - 180)
 
             this.ray.castCone()
 
-            if (this.ray.overlap(this.scene.player.sprite).length > 0) {
-                this.scene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
+            if (this.ray.overlap(this.scene.parentScene.currentLevel.player.sprite).length > 0) {
+                this.scene.parentScene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
             }
 
             for (let slice of this.ray.slicedIntersections) {
-                this.scene.npcVisibleArea.fillStyle(LIGHT_COLOR, LIGHT_OPACITY).fillTriangleShape(slice)
+                this.scene.parentScene.npcVisibleArea.fillStyle(LIGHT_COLOR, LIGHT_OPACITY).fillTriangleShape(slice)
             }
 
             this.ray.setAngleDeg(Phaser.Math.RadToDeg(this.ray.angle) + 180)

@@ -4,8 +4,13 @@ import { ElfHubTeleporterDialogue } from "../../../dialogue/elf";
 import { ElfTexture } from "../../../textures/elf";
 
 export class ElfMinigameTeleporterNPC extends BaseNPC {
+    sprite: Phaser.Physics.Arcade.Sprite
+
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, ElfTexture.TextureKey, 50, undefined, ElfTexture.Animations.IdleFront)
+        super(scene, x, y, 50, 50)
+        this.sprite = scene.physics.add.sprite(x, y, ElfTexture.TextureKey, ElfTexture.Animations.IdleFront)
+        this.sprite.setPushable(false)
+        this.updatePromptPosition(this.sprite)
     }
 
     onInteract(): void {

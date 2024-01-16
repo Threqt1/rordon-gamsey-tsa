@@ -4,8 +4,13 @@ import { BaseNPC } from "../..";
 import { GoblinTexture } from "../../../textures/goblin";
 
 export class GoblinMinigameTeleporterNPC extends BaseNPC {
+    sprite: Phaser.Physics.Arcade.Sprite
+
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, GoblinTexture.TextureKey, 50, undefined, GoblinTexture.Animations.IdleFront);
+        super(scene, x, y, 50, 50);
+        this.sprite = scene.physics.add.sprite(x, y, GoblinTexture.TextureKey, GoblinTexture.Animations.IdleFront)
+        this.sprite.setPushable(false)
+        this.updatePromptPosition(this.sprite)
 
         GoblinTexture.configureGoblinPhysicsBody(this.sprite.body as Phaser.Physics.Arcade.Body)
     }

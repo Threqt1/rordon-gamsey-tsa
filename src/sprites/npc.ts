@@ -23,28 +23,24 @@ export abstract class BaseNPC implements Interactable {
         [Interaction.INTERACT]:
             "E",
     }
-    sprite: Phaser.Physics.Arcade.Sprite
     scene: Phaser.Scene
     input: BaseInput
     interactable: boolean
     interactionPrompt: Phaser.GameObjects.Sprite
     zone: Phaser.GameObjects.Zone
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, zoneSize = 50, frame?: string, animation?: string) {
-        this.sprite = scene.physics.add.sprite(x, y, texture, frame)
+    constructor(scene: Phaser.Scene, x: number, y: number, zoneSizeX = 50, zoneSizeY = 50) {
         this.scene = scene
         this.input = new BaseInput(scene, BaseNPC.keybinds)
         this.interactable = true
-        this.interactionPrompt = this.scene.add.sprite(this.sprite.x, this.sprite.y + this.sprite.displayOriginY, KeyboardTexture.TextureKey, KeyboardTexture.KeyPictures["W"])
+        this.interactionPrompt = this.scene.add.sprite(x, y + zoneSizeY / 2, KeyboardTexture.TextureKey, KeyboardTexture.KeyPictures["W"])
             .setDepth(INTERACTION_PROMPT_DEPTH)
             .setVisible(false)
             .setScale(INTERACTION_PROMPT_SCALE)
-        this.zone = this.scene.add.zone(this.sprite.x, this.sprite.y, zoneSize, zoneSize)
+        this.zone = this.scene.add.zone(x, y, zoneSizeX, zoneSizeY)
 
         this.scene.physics.world.enable(this.zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
-        this.sprite.setPushable(false)
         this.interactionPrompt.setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight / 2)
-        if (animation) this.sprite.anims.play(animation)
     }
 
     abstract onInteract(): void
@@ -57,6 +53,10 @@ export abstract class BaseNPC implements Interactable {
         this.interactable = interactable
     }
 
+    updatePromptPosition(sprite: Phaser.GameObjects.Sprite) {
+        this.interactionPrompt.setPosition(sprite.getCenter().x, sprite.getCenter().y! + sprite.displayHeight / 2 + this.interactionPrompt.displayHeight / 2)
+    }
+
     interact() {
         if (!this.interactable) return
         this.interactionPrompt.setVisible(isInsideZone(this.zone))
@@ -65,5 +65,14 @@ export abstract class BaseNPC implements Interactable {
             this.interactionPrompt.setVisible(false)
             this.onInteract()
         }
+    }
+
+    /**
+     * Destroy all NPC components
+     */
+    cleanup(): void {
+        this.interactable = false
+        this.interactionPrompt.destroy()
+        this.zone.destroy()
     }
 }

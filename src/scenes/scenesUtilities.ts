@@ -7,12 +7,15 @@ export namespace SceneEnums {
         Game = "game",
         ElfMinigame = "elfminigame",
         GoblinMinigame = "goblinminigame",
+        GoblinMinigameLevel = "goblinminigamelevel",
         ElfHub = "elfhub",
         GUI = "gui"
     }
     export enum TilemapNames {
         Game = "game",
-        GoblinMinigame = "goblinminigame",
+        GoblinMinigameLevel1 = "goblinminigame1",
+        GoblinMinigameLevel2 = "goblinminigame2",
+        GoblinMinigameLevel3 = "goblinminigame3",
         ElfMinigame = "elfminigame",
         ElfHub = "elfhub"
     }
@@ -63,6 +66,7 @@ export function preloadTilemap(scene: Phaser.Scene, name: SceneEnums.TilemapName
     scene.load.tilemapTiledJSON(`${name}_map`, `${MAPS_PATH}/${mapPath}`)
     scene.load.json(`${name}_raw`, `${MAPS_PATH}/${mapPath}`)
 }
+
 /**
  * A point object from Tiled
  */
@@ -70,6 +74,17 @@ export type PointObject = {
     name: string,
     x: number,
     y: number
+}
+
+/**
+ * A rectangle object from Tiled
+ */
+export type RectangleObject = {
+    name: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number
 }
 
 /**
@@ -142,6 +157,9 @@ export function loadTilemap(scene: Phaser.Scene, name: SceneEnums.TilemapNames):
             objects[(parsedObject.name) as string] = parsedObject
         }
     }
+
+    // Initialize animated tiles plugin
+    scene.animatedTiles.init(tilemap)
 
     return {
         map: tilemap,

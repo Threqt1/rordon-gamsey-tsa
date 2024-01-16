@@ -5,7 +5,8 @@ import PhaserRaycaster from "phaser-raycaster"
 import { PreloaderScene, MenuScene, GameScene, GUIScene } from './scenes';
 import { ElfHubScene, ElfMinigameScene } from './scenes/elf';
 import { GoblinMinigameScene } from './scenes/goblin';
-import { SpritesPlugin, PluginEnums } from './plugins';
+import { SpritesPlugin, PluginEnums, AnimatedTiles } from './plugins';
+import { GoblinMinigameLevelScene } from './scenes/goblin/level';
 
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -16,7 +17,7 @@ const config: Phaser.Types.Core.GameConfig = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            //debug: true
+            debug: true
         }
     },
     scene: [
@@ -25,6 +26,7 @@ const config: Phaser.Types.Core.GameConfig = {
         GameScene,
         ElfMinigameScene,
         GoblinMinigameScene,
+        GoblinMinigameLevelScene,
         GUIScene,
         ElfHubScene
 
@@ -39,6 +41,11 @@ const config: Phaser.Types.Core.GameConfig = {
             key: PluginEnums.PluginNames.SpritePlugin,
             plugin: SpritesPlugin,
             mapping: PluginEnums.PluginKeys.SpritePlugin
+        },
+        {
+            key: PluginEnums.PluginNames.AnimatedTilesPlugin,
+            plugin: AnimatedTiles,
+            mapping: PluginEnums.PluginKeys.AnimatedTilesPlugin
         }]
     },
     pixelArt: true,

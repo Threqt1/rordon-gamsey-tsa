@@ -44,15 +44,7 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
         eventEmitter.once("destroy", () => { eventEmitter.off("update", this.update) })
         eventEmitter.on("shutdown", () => { this.cleanup() })
 
-        // Store the map so sprites can reference it
-        this.map = map
-        this.interactables = []
-        this.controllables = []
-        this.physicsBodies = this.scene!.physics.add.group()
-        this.interactingBodies = this.scene!.physics.add.group()
-        this.interactableZones = this.scene!.physics.add.group()
-        this.controllablesEnabled = true
-        this.interactablesEnabled = true
+        this.reset(map)
     }
 
     /**
@@ -101,6 +93,21 @@ export class SpritesPlugin extends Phaser.Plugins.ScenePlugin {
                 controllable.control();
             }
         }
+    }
+
+    /**
+     * Reset the data to its initial state
+     */
+    reset(map?: Phaser.Tilemaps.Tilemap): void {
+        // Store the map so sprites can reference it
+        this.map = map
+        this.interactables = []
+        this.controllables = []
+        this.physicsBodies = this.scene!.physics.add.group()
+        this.interactingBodies = this.scene!.physics.add.group()
+        this.interactableZones = this.scene!.physics.add.group()
+        this.controllablesEnabled = true
+        this.interactablesEnabled = true
     }
 
     /**

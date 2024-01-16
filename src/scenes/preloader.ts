@@ -25,7 +25,9 @@ export class PreloaderScene extends Phaser.Scene {
         /* BEGIN LOADING */
 
         preloadTilemap(this, SceneEnums.TilemapNames.Game, "map.tmj", "spritesheet.png")
-        preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigame, "goblin/minigame.tmj", "goblin/goblin.png")
+        preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigameLevel1, "goblin/map1.tmj", "goblin/goblin.png")
+        preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigameLevel2, "goblin/map2.tmj", "goblin/goblin.png")
+        preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigameLevel3, "goblin/map3.tmj", "goblin/goblin.png")
         preloadTilemap(this, SceneEnums.TilemapNames.ElfMinigame, "elf/minigame.tmj", "elf/1.png", "elf/2.png")
         preloadTilemap(this, SceneEnums.TilemapNames.ElfHub, "elf/hub.tmj", "elf/2.png")
 
@@ -66,6 +68,6 @@ export class PreloaderScene extends Phaser.Scene {
         GoblinTexture.load(this)
 
         this.scene.launch(SceneEnums.SceneNames.GUI)
-        this.scene.start(SceneEnums.SceneNames.Menu)
+        this.scene.start(SceneEnums.SceneNames.GoblinMinigame)
     }
 }
