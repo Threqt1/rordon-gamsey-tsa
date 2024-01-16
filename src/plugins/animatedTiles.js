@@ -84,8 +84,7 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
         return this.animatedTiles.findIndex(r => r.map === map)
     }
 
-    setRate(rate, map = null, gid = null) {
-        console.log(this.animatedTiles)
+    setRate(rate, gid = null, map = null) {
         if (gid === null) {
             if (map === null) {
                 this.rate = rate;
@@ -382,3 +381,10 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
         // 3. If container is a layer, just loop through it's tiles
     }
 }
+
+// //  Static function called by the PluginFile Loader.
+// AnimatedTiles.register = function (PluginManager) {
+//     //  Register this plugin with the PluginManager, so it can be added to Scenes.
+//     PluginManager.register('AnimatedTiles', AnimatedTiles, 'animatedTiles');
+// };
+
