@@ -1,19 +1,16 @@
 import { Dialogue } from "../../"
 
 enum Events {
-    END = "end"
+
 }
 
 let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "Hey, you! What are you doing here!",
-            "You're coming with us..."
+            "Wait... where did the treasure go?!",
+            "Thief! Theres a thief! Find him!"
         ]
-    },
-    dialogueFinished(_, emitter) {
-        emitter.emit(Events.END)
     },
     nextOptions: []
 }

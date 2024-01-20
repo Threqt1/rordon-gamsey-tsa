@@ -84,7 +84,8 @@ export type RectangleObject = {
     x: number,
     y: number,
     width: number,
-    height: number
+    height: number,
+    rotation: number
 }
 
 /**

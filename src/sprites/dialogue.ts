@@ -13,7 +13,7 @@ const DialogueOptionKeybinds: Keybinds = {
     [DialogueInteractions.OPTION_1]: "ONE",
     [DialogueInteractions.OPTION_2]: "TWO",
     [DialogueInteractions.OPTION_3]: "THREE",
-    [DialogueInteractions.SUBMIT]: "E"
+    [DialogueInteractions.SUBMIT]: "SPACE"
 
 }
 

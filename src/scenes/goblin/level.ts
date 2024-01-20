@@ -29,6 +29,7 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
     npcs!: GoblinMinigameNPC[]
     additionaLights!: GoblinMinigameLightEmitter[]
     map!: Phaser.Tilemaps.Tilemap
+    spawnPoint!: Phaser.Geom.Point
     markers!: GoblinMinigameObjects
     playerRay!: Raycaster.Ray
     collisionsLayer!: Phaser.Tilemaps.TilemapLayer
@@ -66,7 +67,7 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
         this.sprites.interactingBodies.add(this.player.sprite)
         this.npcs = this.parseAndCreateNPCs(this.markers)
 
-        this.updateActiveTeleporterZone()
+        this.updateTeleportAndSpawn()
 
         // If theres an objective marker, add that too
         if (this.markers.objective !== undefined) {
@@ -93,6 +94,7 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
             let rectangleObject = _rectangleObject as RectangleObject
             let zone = this.add.zone(rectangleObject.x, rectangleObject.y, rectangleObject.width, rectangleObject.height).setOrigin(0, 0);
             this.physics.world.enable(zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
+            (zone.body as Phaser.Physics.Arcade.Body).setImmovable(true)
             this.physics.add.collider(zone, this.player.sprite, () => {
                 this.parentScene.gameEvents.emit(GoblinMinigameEvents.DEAD)
             })
@@ -123,14 +125,15 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
     }
 
     /**
-     * Update the active teleportation zone based on state
+     * Update the active teleportation zone and spawn bbased on state
      */
-    updateActiveTeleporterZone(): void {
+    updateTeleportAndSpawn(): void {
         let activeTeleporterZone: GoblinMinigameTeleporterZone | undefined;
         // If the state is normal, make the exit zone and spawn in the middle of entrance - trying to progress inward
         if (this.parentScene.state === GoblinMinigameState.NORMAL) {
             let playerX = this.markers.entrance_zone.x + this.markers.entrance_zone.width / 2
             let playerY = this.markers.entrance_zone.y + this.markers.entrance_zone.height / 2
+            this.spawnPoint = new Phaser.Geom.Point(playerX, playerY)
             this.player.sprite.setPosition(playerX, playerY)
             if (this.markers.exit_zone !== undefined) {
                 activeTeleporterZone = new GoblinMinigameTeleporterZone(this, this.markers.exit_zone, this.currentLevelIndex + 1)
@@ -140,6 +143,7 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
             if (this.markers.exit_zone) {
                 let playerX = this.markers.exit_zone.x + this.markers.exit_zone.width / 2
                 let playerY = this.markers.exit_zone.y + this.markers.exit_zone.height / 2
+                this.spawnPoint = new Phaser.Geom.Point(playerX, playerY)
                 this.player.sprite.setPosition(playerX, playerY)
             }
             activeTeleporterZone = new GoblinMinigameTeleporterZone(this, this.markers.entrance_zone, this.currentLevelIndex - 1)
@@ -150,6 +154,13 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
     }
 
     /**
+     * Reset the player's position to the spawn
+     */
+    resetPlayerPosition() {
+        this.player.sprite.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+    }
+
+    /**
      * Update the level when the game state changes
      */
     updateLevel(): void {
@@ -157,7 +168,7 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
             for (let npc of this.npcs) {
                 npc.updateState(this.parentScene.state)
             }
-            this.updateActiveTeleporterZone()
+            this.updateTeleportAndSpawn()
             fadeIn(this.parentScene)
         })
     }

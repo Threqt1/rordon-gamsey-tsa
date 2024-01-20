@@ -6,12 +6,12 @@ import { GoblinMinigameLevelScene } from "."
 let BASE_MASK_DEPTH = 100
 let NPC_LIGHT_MASK_DEPTH = 101
 let PLAYER_LIGHT_MASK_DEPTH = 102
-
-let BASE_LAYER_OPACITY = 0.7
+let CAUGHT_TIME_DELAY = 500
+let BASE_LAYER_OPACITY = 0.6
 let PLAYER_LIGHT_LAYER_OPACITY = 0.45
 
 // The order of the levels in the goblin minigame
-export const GOBLIN_MINIGAME_LEVEL_ORDER = [SceneEnums.TilemapNames.GoblinMinigameLevel2, SceneEnums.TilemapNames.GoblinMinigameLevel2, SceneEnums.TilemapNames.GoblinMinigameLevel3]
+export const GOBLIN_MINIGAME_LEVEL_ORDER = [SceneEnums.TilemapNames.GoblinMinigameLevel1, SceneEnums.TilemapNames.GoblinMinigameLevel2, SceneEnums.TilemapNames.GoblinMinigameLevel3]
 
 /**
  * All possible events for the game
@@ -48,6 +48,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
     currentLevel!: GoblinMinigameLevelScene
     state!: GoblinMinigameState
     gameInProgress!: boolean
+    gameResetting!: boolean
     gameEvents!: Phaser.Events.EventEmitter
 
     constructor() {
@@ -85,6 +86,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
 
         this.state = GoblinMinigameState.NORMAL
         this.gameInProgress = false
+        this.gameResetting = false
         this.gameEvents = new Phaser.Events.EventEmitter()
 
         // Once the change mode signal is heard, change game mode to alerted
@@ -93,17 +95,17 @@ export class GoblinMinigameScene extends Phaser.Scene {
             this.currentLevel.updateLevel()
         })
         //Once the player is caught, end the game
-        this.gameEvents.once(GoblinMinigameEvents.CAUGHT, () => {
-            this.endGame()
+        this.gameEvents.on(GoblinMinigameEvents.CAUGHT, () => {
+            this.resetGame()
         })
         //Once the player is dead, end the game
-        this.gameEvents.once(GoblinMinigameEvents.DEAD, () => {
-            this.endGame()
+        this.gameEvents.on(GoblinMinigameEvents.DEAD, () => {
+            this.resetGame()
         })
         //Listen for level change events
         this.gameEvents.on(GoblinMinigameEvents.SWITCH_LEVELS, (newLevelIndex: number) => {
             if (newLevelIndex < 0) {
-                this.endGame()
+                return this.endGame()
             }
             this.currentLevelIndex = newLevelIndex
             this.launchNewLevel(this.currentLevelIndex)
@@ -161,6 +163,24 @@ export class GoblinMinigameScene extends Phaser.Scene {
         for (let npc of this.currentLevel.npcs) {
             npc.raycastAndUpdate()
         }
+    }
+
+    /**
+     * Reset the game, but don't end it
+     */
+    resetGame(): void {
+        if (this.gameResetting) return
+        this.gameResetting = true
+        this.currentLevel.sprites.setControllable(false)
+        fadeOut(this, () => {
+            this.currentLevel.resetPlayerPosition()
+            this.time.delayedCall(CAUGHT_TIME_DELAY, () => {
+                fadeIn(this, () => {
+                    this.gameResetting = false
+                    this.currentLevel.sprites.setControllable(true)
+                })
+            })
+        })
     }
 
     /**

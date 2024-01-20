@@ -74,6 +74,6 @@ export namespace GoblinTexture {
     }
 
     export function configureGoblinPhysicsBody(body: Phaser.Physics.Arcade.Body): void {
-        body.setSize(20, 20).setOffset(16, 14)
+        body.setSize(14, 14).setOffset(18, 17)
     }
 }
