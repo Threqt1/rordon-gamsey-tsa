@@ -208,7 +208,7 @@
         {
          "draworder":"topdown",
          "id":6,
-         "name":"Markers",
+         "name":"Object Layer 1",
          "objects":[
                 {
                  "height":0,
@@ -547,26 +547,82 @@
                  "y":152
                 }, 
                 {
-                 "height":12.1818181818182,
+                 "height":12.1818,
                  "id":56,
                  "name":"exit_zone",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":13.2727272727273,
-                 "x":33.6363636363636,
+                 "width":13.2727,
+                 "x":33.6364,
                  "y":51
                 }, 
                 {
-                 "height":31.4545454545455,
+                 "height":31.4545,
                  "id":59,
                  "name":"entrance_zone",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":34.9090909090909,
-                 "x":453.636363636364,
-                 "y":66.1818181818182
+                 "width":34.9091,
+                 "x":453.636,
+                 "y":66.1818
+                }, 
+                {
+                 "height":17.2727,
+                 "id":61,
+                 "name":"void1",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":41.6364,
+                 "x":411.818,
+                 "y":33.8182
+                }, 
+                {
+                 "height":78.5455,
+                 "id":62,
+                 "name":"void2",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":24.1818,
+                 "x":411.818,
+                 "y":50.2955
+                },
+            
+                {
+                 "height":65.2727,
+                 "id":63,
+                 "name":"void3",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":26.1818,
+                 "x":410.364,
+                 "y":190.727
+                }, 
+                {
+                 "height":52,
+                 "id":64,
+                 "name":"void5",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":25.8182,
+                 "x":186.364,
+                 "y":203.636
+                }, 
+                {
+                 "height":23.0909,
+                 "id":65,
+                 "name":"void4",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":21.6364,
+                 "x":188.485,
+                 "y":76.6667
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -604,7 +660,7 @@
          "y":0
         }],
  "nextlayerid":10,
- "nextobjectid":61,
+ "nextobjectid":66,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
@@ -613,7 +669,7 @@
         {
          "columns":32,
          "firstgid":1,
-         "image":"GoblinSpriteSheet.png",
+         "image":"..\/Aesprite\/Goblin Game\/GoblinSpriteSheet.png",
          "imageheight":256,
          "imagewidth":512,
          "margin":0,

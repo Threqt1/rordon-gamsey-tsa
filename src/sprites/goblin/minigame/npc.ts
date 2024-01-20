@@ -1,16 +1,20 @@
 import { Direction } from "../..";
 import { GoblinMinigameState, GoblinMinigameEvents, GoblinMinigameLevelScene } from "../../../scenes/goblin";
 import { GoblinTexture } from "../../../textures/goblin";
+import { GoblinMinigameLightEmitter, GoblinMinigameLightEmitterType } from "./lightEmitter";
 
-const BOUNDING_BOX_DIMENSION = 60
-const RAY_CONE_DEG = 60
-const SWEEPING_DURATION = 750 * 2
 const SWEEPING_PAUSE = 500
-const SWEEPING_ANGLE = 15
-const NPC_SPEED = 20
-const LIGHT_COLOR = 0xffffff
-const LIGHT_OPACITY = 0.09
-const ALERTED_SPIN_DURATION = 5000
+const NPC_SPEED = 15
+const NPC_ALERTED_SPEED_MULTIPLIER = 1.5
+const NORMAL_NPC_BOUNDING_BOX = 40
+const NORMAL_NPC_SWEEPING_ANGLE = 15
+const NORMAL_NPC_SWEEPING_DURATION = 750
+const NORMAL_RAY_CONE_DEG = 45
+const ALERTED_NPC_BOUNDING_BOX = 50
+const ALERTED_NPC_SWEEPING_ANGLE = 30
+const ALERTED_NPC_SWEEPING_DURATION = 450
+const ALERTED_RAY_CONE_DEG = 60
+
 
 /**
  * Represents the types of paths
@@ -45,6 +49,7 @@ export class GoblinMinigameNPC {
     scene: GoblinMinigameLevelScene
     sprite: Phaser.GameObjects.PathFollower
     speed: number
+    lightEmitter: GoblinMinigameLightEmitter
     pathInformation: GoblinMinigamePathInformation
     currentPathType?: GoblinMinigamePathType
     currentPathPoints: Phaser.Math.Vector2[]
@@ -53,14 +58,13 @@ export class GoblinMinigameNPC {
      * The box that limits raycasting to a certain distance around the player
      */
     boundingBox: Phaser.GameObjects.Rectangle
-    ray: Raycaster.Ray
+    //ray: Raycaster.Ray
     direction: Direction
     stopped: boolean
     /**
-     * Tween that animates cones when the game state is
-     * alerted
+     * Tween that sweeps the light from left to right
      */
-    alertedTween: Phaser.Tweens.Tween
+    sweepTween?: Phaser.Tweens.TweenChain
     state: GoblinMinigameState
 
     constructor(scene: GoblinMinigameLevelScene, x: number, y: number, pathInformation: GoblinMinigamePathInformation) {
@@ -71,37 +75,21 @@ export class GoblinMinigameNPC {
         this.currentPathPoints = []
         this.currentPathIndex = 0
 
-        this.boundingBox = scene.add.rectangle(x, y, BOUNDING_BOX_DIMENSION * 2, BOUNDING_BOX_DIMENSION * 2)
-        let raycaster = scene.raycaster.createRaycaster()
-        scene.createRaycasterSettings(raycaster)
-        raycaster.mapGameObjects(this.boundingBox, true)
-        this.ray = raycaster.createRay()
-        this.ray.setConeDeg(RAY_CONE_DEG)
-        this.ray.autoSlice = true;
-        this.ray.enablePhysics();
-        this.ray.setCollisionRange(1000);
+        this.boundingBox = scene.add.rectangle(x, y, 0, 0)
+        this.lightEmitter = new GoblinMinigameLightEmitter(this.scene, this.sprite, GoblinMinigameLightEmitterType.CONE, this.boundingBox);
 
         this.direction = Direction.UP
         this.stopped = false
-        // Tweens the angle of the ray from 0 to 360, looping as well
-        // Starts off paused
-        let alertedTweenInfo: Phaser.Types.Tweens.TweenBuilderConfig = {
-            targets: { value: 0 },
-            value: 360,
-            repeat: -1,
-            duration: ALERTED_SPIN_DURATION,
-            onUpdate: (info) => {
-                this.ray.setAngleDeg(info.getValue())
-            },
-            paused: true
-        }
-        this.alertedTween = scene.tweens.add(alertedTweenInfo)
         this.state = GoblinMinigameState.NORMAL
 
         scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY);
         let body = this.sprite.body as Phaser.Physics.Arcade.Body
         body.pushable = false
-        GoblinTexture.configureGoblinPhysicsBody(body)
+        GoblinTexture.configureGoblinPhysicsBody(body);
+
+        this.scene.physics.add.collider(this.sprite, this.scene.player.sprite, () => {
+            this.scene.parentScene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
+        })
 
         this.sprite.play(GoblinTexture.Animations.IdleFront, true);
     }
@@ -114,13 +102,66 @@ export class GoblinMinigameNPC {
         this.sprite.stopFollow()
         if (this.state === GoblinMinigameState.NORMAL) {
             this.speed = NPC_SPEED
-            this.alertedTween.pause()
+            this.updateRaySettings()
             this.executePathData(this.pathInformation.normal)
         } else {
-            this.speed = NPC_SPEED * 2
-            this.alertedTween.resume()
+            this.speed = NPC_SPEED * NPC_ALERTED_SPEED_MULTIPLIER
+            this.updateRaySettings()
             this.executePathData(this.pathInformation.alerted)
         }
+    }
+
+    /**
+     * Update the raycaster based on the state
+     */
+    updateRaySettings(): void {
+        if (this.state === GoblinMinigameState.NORMAL) {
+            this.lightEmitter.ray.setConeDeg(NORMAL_RAY_CONE_DEG)
+            this.boundingBox.setSize(NORMAL_NPC_BOUNDING_BOX * 2, NORMAL_NPC_BOUNDING_BOX * 2)
+        } else {
+            this.lightEmitter.ray.setConeDeg(ALERTED_RAY_CONE_DEG)
+            this.boundingBox.setSize(ALERTED_NPC_BOUNDING_BOX * 2, ALERTED_NPC_BOUNDING_BOX * 2)
+        }
+    }
+
+    /**
+     * Play the sweep tween after resetting the previous one
+     */
+    playSweepTween(callback?: () => void, repeat = false) {
+        let sweepingAngle = NORMAL_NPC_SWEEPING_ANGLE
+        let sweepingDuration = NORMAL_NPC_SWEEPING_DURATION
+        if (this.state === GoblinMinigameState.ALERTED) {
+            sweepingAngle = ALERTED_NPC_SWEEPING_ANGLE
+            sweepingDuration = ALERTED_NPC_SWEEPING_DURATION
+        }
+
+        if (this.sweepTween !== undefined) this.sweepTween.stop()
+        let currentAngle = Phaser.Math.RadToDeg(this.lightEmitter.ray.angle)
+        let sweepConeUpwardTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+            targets: { value: currentAngle },
+            value: currentAngle - sweepingAngle,
+            duration: sweepingDuration,
+            onUpdate: (tween) => {
+                this.lightEmitter.ray.setAngleDeg(tween.getValue())
+            },
+            yoyo: true,
+        }
+        let sweepConeDownwardTween: Phaser.Types.Tweens.TweenBuilderConfig = {
+            targets: { value: currentAngle },
+            value: currentAngle + sweepingAngle,
+            duration: sweepingDuration,
+            onUpdate: (tween) => {
+                this.lightEmitter.ray.setAngleDeg(tween.getValue())
+            },
+            yoyo: true,
+        }
+        this.sweepTween = this.scene.tweens.chain({
+            tweens: [sweepConeUpwardTween, sweepConeDownwardTween],
+            onComplete: () => {
+                if (callback) callback()
+            },
+            repeat: repeat ? -1 : 0
+        })
     }
 
     /**
@@ -161,22 +202,24 @@ export class GoblinMinigameNPC {
         let currentSegment = new Phaser.Curves.Line(this.currentPathPoints[this.currentPathIndex], this.currentPathPoints[nextPathIndex])
         this.direction = this.getCurrentDirection(currentSegment)
 
-        // Don't modify angles in alerted state because of the tween
-        if (this.state === GoblinMinigameState.NORMAL) {
-            switch (this.direction) {
-                case Direction.UP:
-                    this.ray.setAngleDeg(-90)
-                    break;
-                case Direction.LEFT:
-                    this.ray.setAngleDeg(-180)
-                    break;
-                case Direction.RIGHT:
-                    this.ray.setAngleDeg(0)
-                    break;
-                case Direction.DOWN:
-                    this.ray.setAngleDeg(90)
-                    break;
-            }
+        switch (this.direction) {
+            case Direction.UP:
+                this.lightEmitter.ray.setAngleDeg(-90)
+                break;
+            case Direction.LEFT:
+                this.lightEmitter.ray.setAngleDeg(-180)
+                break;
+            case Direction.RIGHT:
+                this.lightEmitter.ray.setAngleDeg(0)
+                break;
+            case Direction.DOWN:
+                this.lightEmitter.ray.setAngleDeg(90)
+                break;
+        }
+
+        // Update the sweep tween if alerted
+        if (this.state === GoblinMinigameState.ALERTED) {
+            this.playSweepTween(undefined, true)
         }
 
         this.sprite.setPath(currentPath)
@@ -223,32 +266,10 @@ export class GoblinMinigameNPC {
      */
     pauseAndSweep(): void {
         this.playIdleAnimation()
-        let currentAngle = Phaser.Math.RadToDeg(this.ray.angle)
-        let sweepConeUpwardTween: Phaser.Types.Tweens.TweenBuilderConfig = {
-            targets: { value: currentAngle },
-            value: currentAngle - SWEEPING_ANGLE,
-            duration: SWEEPING_DURATION / 2,
-            onUpdate: (tween) => {
-                this.ray.setAngleDeg(tween.getValue())
-            },
-            yoyo: true
-        }
-        let sweepConeDownwardTween: Phaser.Types.Tweens.TweenBuilderConfig = {
-            targets: { value: currentAngle },
-            value: currentAngle + SWEEPING_ANGLE,
-            duration: SWEEPING_DURATION / 2,
-            onUpdate: (tween) => {
-                this.ray.setAngleDeg(tween.getValue())
-            },
-            yoyo: true
-        }
-        this.scene.tweens.chain({
-            tweens: [sweepConeUpwardTween, sweepConeDownwardTween],
-            onComplete: () => {
-                this.scene.time.delayedCall(SWEEPING_PAUSE, () => {
-                    this.startNextPathSegment()
-                })
-            }
+        this.playSweepTween(() => {
+            this.scene.time.delayedCall(SWEEPING_PAUSE, () => {
+                this.startNextPathSegment()
+            })
         })
     }
 
@@ -297,40 +318,9 @@ export class GoblinMinigameNPC {
      */
     raycastAndUpdate(): void {
         // Make the bounding box move with the sprite
-        this.boundingBox.setPosition(this.sprite.x, this.sprite.y)
-
-        this.ray.setOrigin(this.sprite.x, this.sprite.y)
-
         if (this.currentPathType === GoblinMinigamePathType.DYNAMIC) {
-            this.ray.castCone()
+            this.lightEmitter.emitLight()
         }
-
-        for (let slice of this.ray.slicedIntersections) {
-            this.scene.parentScene.npcVisibleArea.fillStyle(LIGHT_COLOR, LIGHT_OPACITY).fillTriangleShape(slice)
-        }
-
-        if (this.ray.overlap(this.scene.parentScene.currentLevel.player.sprite).length > 0) {
-            this.scene.parentScene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
-        }
-
-        // Do an additional cast with the cone rotated 180 degree to
-        // get the rotating cones effect if alerted
-        if (this.state === GoblinMinigameState.ALERTED) {
-            this.ray.setAngleDeg(Phaser.Math.RadToDeg(this.ray.angle) - 180)
-
-            this.ray.castCone()
-
-            if (this.ray.overlap(this.scene.parentScene.currentLevel.player.sprite).length > 0) {
-                this.scene.parentScene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
-            }
-
-            for (let slice of this.ray.slicedIntersections) {
-                this.scene.parentScene.npcVisibleArea.fillStyle(LIGHT_COLOR, LIGHT_OPACITY).fillTriangleShape(slice)
-            }
-
-            this.ray.setAngleDeg(Phaser.Math.RadToDeg(this.ray.angle) + 180)
-        }
-
     }
 
     /**
@@ -338,7 +328,7 @@ export class GoblinMinigameNPC {
      */
     stop(): void {
         this.stopped = true
-        this.alertedTween.destroy()
+        this.sweepTween?.destroy()
         this.sprite.stopFollow()
     }
 }

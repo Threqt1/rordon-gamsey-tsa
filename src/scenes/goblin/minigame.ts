@@ -1,5 +1,5 @@
 import { fadeOut, fadeSceneTransition, getGUIScene } from ".."
-import { SceneEnums, fadeIn, scaleAndConfigureCamera } from "../scenesUtilities"
+import { SceneEnums, fadeIn } from "../scenesUtilities"
 import { GoblinMinigameEndDialogue } from "../../dialogue/goblin"
 import { GoblinMinigameLevelScene } from "."
 
@@ -11,7 +11,7 @@ let BASE_LAYER_OPACITY = 0.7
 let PLAYER_LIGHT_LAYER_OPACITY = 0.45
 
 // The order of the levels in the goblin minigame
-export const GOBLIN_MINIGAME_LEVEL_ORDER = [SceneEnums.TilemapNames.GoblinMinigameLevel1, SceneEnums.TilemapNames.GoblinMinigameLevel2, SceneEnums.TilemapNames.GoblinMinigameLevel3]
+export const GOBLIN_MINIGAME_LEVEL_ORDER = [SceneEnums.TilemapNames.GoblinMinigameLevel2, SceneEnums.TilemapNames.GoblinMinigameLevel2, SceneEnums.TilemapNames.GoblinMinigameLevel3]
 
 /**
  * All possible events for the game
@@ -19,6 +19,7 @@ export const GOBLIN_MINIGAME_LEVEL_ORDER = [SceneEnums.TilemapNames.GoblinMiniga
 export enum GoblinMinigameEvents {
     ALERT = "alert",
     CAUGHT = "caught",
+    DEAD = "dead",
     SWITCH_LEVELS = "switch_levels"
 }
 
@@ -95,6 +96,10 @@ export class GoblinMinigameScene extends Phaser.Scene {
         this.gameEvents.once(GoblinMinigameEvents.CAUGHT, () => {
             this.endGame()
         })
+        //Once the player is dead, end the game
+        this.gameEvents.once(GoblinMinigameEvents.DEAD, () => {
+            this.endGame()
+        })
         //Listen for level change events
         this.gameEvents.on(GoblinMinigameEvents.SWITCH_LEVELS, (newLevelIndex: number) => {
             if (newLevelIndex < 0) {
@@ -124,7 +129,6 @@ export class GoblinMinigameScene extends Phaser.Scene {
             this.scene.moveAbove(SceneEnums.SceneNames.GoblinMinigameLevel, SceneEnums.SceneNames.GoblinMinigame)
             this.currentLevel = this.scene.get(SceneEnums.SceneNames.GoblinMinigameLevel) as GoblinMinigameLevelScene
             this.currentLevel.events.once(Phaser.Scenes.Events.CREATE, () => {
-                scaleAndConfigureCamera(this, this.currentLevel.map)
                 this.gameInProgress = true
                 fadeIn(this)
             })

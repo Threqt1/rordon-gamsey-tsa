@@ -1,9 +1,13 @@
-import { GOBLIN_MINIGAME_LEVEL_ORDER, GoblinMinigameScene, GoblinMinigameState } from ".";
+import { GOBLIN_MINIGAME_LEVEL_ORDER, GoblinMinigameEvents, GoblinMinigameScene, GoblinMinigameState } from ".";
 import { PointObject, RectangleObject, SceneEnums, fadeIn, fadeOut, loadTilemap, scaleAndConfigureCamera } from "..";
 import { Direction } from "../../sprites";
 import { Player } from "../../sprites/game";
 import { GoblinMinigameNPC, GoblinMinigameStaticPathData, GoblinMinigameDynamicPathData, GoblinMinigamePathType, GoblinMinigamePathInformation, GoblinMinigameObjective } from "../../sprites/goblin";
+import { GoblinMinigameLightEmitter, GoblinMinigameLightEmitterType } from "../../sprites/goblin/minigame/lightEmitter";
 import { GoblinMinigameTeleporterZone } from "../../sprites/goblin/minigame/zone";
+import { PlayerTexture } from "../../textures";
+
+const BONFIRE_LIGHT_RADIUS = 70
 
 /*
 TODO:
@@ -15,6 +19,7 @@ type GoblinMinigameObjects = {
     entrance_zone: RectangleObject,
     exit_zone?: RectangleObject
     objective?: PointObject
+    bonfire?: PointObject
 }
 
 export class GoblinMinigameLevelScene extends Phaser.Scene {
@@ -22,6 +27,7 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
     currentLevelIndex!: number
     player!: Player
     npcs!: GoblinMinigameNPC[]
+    additionaLights!: GoblinMinigameLightEmitter[]
     map!: Phaser.Tilemaps.Tilemap
     markers!: GoblinMinigameObjects
     playerRay!: Raycaster.Ray
@@ -44,6 +50,7 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
     create(config: { parent: GoblinMinigameScene, levelIndex: number }) {
         this.parentScene = config.parent
         this.currentLevelIndex = config.levelIndex
+        this.additionaLights = []
         /* MAP LOADING */
         let { collisionsLayer, map, playerSpriteDepth, objects } = loadTilemap(this, GOBLIN_MINIGAME_LEVEL_ORDER[config.levelIndex])
         this.map = map
@@ -68,14 +75,37 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
             this.sprites.physicsBodies.add(objective.sprite)
         }
 
+        // Make the bonfire, if any
+        if (this.markers.bonfire !== undefined) {
+            let sprite = this.add.sprite(this.markers.bonfire.x, this.markers.bonfire.y, PlayerTexture.TextureKey).setVisible(false)
+            this.additionaLights.push(new GoblinMinigameLightEmitter(this, sprite, GoblinMinigameLightEmitterType.CIRCLE, this.add.polygon(
+                sprite.x,
+                sprite.y,
+                new Phaser.Geom.Circle(BONFIRE_LIGHT_RADIUS, BONFIRE_LIGHT_RADIUS, BONFIRE_LIGHT_RADIUS).getPoints(36),
+                undefined,
+                1
+            )))
+        }
+
+        // Initialize all voids and their zones
+        for (let [key, _rectangleObject] of Object.entries(this.markers)) {
+            if (!key.toLowerCase().startsWith("void")) continue
+            let rectangleObject = _rectangleObject as RectangleObject
+            let zone = this.add.zone(rectangleObject.x, rectangleObject.y, rectangleObject.width, rectangleObject.height).setOrigin(0, 0);
+            this.physics.world.enable(zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
+            this.physics.add.collider(zone, this.player.sprite, () => {
+                this.parentScene.gameEvents.emit(GoblinMinigameEvents.DEAD)
+            })
+        }
+
         this.sprites.physicsBodies.setDepth(playerSpriteDepth)
         this.sprites.makeCollisionsWithLayer(collisionsLayer)
 
         // Configure camera
         scaleAndConfigureCamera(this, map, this.player.sprite)
+        scaleAndConfigureCamera(this.parentScene, this.map, this.player.sprite)
 
         // Configure raycaster
-        this.playerRay?.destroy()
         let raycaster = this.raycaster.createRaycaster()
         this.createRaycasterSettings(raycaster)
         this.playerRay = raycaster.createRay()
@@ -83,6 +113,12 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
 
         for (let npc of this.npcs) {
             npc.updateState(this.parentScene.state)
+        }
+    }
+
+    update() {
+        for (let light of this.additionaLights) {
+            light.emitLight()
         }
     }
 
