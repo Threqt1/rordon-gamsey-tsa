@@ -140,7 +140,11 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
             }
         } else {
             // Otherwise, entrances are exits and exits are entrances - you're trying to escape
-            if (this.markers.exit_zone) {
+            // Except if theres a objective - spawn at the objective otherwise
+            if (this.markers.objective) {
+                this.spawnPoint = new Phaser.Geom.Point(this.markers.objective.x, this.markers.objective.y);
+                this.player.sprite.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+            } else if (this.markers.exit_zone) {
                 let playerX = this.markers.exit_zone.x + this.markers.exit_zone.width / 2
                 let playerY = this.markers.exit_zone.y + this.markers.exit_zone.height / 2
                 this.spawnPoint = new Phaser.Geom.Point(playerX, playerY)

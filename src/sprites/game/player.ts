@@ -3,7 +3,8 @@ import { Controllable } from "../../plugins"
 import { PlayerTexture } from "../../textures"
 import { BaseInput, Keybinds } from "../input"
 
-const DIAGONAL_SPEED_BOOST_FACTOR = 1.2
+const SPEED = 56
+const DIAGONAL_SPEED_BOOST_FACTOR = 1.25
 
 export class Player implements Controllable {
     static keybinds: Keybinds = {
@@ -28,7 +29,7 @@ export class Player implements Controllable {
         this.scene = scene
         this.input = new BaseInput(scene, Player.keybinds)
         this.controllable = true
-        this.speed = 50
+        this.speed = SPEED
         this.direction = Direction.DOWN
     }
 
