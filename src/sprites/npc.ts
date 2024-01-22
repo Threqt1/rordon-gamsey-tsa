@@ -4,6 +4,7 @@ import { KeyboardTexture } from "../textures";
 
 const INTERACTION_PROMPT_DEPTH = 100
 const INTERACTION_PROMPT_SCALE = 0.3
+const INTERACTION_COOLDOWN = 1500
 
 /**
  * Base interactions
@@ -27,6 +28,7 @@ export abstract class BaseNPC implements Interactable {
     input: BaseInput
     interactable: boolean
     interactionPrompt: Phaser.GameObjects.Sprite
+    emitter: Phaser.Events.EventEmitter
     zone: Phaser.GameObjects.Zone
 
     constructor(scene: Phaser.Scene, x: number, y: number, zoneSizeX = 50, zoneSizeY = 50) {
@@ -37,6 +39,7 @@ export abstract class BaseNPC implements Interactable {
             .setDepth(INTERACTION_PROMPT_DEPTH)
             .setVisible(false)
             .setScale(INTERACTION_PROMPT_SCALE)
+        this.emitter = new Phaser.Events.EventEmitter()
         this.zone = this.scene.add.zone(x, y, zoneSizeX, zoneSizeY)
 
         this.scene.physics.world.enable(this.zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
@@ -65,6 +68,15 @@ export abstract class BaseNPC implements Interactable {
             this.interactionPrompt.setVisible(false)
             this.onInteract()
         }
+    }
+
+    /**
+     * Handle re-enabling interactable, but just after a cooldown
+     */
+    startCooldown() {
+        this.scene.time.delayedCall(INTERACTION_COOLDOWN, () => {
+            this.interactable = true
+        })
     }
 
     /**

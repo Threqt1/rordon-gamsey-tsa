@@ -16,8 +16,7 @@ export class ElfMinigameTeleporterNPC extends BaseNPC {
 
     onInteract(): void {
         this.interactable = false
-        let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-        getGUIScene(this.scene).dialogue.start(this.scene, ElfHubTeleporterDialogue.Dialogue, dialogueEventEmitter, () => {
+        getGUIScene(this.scene).dialogue.start(this.scene, ElfHubTeleporterDialogue.Dialogue, this.emitter, () => {
             fadeSceneTransition(this.scene, SceneEnums.SceneNames.ElfMinigame)
         })
     }

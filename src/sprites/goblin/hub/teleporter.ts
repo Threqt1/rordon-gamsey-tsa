@@ -18,8 +18,7 @@ export class GoblinMinigameTeleporterNPC extends BaseNPC {
 
     onInteract(): void {
         this.interactable = false
-        let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-        getGUIScene(this.scene).dialogue.start(this.scene, GoblinHubTeleporterDialogue.Dialogue, dialogueEventEmitter, () => {
+        getGUIScene(this.scene).dialogue.start(this.scene, GoblinHubTeleporterDialogue.Dialogue, this.emitter, () => {
             fadeSceneTransition(this.scene, SceneEnums.SceneNames.GoblinMinigame)
         })
     }
