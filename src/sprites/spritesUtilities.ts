@@ -1,24 +1,27 @@
-export enum Zone {
-    ENTERED,
+/**
+ * Enum for the cardinal directions
+ */
+export enum Direction {
+    UP,
+    DOWN,
     LEFT,
-    NONE
+    RIGHT,
 }
 
-export function checkIfInZone(zone: Phaser.GameObjects.Zone) {
-    let touching = (zone.body as Phaser.Physics.Arcade.Body).touching.none
-    let wasTouching = (zone.body as Phaser.Physics.Arcade.Body).wasTouching.none
-    let embedded = (zone.body as Phaser.Physics.Arcade.Body).embedded
+/**
+ * Check if an interacting body is inside the zone
+ * @param zone The zone to check
+ * @returns If an interacting body is in the zone or not
+ */
+export function isInsideZone(zone: Phaser.GameObjects.Zone): boolean {
+    let body = zone.body as Phaser.Physics.Arcade.Body
+    let touching = !body.touching.none
+    let wasTouching = !body.wasTouching.none
+    let embedded = body.embedded
 
-    if (touching && !wasTouching) {
-        if (embedded) {
-            return Zone.ENTERED
-        } else {
-            return Zone.LEFT
-        }
-    }
-    else if (!touching && wasTouching) {
-        return Zone.ENTERED
+    if (touching && !wasTouching || touching && wasTouching || embedded) {
+        return true
     }
 
-    return Zone.NONE
+    return false
 }
