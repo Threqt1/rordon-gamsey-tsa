@@ -19,14 +19,14 @@ export class ElfHubEstel extends BaseNPC {
 
     startInitialDialogue() {
         this.interactable = false
-        getGUIScene(this.scene).dialogue.start(this.scene, ElfHubEstelInitialDialogue.Dialogue, this.emitter, () => {
+        getGUIScene(this.scene).dialogue.start(this.scene, ElfHubEstelInitialDialogue.Dialogue, this.emitter, this.scene.data, () => {
             this.startCooldown()
         })
     }
 
     onInteract(): void {
         this.interactable = false
-        getGUIScene(this.scene).dialogue.start(this.scene, ElfHubEstelNormalDialogue.Dialogue, this.emitter, () => {
+        getGUIScene(this.scene).dialogue.start(this.scene, ElfHubEstelNormalDialogue.Dialogue, this.emitter, this.scene.data, () => {
             this.startCooldown()
         })
     }
