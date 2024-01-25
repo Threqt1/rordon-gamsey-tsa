@@ -1,9 +1,9 @@
 import { BaseNPC } from "../..";
 import { SceneEnums, fadeSceneTransition, getGUIScene } from "../../../scenes";
-import { ElfHubTeleporterDialogue } from "../../../dialogue/elf";
 import { ElfTexture } from "../../../textures/elf";
+import { GoblinMinigameTeleporterDialogue } from "../../../dialogue/elf/postminigame/goblinTeleporter";
 
-export class ElfMinigameTeleporterNPC extends BaseNPC {
+export class GoblinMinigameTeleporterNPC extends BaseNPC {
     sprite: Phaser.Physics.Arcade.Sprite
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
@@ -16,8 +16,8 @@ export class ElfMinigameTeleporterNPC extends BaseNPC {
 
     onInteract(): void {
         this.interactable = false
-        getGUIScene(this.scene).dialogue.start(this.scene, ElfHubTeleporterDialogue.Dialogue, this.emitter, this.scene.data, () => {
-            fadeSceneTransition(this.scene, SceneEnums.SceneNames.ElfMinigame)
+        getGUIScene(this.scene).dialogue.start(this.scene, GoblinMinigameTeleporterDialogue.Dialogue, this.emitter, this.scene.data, () => {
+            fadeSceneTransition(this.scene, SceneEnums.SceneNames.GoblinMinigame)
         })
     }
 }

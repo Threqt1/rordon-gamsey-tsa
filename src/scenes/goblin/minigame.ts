@@ -196,7 +196,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
             this.currentLevel.scene.stop()
             this.scene.stop()
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-            getGUIScene(this).dialogue.start(this, GoblinMinigameEndDialogue.Dialogue, dialogueEventEmitter, () => {
+            getGUIScene(this).dialogue.start(this, GoblinMinigameEndDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
                 fadeSceneTransition(this, SceneEnums.SceneNames.Menu)
             })
         })

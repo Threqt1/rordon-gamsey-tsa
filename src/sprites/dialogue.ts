@@ -32,7 +32,7 @@ export class BaseDialogue implements Controllable {
         this.dialogueSprite = new DialogueSprite(scene, width, height)
         this.dialogueSprite.setVisible(false)
         this.input = new BaseInput(scene, DialogueOptionKeybinds)
-        this.dialogueWalker = new Dialogue.Walker(scene.registry)
+        this.dialogueWalker = new Dialogue.Walker()
         this.controllable = false
 
         scene.sprites.controllables.push(this)
@@ -46,12 +46,12 @@ export class BaseDialogue implements Controllable {
      * @param endCallback Function to run once dialogue is finished
      * @returns 
      */
-    start(scene: Phaser.Scene, dialogue: Dialogue.Dialogue, emitter: Phaser.Events.EventEmitter, endCallback?: () => void): void {
+    start(scene: Phaser.Scene, dialogue: Dialogue.Dialogue, emitter: Phaser.Events.EventEmitter, registry: Phaser.Data.DataManager, endCallback?: () => void): void {
         if (this.controllable) return
         this.activeScene = scene
         this.endCallback = endCallback
 
-        this.dialogueWalker.startWithNewDialogue(dialogue, emitter)
+        this.dialogueWalker.startWithNewDialogue(dialogue, emitter, registry)
         this.dialogueSprite.setVisible(true)
         this.activeScene.sprites.setControllable(false)
         this.input.input.resetKeys()

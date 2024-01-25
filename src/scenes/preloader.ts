@@ -29,7 +29,7 @@ export class PreloaderScene extends Phaser.Scene {
         preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigameLevel2, "goblin/map2.tmj", "goblin/goblin.png")
         preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigameLevel3, "goblin/map3.tmj", "goblin/goblin.png")
         preloadTilemap(this, SceneEnums.TilemapNames.ElfMinigame, "elf/minigame.tmj", "elf/1.png", "elf/2.png")
-        preloadTilemap(this, SceneEnums.TilemapNames.ElfHub, "elf/hub.tmj", "elf/2.png")
+        preloadTilemap(this, SceneEnums.TilemapNames.ElfHub, "elf/hub.tmj", "elf/2.png", "goblin/goblin.png")
 
         PlayerTexture.preload(this)
         KeyboardTexture.preload(this)

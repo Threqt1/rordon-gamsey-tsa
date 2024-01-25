@@ -41,10 +41,10 @@ export namespace Dialogue {
 
         emitter!: Phaser.Events.EventEmitter
         state!: WalkerState
-        registry: Phaser.Data.DataManager
+        registry!: Phaser.Data.DataManager
 
-        constructor(registry: Phaser.Data.DataManager) {
-            this.registry = registry
+        constructor() {
+
         }
 
         /**
@@ -52,9 +52,10 @@ export namespace Dialogue {
          * @param dialogue The new dialogue to walk
          * @param emitter The emitter for the new dialogue
          */
-        startWithNewDialogue(dialogue: Dialogue, emitter: Phaser.Events.EventEmitter) {
+        startWithNewDialogue(dialogue: Dialogue, emitter: Phaser.Events.EventEmitter, registry: Phaser.Data.DataManager) {
             this.emitter = emitter
             this.state = WalkerState.CONTENT
+            this.registry = registry
 
             this.switchToNewBlock(dialogue)
         }

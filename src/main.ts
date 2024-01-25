@@ -6,6 +6,7 @@ import { PreloaderScene, MenuScene, GameScene, GUIScene } from './scenes';
 import { ElfHubScene, ElfMinigameScene } from './scenes/elf';
 import { GoblinMinigameScene, GoblinMinigameLevelScene } from './scenes/goblin';
 import { SpritesPlugin, PluginEnums, AnimatedTiles } from './plugins';
+import { ElfPostMinigameScene } from './scenes/elf/postminigame';
 
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -24,6 +25,7 @@ const config: Phaser.Types.Core.GameConfig = {
         MenuScene,
         GameScene,
         ElfMinigameScene,
+        ElfPostMinigameScene,
         GoblinMinigameScene,
         GoblinMinigameLevelScene,
         GUIScene,

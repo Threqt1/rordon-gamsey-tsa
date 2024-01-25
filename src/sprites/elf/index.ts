@@ -1,5 +1,7 @@
 export * from "./hub/teleporter"
 export * from "./hub/estel"
+export * from "./hub/overseer"
+export * from "./hub/pochi"
 export * from "./minigame/npc"
 export * from "./minigame/player"
 export * from "./minigame/fruits/apple"

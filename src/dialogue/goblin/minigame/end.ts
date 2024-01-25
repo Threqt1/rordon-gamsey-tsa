@@ -8,8 +8,10 @@ let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "Wait... where did the treasure go?!",
-            "Thief! Theres a thief! Find him!"
+            "NO! You can't steal that! We stole it first!",
+            "Aargh Darn! Now what am I gonna wipe with!",
+            "WITH THIS TREASURE I SUMMON!! DIVINE GOBLIN GENERAL-",
+            "*Apple and Sausages Obtained*"
         ]
     },
     nextOptions: []

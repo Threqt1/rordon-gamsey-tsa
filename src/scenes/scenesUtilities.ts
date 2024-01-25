@@ -5,10 +5,11 @@ export namespace SceneEnums {
         Preloader = "preloader",
         Menu = "menu",
         Game = "game",
+        ElfHub = "elfhub",
         ElfMinigame = "elfminigame",
+        ElfPostMinigame = "elfpostminigame",
         GoblinMinigame = "goblinminigame",
         GoblinMinigameLevel = "goblinminigamelevel",
-        ElfHub = "elfhub",
         GUI = "gui"
     }
     export enum TilemapNames {
@@ -212,6 +213,7 @@ export function fadeIn(scene: Phaser.Scene, callback?: () => void): void {
 export function fadeSceneTransition(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames): void {
     fadeOut(scene, () => {
         scene.scene.start(nextScene)
+        scene.scene.moveAbove(nextScene, SceneEnums.SceneNames.GUI)
         scene.scene.get(nextScene).events.once(Phaser.Scenes.Events.CREATE, () => {
             fadeIn(scene.scene.get(nextScene))
         })

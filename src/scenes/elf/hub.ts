@@ -1,13 +1,22 @@
 import { Player } from "../../sprites/game"
 import { loadTilemap, SceneEnums, scaleAndConfigureCamera, PointObject } from "../"
-import { ElfHubEstel } from "../../sprites/elf"
+import { ElfHubEstel, ElfHubOverseer, ElfHubPochi, ElfMinigameTeleporterNPC } from "../../sprites/elf"
 import { Direction } from "../../sprites"
 import { Cameras } from "phaser"
 
 type ElfHubMarkers = {
-    EstelLocation: PointObject
-    NPC1Location: PointObject
-    OverseerLocation: PointObject
+    EstelNPCLocation: PointObject
+    PochiNPCLocation: PointObject
+    OverseerNPCLocation: PointObject
+    TeleporterNPCLocation: PointObject
+}
+
+export type ElfHubData = {
+    talkedToPochi: boolean
+}
+
+const DEFAULT_DATA: ElfHubData = {
+    talkedToPochi: false
 }
 
 const ESTEL_INITIAL_TALK_DELAY = 500
@@ -24,13 +33,20 @@ export class ElfHubScene extends Phaser.Scene {
 
         this.sprites.initialize(map)
 
+        // initialize registry
+        this.data.set(DEFAULT_DATA)
+
         //position player in front of estel
-        let estel = new ElfHubEstel(this, markers.EstelLocation.x, markers.EstelLocation.y)
-        let player = new Player(this, markers.EstelLocation.x, markers.EstelLocation.y + PLAYER_ESTEL_Y_OFFSET)
+        let estel = new ElfHubEstel(this, markers.EstelNPCLocation.x, markers.EstelNPCLocation.y)
+        let player = new Player(this, markers.EstelNPCLocation.x, markers.EstelNPCLocation.y + PLAYER_ESTEL_Y_OFFSET)
+
+        let teleporter = new ElfMinigameTeleporterNPC(this, markers.TeleporterNPCLocation.x, markers.TeleporterNPCLocation.y)
+        let overseer = new ElfHubOverseer(this, markers.OverseerNPCLocation.x, markers.OverseerNPCLocation.y)
+        let pochi = new ElfHubPochi(this, markers.PochiNPCLocation.x, markers.PochiNPCLocation.y)
 
         this.sprites.controllables.push(player)
-        this.sprites.addInteractables(estel)
-        this.sprites.physicsBodies.addMultiple([player.sprite, estel.sprite])
+        this.sprites.addInteractables(estel, overseer, pochi, teleporter)
+        this.sprites.physicsBodies.addMultiple([player.sprite, estel.sprite, overseer.sprite, pochi.sprite, teleporter.sprite])
         this.sprites.interactingBodies.add(player.sprite)
         this.sprites.physicsBodies.setDepth(playerSpriteDepth)
 
