@@ -51,7 +51,7 @@ export class MenuScene extends Phaser.Scene {
         startSprite.on("pointerup", () => {
             if (!switching) {
                 switching = true
-                fadeSceneTransition(this, SceneEnums.SceneNames.Final)
+                fadeSceneTransition(this, SceneEnums.SceneNames.ElfHub)
             }
         })
 
