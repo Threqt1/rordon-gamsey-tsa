@@ -1,4 +1,4 @@
-import { GUIScene } from ".";
+import { GUIScene, GameData } from ".";
 
 export namespace SceneEnums {
     export enum SceneNames {
@@ -238,6 +238,15 @@ export function fadeSceneTransition(scene: Phaser.Scene, nextScene: SceneEnums.S
  */
 export function getGUIScene(scene: Phaser.Scene): GUIScene {
     return scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene
+}
+
+/**
+ * Get the current game registry
+ * @param scene Te scene to call from
+ * @returns The registry with the proper type
+ */
+export function getGameRegistry(scene: Phaser.Scene): GameData {
+    return scene.registry.values as GameData
 }
 
 /**

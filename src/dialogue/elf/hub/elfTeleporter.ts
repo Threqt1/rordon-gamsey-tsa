@@ -62,3 +62,35 @@ export const ElfHubTeleporterDialogue = {
     Dialogue: Base,
     Events
 }
+
+enum Events1 {
+}
+
+let Base1: Dialogue.Dialogue = {
+    getOptionText() { return "" },
+    getContentText() {
+        return [
+            "You're back again?~",
+            "Well, I respect the dedication!",
+            "Are you ready to try again?",
+        ]
+    },
+    nextOptions: []
+}
+
+let Option1_1: Dialogue.Dialogue = {
+    getOptionText() { return "Let me try again!" },
+    getContentText() {
+        return [
+            "Very well!"
+        ]
+    },
+    nextOptions: []
+}
+
+Base1.nextOptions = [Option1_1]
+
+export const ElfHubTeleporterAgainDialogue = {
+    Dialogue: Base1,
+    Events1
+}

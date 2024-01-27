@@ -8,7 +8,6 @@ import { GoblinMinigameScene, GoblinMinigameLevelScene } from './scenes/goblin';
 import { SpritesPlugin, PluginEnums, AnimatedTiles } from './plugins';
 import { FinalScene } from './scenes/final';
 
-
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
     width: window.innerWidth,

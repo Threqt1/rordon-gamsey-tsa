@@ -1,5 +1,5 @@
 import { Player } from "../../sprites/game"
-import { loadTilemap, SceneEnums, scaleAndConfigureCamera, PointObject } from "../"
+import { loadTilemap, SceneEnums, scaleAndConfigureCamera, PointObject, GameData, getGameRegistry } from "../"
 import { ElfHubEstel, ElfHubOverseer, ElfHubPochi, ElfMinigameTeleporterNPC } from "../../sprites/elf"
 import { Direction } from "../../sprites"
 import { Cameras } from "phaser"
@@ -20,7 +20,7 @@ const DEFAULT_DATA: ElfHubData = {
 }
 
 const ESTEL_INITIAL_TALK_DELAY = 500
-const PLAYER_ESTEL_Y_OFFSET = 25;
+const PLAYER_OFFSET = 25;
 
 export class ElfHubScene extends Phaser.Scene {
     constructor() {
@@ -38,7 +38,7 @@ export class ElfHubScene extends Phaser.Scene {
 
         //position player in front of estel
         let estel = new ElfHubEstel(this, markers.EstelNPCLocation.x, markers.EstelNPCLocation.y)
-        let player = new Player(this, markers.EstelNPCLocation.x, markers.EstelNPCLocation.y + PLAYER_ESTEL_Y_OFFSET)
+        let player = new Player(this, 0, 0)
 
         let teleporter = new ElfMinigameTeleporterNPC(this, markers.TeleporterNPCLocation.x, markers.TeleporterNPCLocation.y)
         let overseer = new ElfHubOverseer(this, markers.OverseerNPCLocation.x, markers.OverseerNPCLocation.y)
@@ -50,9 +50,6 @@ export class ElfHubScene extends Phaser.Scene {
         this.sprites.interactingBodies.add(player.sprite)
         this.sprites.physicsBodies.setDepth(playerSpriteDepth)
 
-        // disable control initially
-        this.sprites.setControllable(false)
-
         scaleAndConfigureCamera(this, map, player.sprite)
 
         this.sprites.makeCollisionsWithLayer(collisionsLayer)
@@ -61,12 +58,19 @@ export class ElfHubScene extends Phaser.Scene {
         player.direction = Direction.UP
         player.playDirectionAnimation(0, 0)
 
-        //delay and play the initial estel dialogue
-        this.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
-            this.time.delayedCall(ESTEL_INITIAL_TALK_DELAY, () => {
-                estel.startInitialDialogue()
+        //delay and play the initial estel dialogue if first time
+        if (!getGameRegistry(this).startingCutscenePassed) {
+            // disable control initially
+            this.sprites.setControllable(false)
+            player.sprite.setPosition(markers.EstelNPCLocation.x, markers.EstelNPCLocation.y + PLAYER_OFFSET)
+            this.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+                this.time.delayedCall(ESTEL_INITIAL_TALK_DELAY, () => {
+                    estel.startInitialDialogue()
+                })
             })
-        })
+        } else {
+            player.sprite.setPosition(markers.TeleporterNPCLocation.x - PLAYER_OFFSET, markers.TeleporterNPCLocation.y)
+        }
     }
 
     update() {

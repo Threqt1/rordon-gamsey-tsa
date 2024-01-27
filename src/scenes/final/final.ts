@@ -1,6 +1,6 @@
 import { PointObject, SceneEnums, fadeIn, fadeOut, fadeSceneTransition, getGUIScene, loadTilemap, scaleAndConfigureCamera, switchCameraFollow } from ".."
 import { Dialogue } from "../../dialogue"
-import { FinalElfFoodDialogue, FinalElfTableDialogue, FinalEndDialogue, FinalGoblinFoodDialogue, FinalGoblinTableDialogue, FinalPlayerFoodDialogue, FinalPlayerTableDialogue } from "../../dialogue/final"
+import { FinalElfFoodDialogue, FinalElfTableDialogue, FinalEndDialogue, FinalGoblinFoodDialogue, FinalGoblinTableDialogue, FinalPlayerFoodDialogue, FinalPlayerTableDialogue, FinalStartDialogue } from "../../dialogue/final"
 import { FinalNPC, FinalNPCEvents, FinalNPCTexture } from "../../sprites/final"
 import { FoodTexture, PlayerTexture } from "../../textures"
 import { ElfTexture } from "../../textures/elf"
@@ -122,7 +122,16 @@ export class FinalScene extends Phaser.Scene {
         this.currentOrderIndex = 0
         this.spriteDepth = playerSpriteDepth
 
-        this.startNextNPC()
+        this.cameras.main.alpha = 0
+
+        let dialogueEventEmitter = new Phaser.Events.EventEmitter()
+        getGUIScene(this).dialogue.start(this, FinalStartDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
+            fadeOut(this, () => {
+                this.cameras.main.alpha = 1
+                this.startNextNPC()
+                fadeIn(this)
+            })
+        })
     }
 
     getNPCTexture(npc: FinalNPCs): FinalNPCTexture {

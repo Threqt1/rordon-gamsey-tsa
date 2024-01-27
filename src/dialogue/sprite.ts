@@ -43,7 +43,7 @@ export class DialogueSprite {
     }
 
     setText(text: string) {
-        this.dialogueText.setText(text.toLowerCase())
+        this.dialogueText.setText(text)
     }
 
     setVisible(visible: boolean) {

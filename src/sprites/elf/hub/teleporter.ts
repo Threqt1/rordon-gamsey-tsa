@@ -1,7 +1,8 @@
 import { BaseNPC } from "../..";
-import { SceneEnums, fadeSceneTransition, getGUIScene } from "../../../scenes";
-import { ElfHubTeleporterDialogue } from "../../../dialogue/elf";
+import { SceneEnums, fadeSceneTransition, getGUIScene, getGameRegistry } from "../../../scenes";
+import { ElfHubTeleporterAgainDialogue, ElfHubTeleporterDialogue } from "../../../dialogue/elf";
 import { ElfTexture } from "../../../textures/elf";
+import { Dialogue } from "../../../dialogue";
 
 export class ElfMinigameTeleporterNPC extends BaseNPC {
     sprite: Phaser.Physics.Arcade.Sprite
@@ -16,7 +17,13 @@ export class ElfMinigameTeleporterNPC extends BaseNPC {
 
     onInteract(): void {
         this.interactable = false
-        getGUIScene(this.scene).dialogue.start(this.scene, ElfHubTeleporterDialogue.Dialogue, this.emitter, this.scene.data, () => {
+        let dialogue: Dialogue.Dialogue;
+        if (getGameRegistry(this.scene).elfMinigameLost) {
+            dialogue = ElfHubTeleporterAgainDialogue.Dialogue
+        } else {
+            dialogue = ElfHubTeleporterDialogue.Dialogue
+        }
+        getGUIScene(this.scene).dialogue.start(this.scene, dialogue, this.emitter, this.scene.data, () => {
             fadeSceneTransition(this.scene, SceneEnums.SceneNames.ElfMinigame)
         })
     }

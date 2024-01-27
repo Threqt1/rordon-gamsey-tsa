@@ -1,7 +1,7 @@
 import { ElfMinigameNPC, ElfMinigamePlayer, ElfMinigameFruit, ElfMinigameApple, ElfMinigamePumpkin, ElfMinigameFruitType, ElfMinigameFruitEvents, ElfMinigameFruitInformation } from "../../sprites/elf"
-import { fadeOut, fadeSceneTransition, getGUIScene, loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums } from "..";
+import { fadeOut, fadeSceneTransition, getGameRegistry, getGUIScene, loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums } from "..";
 import { TorchesTexture } from "../../textures/elf";
-import { ElfMinigameEndDialogue } from "../../dialogue/elf";
+import { ElfMinigameEndDialogue, ElfMinigameLoseDialogue } from "../../dialogue/elf";
 
 enum ElfMinigameEvents {
     DONE = "done"
@@ -162,8 +162,7 @@ export class ElfMinigameScene extends Phaser.Scene {
             fruit.fruitEvents.once(ElfMinigameFruitEvents.FAIL, () => {
                 // Prevent double game endeds
                 if (!this.gameEnded) {
-                    this.gameEnded = true
-                    fadeSceneTransition(this, SceneEnums.SceneNames.Menu)
+                    this.loseGame()
                 }
             })
 
@@ -251,6 +250,21 @@ export class ElfMinigameScene extends Phaser.Scene {
             }
         }
         this.tweens.addMultiple([timeScaleTween, grayscaleTween])
+    }
+
+    /**
+     * Lose the game
+     */
+    loseGame(): void {
+        fadeOut(this, () => {
+            this.scene.stop()
+            this.gameEnded = true
+            let dialogueEventEmitter = new Phaser.Events.EventEmitter()
+            getGUIScene(this).dialogue.start(this, ElfMinigameLoseDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
+                getGameRegistry(this).elfMinigameLost = true
+                fadeSceneTransition(this, SceneEnums.SceneNames.ElfHub)
+            })
+        })
     }
 
     /**

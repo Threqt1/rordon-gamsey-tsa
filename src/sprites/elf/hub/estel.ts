@@ -1,4 +1,4 @@
-import { getGUIScene } from "../../../scenes";
+import { getGUIScene, getGameRegistry } from "../../../scenes";
 import { BaseNPC } from "../..";
 import { ElfTexture } from "../../../textures/elf";
 import { ElfHubEstelInitialDialogue, ElfHubEstelNormalDialogue } from "../../../dialogue/elf";
@@ -20,6 +20,7 @@ export class ElfHubEstel extends BaseNPC {
     startInitialDialogue() {
         this.interactable = false
         getGUIScene(this.scene).dialogue.start(this.scene, ElfHubEstelInitialDialogue.Dialogue, this.emitter, this.scene.data, () => {
+            getGameRegistry(this.scene).startingCutscenePassed = true
             this.startCooldown()
         })
     }

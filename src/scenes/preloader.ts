@@ -3,6 +3,16 @@ import { pct, preloadTilemap, SceneEnums } from ".";
 import { SlashesTexture, ElfTexture, FruitsTexture, TorchesTexture } from "../textures/elf";
 import { GoblinTexture } from "../textures/goblin";
 
+export type GameData = {
+    startingCutscenePassed: boolean,
+    elfMinigameLost: boolean
+}
+
+const DEFAULT_DATA: GameData = {
+    startingCutscenePassed: false,
+    elfMinigameLost: false,
+}
+
 /**
  * Preloads necessary assets before running the game
  */
@@ -69,6 +79,8 @@ export class PreloaderScene extends Phaser.Scene {
         FruitsTexture.load(this)
         TorchesTexture.load(this)
         GoblinTexture.load(this)
+
+        this.registry.set(DEFAULT_DATA)
 
         this.scene.launch(SceneEnums.SceneNames.GUI)
         this.scene.start(SceneEnums.SceneNames.Menu)
