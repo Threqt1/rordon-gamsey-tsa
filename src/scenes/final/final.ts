@@ -29,18 +29,17 @@ const playerTexture: FinalNPCTexture = {
     key: PlayerTexture.TextureKey,
     food: FoodTexture.Frames.Player,
     moveRightAnimation: (sprite) => {
-        sprite.setFlipX(false)
-        sprite.play(PlayerTexture.Animations.WalkSide, true)
+        sprite.play(PlayerTexture.Animations.WalkRight, true)
     },
     idleRightAnimation: (sprite) => {
-        sprite.setFlipX(false)
-        sprite.play(PlayerTexture.Animations.IdleSide, true)
+        sprite.play(PlayerTexture.Animations.IdleRight, true)
     },
     moveLeftAnimation: (sprite) => {
-        sprite.setFlipX(true)
-        sprite.play(PlayerTexture.Animations.WalkSide, true)
+        sprite.play(PlayerTexture.Animations.WalkLeft, true)
     },
-    idleFrontAnimation: (sprite) => sprite.play(PlayerTexture.Animations.IdleFront, true)
+    idleFrontAnimation: (sprite) => {
+        sprite.play(PlayerTexture.Animations.IdleFront, true)
+    }
 }
 
 const playerDialogue: FinalNPCDialogue = {
@@ -63,7 +62,10 @@ const elfTexture: FinalNPCTexture = {
         sprite.setFlipX(true)
         sprite.play(ElfTexture.Animations.WalkSide, true)
     },
-    idleFrontAnimation: (sprite) => sprite.play(ElfTexture.Animations.IdleFront, true)
+    idleFrontAnimation: (sprite) => {
+        sprite.setFlipX(false)
+        sprite.play(ElfTexture.Animations.IdleFront, true)
+    }
 }
 
 const elfDialogue: FinalNPCDialogue = {

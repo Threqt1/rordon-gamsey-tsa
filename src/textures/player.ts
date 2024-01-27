@@ -5,10 +5,12 @@ export namespace PlayerTexture {
     export const TextureKey = "player"
     export const Animations = {
         IdleFront: TextureKey + "-idle-front",
-        IdleSide: TextureKey + "-idle-side",
+        IdleRight: TextureKey + "-idle-right",
+        IdleLeft: TextureKey + "-idle-left",
         IdleBack: TextureKey + "-idle-back",
         WalkFront: TextureKey + "-walk-front",
-        WalkSide: TextureKey + "-walk-side",
+        WalkRight: TextureKey + "-walk-right",
+        WalkLeft: TextureKey + "-walk-left",
         WalkBack: TextureKey + "-walk-back"
     }
 
@@ -23,44 +25,62 @@ export namespace PlayerTexture {
         LOADED = true
         scene.anims.create({
             key: Animations.IdleFront,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 0, end: 5, prefix: "player_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 5
-        })
-
-        scene.anims.create({
-            key: Animations.IdleSide,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 6, end: 11, prefix: "player_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 5
-        })
-
-        scene.anims.create({
-            key: Animations.IdleBack,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 12, end: 17, prefix: "player_", suffix: ".png" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 4, prefix: "player_" }),
             repeat: -1,
             frameRate: 5
         })
 
         scene.anims.create({
             key: Animations.WalkFront,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 18, end: 23, prefix: "player_", suffix: ".png" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 5, end: 10, prefix: "player_" }),
             repeat: -1,
             frameRate: 10
         })
 
         scene.anims.create({
-            key: Animations.WalkSide,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 24, end: 29, prefix: "player_", suffix: ".png" }),
+            key: Animations.IdleRight,
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 11, end: 14, prefix: "player_" }),
+            repeat: -1,
+            frameRate: 5
+        })
+
+        scene.anims.create({
+            key: Animations.WalkRight,
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 15, end: 20, prefix: "player_" }),
             repeat: -1,
             frameRate: 10
+        })
+
+        scene.anims.create({
+            key: Animations.IdleBack,
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 21, end: 24, prefix: "player_" }),
+            repeat: -1,
+            frameRate: 5
         })
 
         scene.anims.create({
             key: Animations.WalkBack,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 30, end: 35, prefix: "player_", suffix: ".png" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 25, end: 30, prefix: "player_" }),
             repeat: -1,
             frameRate: 10
         })
+
+        scene.anims.create({
+            key: Animations.IdleLeft,
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 31, end: 34, prefix: "player_" }),
+            repeat: -1,
+            frameRate: 5
+        })
+
+        scene.anims.create({
+            key: Animations.WalkLeft,
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 35, end: 40, prefix: "player_" }),
+            repeat: -1,
+            frameRate: 10
+        })
+    }
+
+    export function configurePlayerPhysicsBody(body: Phaser.Physics.Arcade.Body): void {
+        body.setSize(10, 16).setOffset(3, 15)
     }
 }

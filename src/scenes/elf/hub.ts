@@ -38,11 +38,12 @@ export class ElfHubScene extends Phaser.Scene {
 
         //position player in front of estel
         let estel = new ElfHubEstel(this, markers.EstelNPCLocation.x, markers.EstelNPCLocation.y)
-        let player = new Player(this, 0, 0)
 
         let teleporter = new ElfMinigameTeleporterNPC(this, markers.TeleporterNPCLocation.x, markers.TeleporterNPCLocation.y)
         let overseer = new ElfHubOverseer(this, markers.OverseerNPCLocation.x, markers.OverseerNPCLocation.y)
         let pochi = new ElfHubPochi(this, markers.PochiNPCLocation.x, markers.PochiNPCLocation.y)
+
+        let player = new Player(this, 0, 0)
 
         this.sprites.controllables.push(player)
         this.sprites.addInteractables(estel, overseer, pochi, teleporter)

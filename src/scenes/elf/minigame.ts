@@ -1,7 +1,9 @@
-import { ElfMinigameNPC, ElfMinigamePlayer, ElfMinigameFruit, ElfMinigameApple, ElfMinigamePumpkin, ElfMinigameFruitType, ElfMinigameFruitEvents, ElfMinigameFruitInformation } from "../../sprites/elf"
+import { ElfMinigameNPC, ElfMinigameFruit, ElfMinigameApple, ElfMinigamePumpkin, ElfMinigameFruitType, ElfMinigameFruitEvents, ElfMinigameFruitInformation } from "../../sprites/elf"
 import { fadeOut, fadeSceneTransition, getGameRegistry, getGUIScene, loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums } from "..";
 import { TorchesTexture } from "../../textures/elf";
 import { ElfMinigameEndDialogue, ElfMinigameLoseDialogue } from "../../dialogue/elf";
+import { Player } from "../../sprites/game";
+import { Direction } from "../../sprites";
 
 enum ElfMinigameEvents {
     DONE = "done"
@@ -75,7 +77,9 @@ export class ElfMinigameScene extends Phaser.Scene {
         this.sprites.initialize(map);
 
         /* SPRITES LOADING */
-        let player = new ElfMinigamePlayer(this, this.markers.Player.x, this.markers.Player.y)
+        let player = new Player(this, this.markers.Player.x, this.markers.Player.y)
+        player.direction = Direction.LEFT
+        player.setControllable(false)
         player.sprite.setDepth(playerSpriteDepth)
 
         let npc = new ElfMinigameNPC(this, this.markers.Elf.x, this.markers.Elf.y)

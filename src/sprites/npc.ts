@@ -3,7 +3,6 @@ import { Interactable } from "../plugins";
 import { KeyboardTexture } from "../textures";
 
 const INTERACTION_PROMPT_DEPTH = 100
-const INTERACTION_PROMPT_SCALE = 0.3
 const INTERACTION_COOLDOWN = 1500
 
 /**
@@ -35,10 +34,9 @@ export abstract class BaseNPC implements Interactable {
         this.scene = scene
         this.input = new BaseInput(scene, BaseNPC.keybinds)
         this.interactable = true
-        this.interactionPrompt = this.scene.add.sprite(x, y + zoneSizeY / 2, KeyboardTexture.TextureKey, KeyboardTexture.KeyPictures["W"])
+        this.interactionPrompt = this.scene.add.sprite(x, y + zoneSizeY / 2, KeyboardTexture.TextureKey, KeyboardTexture.KeyPictures["E"])
             .setDepth(INTERACTION_PROMPT_DEPTH)
             .setVisible(false)
-            .setScale(INTERACTION_PROMPT_SCALE)
         this.emitter = new Phaser.Events.EventEmitter()
         this.zone = this.scene.add.zone(x, y, zoneSizeX, zoneSizeY)
 
