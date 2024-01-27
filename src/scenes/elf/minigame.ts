@@ -256,9 +256,9 @@ export class ElfMinigameScene extends Phaser.Scene {
      * Lose the game
      */
     loseGame(): void {
+        this.gameEnded = true
         fadeOut(this, () => {
             this.scene.stop()
-            this.gameEnded = true
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
             getGUIScene(this).dialogue.start(this, ElfMinigameLoseDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
                 getGameRegistry(this).elfMinigameLost = true
