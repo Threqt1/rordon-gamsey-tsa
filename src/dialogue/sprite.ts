@@ -32,7 +32,7 @@ export class DialogueSprite {
             text: "",
             origin: { x: 0, y: 0 },
             style: {
-                fontFamily: 'font',
+                fontFamily: 'Arial',
                 color: 'white',
                 wordWrap: { width: this.dialogueBoxSprite.displayWidth - pct(this.dialogueBoxSprite.displayWidth, TEXT_OFFSET_X_PERCENT * 2), useAdvancedWrap: true },
                 fixedHeight: this.dialogueBoxSprite.displayHeight - pct(this.dialogueBoxSprite.displayHeight, TEXT_OFFSET_Y_PERCENT * 2),

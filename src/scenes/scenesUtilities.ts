@@ -10,6 +10,7 @@ export namespace SceneEnums {
         ElfPostMinigame = "elfpostminigame",
         GoblinMinigame = "goblinminigame",
         GoblinMinigameLevel = "goblinminigamelevel",
+        Final = "final",
         GUI = "gui"
     }
     export enum TilemapNames {
@@ -18,7 +19,8 @@ export namespace SceneEnums {
         GoblinMinigameLevel2 = "goblinminigame2",
         GoblinMinigameLevel3 = "goblinminigame3",
         ElfMinigame = "elfminigame",
-        ElfHub = "elfhub"
+        ElfHub = "elfhub",
+        Final = "final"
     }
     export enum CollisionCategories {
         MAP = 1,
@@ -28,26 +30,35 @@ export namespace SceneEnums {
     }
 }
 
-const CAMERA_LERP_X = 0.2
-const CAMERA_LERP_Y = 0.2
-
 /**
  * Scales and configures a scene's camera based on the map dimensions and player
  * @param scene The scene which the camera is on
  * @param map The map reference
  * @param player The player reference
  */
-export function scaleAndConfigureCamera(scene: Phaser.Scene, map: Phaser.Tilemaps.Tilemap, player?: Phaser.Physics.Arcade.Sprite) {
+export function scaleAndConfigureCamera(scene: Phaser.Scene, map: Phaser.Tilemaps.Tilemap, player?: Phaser.GameObjects.GameObject) {
     const camera = scene.cameras.main;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
     if (player)
-        camera.startFollow(player, true, CAMERA_LERP_X, CAMERA_LERP_Y);
+        switchCameraFollow(scene, player)
     // Set the zoom based on the smallest dimension
     if (scene.scale.height > scene.scale.width) {
         camera.setZoom(scene.scale.width / map.widthInPixels)
     } else[
         camera.setZoom(scene.scale.height / map.heightInPixels)
     ]
+}
+
+const CAMERA_LERP_X = 0.2
+const CAMERA_LERP_Y = 0.2
+
+/**
+ * Makes a camera follow a game object
+ * @param camera The scene
+ * @param object The object to follow
+ */
+export function switchCameraFollow(scene: Phaser.Scene, object: Phaser.GameObjects.GameObject) {
+    scene.cameras.main.startFollow(object, true, CAMERA_LERP_X, CAMERA_LERP_Y);
 }
 
 const MAPS_PATH = "/maps/tilemaps"

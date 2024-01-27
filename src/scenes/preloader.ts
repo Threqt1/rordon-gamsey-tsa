@@ -1,4 +1,4 @@
-import { DialogueTexture, KeyboardTexture, PlayerTexture } from "../textures";
+import { DialogueTexture, FoodTexture, KeyboardTexture, PlayerTexture } from "../textures";
 import { pct, preloadTilemap, SceneEnums } from ".";
 import { SlashesTexture, ElfTexture, FruitsTexture, TorchesTexture } from "../textures/elf";
 import { GoblinTexture } from "../textures/goblin";
@@ -30,10 +30,12 @@ export class PreloaderScene extends Phaser.Scene {
         preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigameLevel3, "goblin/map3.tmj", "goblin/goblin.png")
         preloadTilemap(this, SceneEnums.TilemapNames.ElfMinigame, "elf/minigame.tmj", "elf/1.png", "elf/2.png")
         preloadTilemap(this, SceneEnums.TilemapNames.ElfHub, "elf/hub.tmj", "elf/2.png", "goblin/goblin.png")
+        preloadTilemap(this, SceneEnums.TilemapNames.Final, "final/castle.tmj", "final/castle.png")
 
         PlayerTexture.preload(this)
         KeyboardTexture.preload(this)
         DialogueTexture.preload(this)
+        FoodTexture.preload(this)
         SlashesTexture.preload(this)
         ElfTexture.preload(this)
         FruitsTexture.preload(this)
@@ -61,6 +63,7 @@ export class PreloaderScene extends Phaser.Scene {
         PlayerTexture.load(this)
         KeyboardTexture.load(this)
         DialogueTexture.load(this)
+        FoodTexture.load(this)
         SlashesTexture.load(this)
         ElfTexture.load(this)
         FruitsTexture.load(this)

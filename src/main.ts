@@ -3,10 +3,10 @@ import './style.css'
 import { Game } from 'phaser';
 import PhaserRaycaster from "phaser-raycaster"
 import { PreloaderScene, MenuScene, GameScene, GUIScene } from './scenes';
-import { ElfHubScene, ElfMinigameScene } from './scenes/elf';
+import { ElfHubScene, ElfMinigameScene, ElfPostMinigameScene } from './scenes/elf';
 import { GoblinMinigameScene, GoblinMinigameLevelScene } from './scenes/goblin';
 import { SpritesPlugin, PluginEnums, AnimatedTiles } from './plugins';
-import { ElfPostMinigameScene } from './scenes/elf/postminigame';
+import { FinalScene } from './scenes/final';
 
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -29,7 +29,8 @@ const config: Phaser.Types.Core.GameConfig = {
         GoblinMinigameScene,
         GoblinMinigameLevelScene,
         GUIScene,
-        ElfHubScene
+        ElfHubScene,
+        FinalScene
 
     ],
     plugins: {
