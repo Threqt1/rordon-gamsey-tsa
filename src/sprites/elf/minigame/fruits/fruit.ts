@@ -104,7 +104,7 @@ export abstract class ElfMinigameBaseFruit implements ElfMinigameFruit {
         this.slashSprite = scene.physics.add.sprite(x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(SLASH_SCALE)
         this.fruitEvents = new Phaser.Events.EventEmitter()
         this.interactionPrompt = scene.add.sprite(x, y, KeyboardTexture.TextureKey)
-        this.interactionPrompt.setDepth(100).setScale(0.3).setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight + 5).setVisible(false)
+        this.interactionPrompt.setDepth(100).setY(this.interactionPrompt.y + this.interactionPrompt.displayHeight + 5).setVisible(false)
         this.currentPatternLocation = 0;
 
         // Tween for moving the fruit
