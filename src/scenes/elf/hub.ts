@@ -1,5 +1,5 @@
 import { Player } from "../../sprites/game"
-import { loadTilemap, SceneEnums, scaleAndConfigureCamera, PointObject, GameData, getGameRegistry } from "../"
+import { loadTilemap, SceneEnums, scaleAndConfigureCamera, PointObject, getGameRegistry } from "../"
 import { ElfHubEstel, ElfHubOverseer, ElfHubPochi, ElfMinigameTeleporterNPC } from "../../sprites/elf"
 import { Direction } from "../../sprites"
 import { Cameras } from "phaser"
