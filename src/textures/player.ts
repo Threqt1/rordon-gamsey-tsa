@@ -27,7 +27,7 @@ export namespace PlayerTexture {
             key: Animations.IdleFront,
             frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 4, prefix: "player_" }),
             repeat: -1,
-            frameRate: 5
+            frameRate: 3
         })
 
         scene.anims.create({
@@ -41,7 +41,7 @@ export namespace PlayerTexture {
             key: Animations.IdleRight,
             frames: scene.anims.generateFrameNames(TextureKey, { start: 11, end: 14, prefix: "player_" }),
             repeat: -1,
-            frameRate: 5
+            frameRate: 3
         })
 
         scene.anims.create({
@@ -55,7 +55,7 @@ export namespace PlayerTexture {
             key: Animations.IdleBack,
             frames: scene.anims.generateFrameNames(TextureKey, { start: 21, end: 24, prefix: "player_" }),
             repeat: -1,
-            frameRate: 5
+            frameRate: 3
         })
 
         scene.anims.create({
@@ -69,7 +69,7 @@ export namespace PlayerTexture {
             key: Animations.IdleLeft,
             frames: scene.anims.generateFrameNames(TextureKey, { start: 31, end: 34, prefix: "player_" }),
             repeat: -1,
-            frameRate: 5
+            frameRate: 3
         })
 
         scene.anims.create({

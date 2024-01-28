@@ -15,7 +15,7 @@ let Base: Dialogue.Dialogue = {
 }
 
 let Option1: Dialogue.Dialogue = {
-    getOptionText() { return "I'm Evrin's son, Estel brought me here to face a trial." },
+    getOptionText() { return "I'm Ervin's son, Estel brought me here to face a trial." },
     getContentText() {
         return [
             "With what? Finding a lady that'll put up with that ugly mug?",

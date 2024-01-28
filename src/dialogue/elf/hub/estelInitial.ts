@@ -7,7 +7,7 @@ let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "Hm?... I see, you must be Evrin's boy.",
+            "Hm?... I see, you must be Ervin's boy.",
             "Where are my manners, I am Estel.",
         ]
     },

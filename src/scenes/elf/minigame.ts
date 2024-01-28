@@ -55,6 +55,7 @@ const MINIGAME_LEVEL_COOLDOWN = 1300
 const MINIGAME_TORCH_DELAY = 500
 const MINIGAME_TIME_SCALE = 0.8
 const MINIGAME_GRAYSCALE_SCALE = 0.6
+const MINIMUM_LEVEL_PASSED = 3
 
 export class ElfMinigameScene extends Phaser.Scene {
     currentLevelIndex!: number
@@ -166,7 +167,11 @@ export class ElfMinigameScene extends Phaser.Scene {
             fruit.fruitEvents.once(ElfMinigameFruitEvents.FAIL, () => {
                 // Prevent double game endeds
                 if (!this.gameEnded) {
-                    this.loseGame()
+                    if (this.currentLevelIndex >= MINIMUM_LEVEL_PASSED - 1) {
+                        this.endGame()
+                    } else {
+                        this.loseGame()
+                    }
                 }
             })
 
@@ -275,10 +280,10 @@ export class ElfMinigameScene extends Phaser.Scene {
      * End the game
      */
     endGame(): void {
+        this.gameEnded = true
         // Fade in, run dialogue, switch scenes
         fadeOut(this, () => {
             this.scene.stop()
-            this.gameEnded = true
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
             getGUIScene(this).dialogue.start(this, ElfMinigameEndDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
                 fadeSceneTransition(this, SceneEnums.SceneNames.ElfPostMinigame)

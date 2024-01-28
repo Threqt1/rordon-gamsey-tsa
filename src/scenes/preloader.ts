@@ -34,7 +34,6 @@ export class PreloaderScene extends Phaser.Scene {
 
         /* BEGIN LOADING */
 
-        preloadTilemap(this, SceneEnums.TilemapNames.Game, "map.tmj", "spritesheet.png")
         preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigameLevel1, "goblin/map1.tmj", "goblin/goblin.png")
         preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigameLevel2, "goblin/map2.tmj", "goblin/goblin.png")
         preloadTilemap(this, SceneEnums.TilemapNames.GoblinMinigameLevel3, "goblin/map3.tmj", "goblin/goblin.png")
