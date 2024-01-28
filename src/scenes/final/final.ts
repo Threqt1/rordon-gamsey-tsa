@@ -116,6 +116,13 @@ export class FinalScene extends Phaser.Scene {
         this.markers = objects as FinalMarkers
 
         this.sprites.initialize(map)
+        let music = this.sound.add(SceneEnums.MusicNames.Final)
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+            music.stop()
+        })
+        music.play("", {
+            loop: true
+        })
 
         // /* CAMERA CONFIGURATION*/
         scaleAndConfigureCamera(this, map)

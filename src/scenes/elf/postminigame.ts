@@ -23,6 +23,13 @@ export class ElfPostMinigameScene extends Phaser.Scene {
         let markers = objects as ElfPostMinigameMarkers
 
         this.sprites.initialize(map)
+        let music = this.sound.add(SceneEnums.MusicNames.ElfNeutral)
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+            music.stop()
+        })
+        music.play("", {
+            loop: true
+        })
 
         let teleporter = new GoblinMinigameTeleporterNPC(this, markers.TeleporterNPCLocation.x, markers.TeleporterNPCLocation.y)
         let player = new Player(this, markers.Player.x, markers.Player.y)

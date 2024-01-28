@@ -22,6 +22,14 @@ export namespace SceneEnums {
         ElfHub = "elfhub",
         Final = "final"
     }
+    export enum MusicNames {
+        Main = "main",
+        ElfNeutral = "elfneutral",
+        ElfMinigame = "elfminigame",
+        GoblinNeutral = "goblinneutral",
+        GoblinAlerted = "goblinalerted",
+        Final = "final"
+    }
     export enum CollisionCategories {
         MAP = 1,
         INTERACTABLE,

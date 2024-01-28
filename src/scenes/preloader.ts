@@ -49,6 +49,15 @@ export class PreloaderScene extends Phaser.Scene {
         TorchesTexture.preload(this)
         GoblinTexture.preload(this)
 
+        this.load.audio(SceneEnums.MusicNames.Main, "/music/main.mp3", {
+
+        })
+        this.load.audio(SceneEnums.MusicNames.ElfNeutral, "/music/elfneutral.mp3")
+        this.load.audio(SceneEnums.MusicNames.ElfMinigame, "/music/elfminigame.mp3")
+        this.load.audio(SceneEnums.MusicNames.GoblinNeutral, "/music/goblinneutral.mp3")
+        this.load.audio(SceneEnums.MusicNames.GoblinAlerted, "/music/goblinalerted.mp3")
+        this.load.audio(SceneEnums.MusicNames.Final, "/music/final.mp3")
+
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
 
         /* END LOADING */

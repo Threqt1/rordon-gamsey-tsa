@@ -12,7 +12,7 @@ let PLAYER_LIGHT_LAYER_OPACITY = 0.45
 
 // The order of the levels in the goblin minigame
 export const GOBLIN_MINIGAME_LEVEL_ORDER = [
-    SceneEnums.TilemapNames.GoblinMinigameLevel3,
+    SceneEnums.TilemapNames.GoblinMinigameLevel1,
     SceneEnums.TilemapNames.GoblinMinigameLevel2,
     SceneEnums.TilemapNames.GoblinMinigameLevel3
 ]
@@ -40,6 +40,7 @@ export enum GoblinMinigameState {
  */
 export class GoblinMinigameScene extends Phaser.Scene {
     currentLevelIndex!: number
+    music!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound
     /**
      * Area visible to the player
      */
@@ -61,6 +62,14 @@ export class GoblinMinigameScene extends Phaser.Scene {
 
     create() {
         this.currentLevelIndex = 0
+
+        this.music = this.sound.add(SceneEnums.MusicNames.GoblinNeutral)
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.music.stop()
+        })
+        this.music.play("", {
+            loop: true
+        })
 
         // Create the graphics that will represent the area the player can see
         this.playerVisibleArea = this.add.graphics().removeFromDisplayList()
@@ -96,6 +105,9 @@ export class GoblinMinigameScene extends Phaser.Scene {
         // Once the change mode signal is heard, change game mode to alerted
         this.gameEvents.once(GoblinMinigameEvents.ALERT, () => {
             this.state = GoblinMinigameState.ALERTED
+            this.music.stop()
+            this.music = this.sound.add(SceneEnums.MusicNames.GoblinAlerted)
+            this.music.play()
             this.currentLevel.updateLevel()
         })
         //Once the player is caught, end the game

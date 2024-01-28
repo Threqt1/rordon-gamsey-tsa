@@ -25,6 +25,14 @@ export class MenuScene extends Phaser.Scene {
     }
 
     create() {
+        let music = this.sound.add(SceneEnums.MusicNames.Main)
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+            music.stop()
+        })
+        music.play({
+            loop: true
+        })
+
         const cameraWidth = this.cameras.main.width
         const cameraHeight = this.cameras.main.height
 

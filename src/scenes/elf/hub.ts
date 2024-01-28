@@ -32,6 +32,13 @@ export class ElfHubScene extends Phaser.Scene {
         let markers = objects as ElfHubMarkers
 
         this.sprites.initialize(map)
+        let music = this.sound.add(SceneEnums.MusicNames.ElfNeutral)
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+            music.stop()
+        })
+        music.play("", {
+            loop: true
+        })
 
         // initialize registry
         this.data.set(DEFAULT_DATA)

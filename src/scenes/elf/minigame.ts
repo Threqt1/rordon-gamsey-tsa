@@ -76,6 +76,13 @@ export class ElfMinigameScene extends Phaser.Scene {
         this.markers = objects as ElfMinigameMarkers
 
         this.sprites.initialize(map);
+        let music = this.sound.add(SceneEnums.MusicNames.ElfMinigame)
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+            music.stop()
+        })
+        music.play("", {
+            loop: true
+        })
 
         /* SPRITES LOADING */
         let player = new Player(this, this.markers.Player.x, this.markers.Player.y)
