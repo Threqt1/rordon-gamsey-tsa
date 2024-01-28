@@ -7,7 +7,12 @@ let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "Goblin dialogue"
+            "*munch munch*",
+            "BLEEEEGHHH!",
+            "So much... meat!",
+            "Nothing to go with it...",
+            "Brutish goblins, you do not understand what a varied palette is!",
+            "Outta my sight!"
         ]
     },
     nextOptions: []

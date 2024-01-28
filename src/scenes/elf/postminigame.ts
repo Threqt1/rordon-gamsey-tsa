@@ -24,8 +24,8 @@ export class ElfPostMinigameScene extends Phaser.Scene {
 
         this.sprites.initialize(map)
 
-        let player = new Player(this, markers.Player.x, markers.Player.y)
         let teleporter = new GoblinMinigameTeleporterNPC(this, markers.TeleporterNPCLocation.x, markers.TeleporterNPCLocation.y)
+        let player = new Player(this, markers.Player.x, markers.Player.y)
 
         this.sprites.controllables.push(player)
         this.sprites.addInteractables(teleporter)

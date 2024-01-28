@@ -7,7 +7,11 @@ let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "This is the elf dialogue"
+            "*munch munch*",
+            "BLEGHHHHH!",
+            "So many greens... these elves.",
+            "Vegetarian as always.",
+            "Get outta my sight!"
         ]
     },
     nextOptions: []

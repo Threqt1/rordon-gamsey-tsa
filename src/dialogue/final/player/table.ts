@@ -7,7 +7,9 @@ let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "Player dialogue"
+            "Gamsey! I have made the ultimate dish!",
+            "This is sure to satisfy you!",
+            "I call it \"Elysian\", made with ingredients from all across the world!"
         ]
     },
     nextOptions: []

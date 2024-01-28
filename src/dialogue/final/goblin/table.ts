@@ -7,7 +7,9 @@ let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "Goblin dialogue"
+            "Gamsey, sir!",
+            "\"Sausage\", straight from cave!",
+            "Please eat all of it!"
         ]
     },
     nextOptions: []

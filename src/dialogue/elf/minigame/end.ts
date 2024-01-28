@@ -8,7 +8,7 @@ let Base: Dialogue.Dialogue = {
     getContentText() {
         return [
             "Would you look at that!",
-            "I see Evrin has trained quite the impressive pupil.",
+            "I see Ervin has trained quite the impressive pupil.",
             "Very well, I am a lady of my word.",
             "Here, your reward.",
             "*Pumpkin Obtained!*"

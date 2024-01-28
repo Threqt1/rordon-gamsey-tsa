@@ -7,7 +7,9 @@ let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "Elf dialogue"
+            "Lord Gamsey, accept our dish.",
+            "We call it \"Xuiye's Salad\".",
+            "Enjoy."
         ]
     },
     nextOptions: []
