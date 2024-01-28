@@ -1,6 +1,7 @@
 import { Direction } from "../..";
 import { GoblinMinigameState, GoblinMinigameEvents, GoblinMinigameLevelScene } from "../../../scenes/goblin";
 import { GoblinTexture } from "../../../textures/goblin";
+import { Player } from "../../game";
 import { GoblinMinigameLightEmitter, GoblinMinigameLightEmitterType } from "./lightEmitter";
 
 const SWEEPING_PAUSE = 500
@@ -87,11 +88,13 @@ export class GoblinMinigameNPC {
         body.pushable = false
         GoblinTexture.configureGoblinPhysicsBody(body);
 
-        this.scene.physics.add.collider(this.sprite, this.scene.player.sprite, () => {
+        this.sprite.play(GoblinTexture.Animations.IdleFront, true);
+    }
+
+    makeCollisionsWithPlayer(player: Player) {
+        this.scene.physics.add.collider(this.sprite, player.sprite, () => {
             this.scene.parentScene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
         })
-
-        this.sprite.play(GoblinTexture.Animations.IdleFront, true);
     }
 
     /**

@@ -62,11 +62,15 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
         this.sprites.initialize(map)
 
         /* SPRITES LOADING */
+        this.npcs = this.parseAndCreateNPCs(this.markers)
         this.player = new Player(this, 0, 0)
         this.sprites.controllables.push(this.player)
         this.sprites.physicsBodies.add(this.player.sprite)
         this.sprites.interactingBodies.add(this.player.sprite)
-        this.npcs = this.parseAndCreateNPCs(this.markers)
+
+        for (let npc of this.npcs) {
+            npc.makeCollisionsWithPlayer(this.player)
+        }
 
         this.updateTeleportAndSpawn()
 

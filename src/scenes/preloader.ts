@@ -4,12 +4,10 @@ import { SlashesTexture, ElfTexture, FruitsTexture, TorchesTexture } from "../te
 import { GoblinTexture } from "../textures/goblin";
 
 export type GameData = {
-    startingCutscenePassed: boolean,
     elfMinigameLost: boolean
 }
 
 const DEFAULT_DATA: GameData = {
-    startingCutscenePassed: false,
     elfMinigameLost: false,
 }
 

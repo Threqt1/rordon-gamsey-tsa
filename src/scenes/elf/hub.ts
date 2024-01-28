@@ -60,7 +60,7 @@ export class ElfHubScene extends Phaser.Scene {
         player.playDirectionAnimation(0, 0)
 
         //delay and play the initial estel dialogue if first time
-        if (!getGameRegistry(this).startingCutscenePassed) {
+        if (!getGameRegistry(this).elfMinigameLost) {
             // disable control initially
             this.sprites.setControllable(false)
             player.sprite.setPosition(markers.EstelNPCLocation.x, markers.EstelNPCLocation.y + PLAYER_OFFSET)

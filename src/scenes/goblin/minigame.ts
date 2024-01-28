@@ -12,7 +12,7 @@ let PLAYER_LIGHT_LAYER_OPACITY = 0.45
 
 // The order of the levels in the goblin minigame
 export const GOBLIN_MINIGAME_LEVEL_ORDER = [
-    SceneEnums.TilemapNames.GoblinMinigameLevel1,
+    SceneEnums.TilemapNames.GoblinMinigameLevel3,
     SceneEnums.TilemapNames.GoblinMinigameLevel2,
     SceneEnums.TilemapNames.GoblinMinigameLevel3
 ]
