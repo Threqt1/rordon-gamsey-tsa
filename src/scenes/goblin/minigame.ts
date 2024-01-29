@@ -68,7 +68,7 @@ export class GoblinMinigameScene extends Phaser.Scene {
             this.music.stop()
         })
         this.music.play("", {
-            loop: true
+            loop: true,
         })
 
         // Create the graphics that will represent the area the player can see
@@ -107,7 +107,10 @@ export class GoblinMinigameScene extends Phaser.Scene {
             this.state = GoblinMinigameState.ALERTED
             this.music.stop()
             this.music = this.sound.add(SceneEnums.MusicNames.GoblinAlerted)
-            this.music.play()
+            this.music.play({
+                loop: true,
+                rate: 1.5
+            })
             this.currentLevel.updateLevel()
         })
         //Once the player is caught, end the game

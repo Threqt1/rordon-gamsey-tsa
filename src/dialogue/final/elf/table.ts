@@ -8,8 +8,8 @@ let Base: Dialogue.Dialogue = {
     getContentText() {
         return [
             "Lord Gamsey, accept our dish.",
-            "We call it \"Xuiye's Salad\".",
-            "Enjoy."
+            "We call it \"Xuiye's Salad\". It's made with the finest pickings from our latest harvest.",
+            "Enjoy!"
         ]
     },
     nextOptions: []

@@ -9,7 +9,8 @@ let Base: Dialogue.Dialogue = {
         return [
             "Gamsey, sir!",
             "\"Sausage\", straight from cave!",
-            "Please eat all of it!"
+            "Freshly stol- borrowed from other!",
+            "Please eat all it!"
         ]
     },
     nextOptions: []

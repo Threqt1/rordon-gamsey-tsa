@@ -16,12 +16,12 @@ export class MenuScene extends Phaser.Scene {
             frameRate: 10
         })
 
-        this.anims.create({
-            key: "creditsButton_animate",
-            frames: this.anims.generateFrameNames("button", { start: 0, end: 9, prefix: "credits_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 10
-        })
+        // this.anims.create({
+        //     key: "creditsButton_animate",
+        //     frames: this.anims.generateFrameNames("button", { start: 0, end: 9, prefix: "credits_", suffix: ".png" }),
+        //     repeat: -1,
+        //     frameRate: 10
+        // })
     }
 
     create() {
@@ -41,9 +41,9 @@ export class MenuScene extends Phaser.Scene {
         startSprite.setScale(buttonScale)
         startSprite.setInteractive()
 
-        const creditsSprite = this.add.sprite(cameraWidth / 2, cameraHeight / 2 + (startSprite.displayHeight + startSprite.displayHeight / 4), "button", "credits_0.png")
-        creditsSprite.setScale(buttonScale)
-        creditsSprite.setInteractive()
+        // const creditsSprite = this.add.sprite(cameraWidth / 2, cameraHeight / 2 + (startSprite.displayHeight + startSprite.displayHeight / 4), "button", "credits_0.png")
+        // creditsSprite.setScale(buttonScale)
+        // creditsSprite.setInteractive()
 
         let switching = false
 
@@ -63,14 +63,14 @@ export class MenuScene extends Phaser.Scene {
             }
         })
 
-        creditsSprite.on("pointerover", () => {
-            creditsSprite.play("creditsButton_animate")
-        })
+        // creditsSprite.on("pointerover", () => {
+        //     creditsSprite.play("creditsButton_animate")
+        // })
 
-        creditsSprite.on("pointerout", () => {
-            creditsSprite.anims.stop()
-            creditsSprite.setFrame(this.anims.get("creditsButton_animate").frames[0].textureFrame)
-        })
+        // creditsSprite.on("pointerout", () => {
+        //     creditsSprite.anims.stop()
+        //     creditsSprite.setFrame(this.anims.get("creditsButton_animate").frames[0].textureFrame)
+        // })
 
         // creditsSprite.on("pointerup", () => {
         //     if (!switching) {

@@ -232,7 +232,6 @@ export class FinalScene extends Phaser.Scene {
             this.scene.stop()
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
             getGUIScene(this).dialogue.start(this, FinalEndDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
-                console.log("hi")
                 fadeSceneTransition(this, SceneEnums.SceneNames.Menu)
             })
         })

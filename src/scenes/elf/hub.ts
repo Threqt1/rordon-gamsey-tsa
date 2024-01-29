@@ -37,7 +37,7 @@ export class ElfHubScene extends Phaser.Scene {
             music.stop()
         })
         music.play("", {
-            loop: true
+            loop: true,
         })
 
         // initialize registry

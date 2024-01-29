@@ -9,8 +9,8 @@ let Base: Dialogue.Dialogue = {
         return [
             "*munch munch*",
             "BLEGHHHHH!",
-            "So many greens... these elves.",
-            "Vegetarian as always.",
+            "So many greens....",
+            "Never puttin' meat with anything!",
             "Get outta my sight!"
         ]
     },

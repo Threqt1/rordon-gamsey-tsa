@@ -10,7 +10,7 @@ let Base: Dialogue.Dialogue = {
             "*munch munch*",
             "BLEEEEGHHH!",
             "So much... meat!",
-            "Nothing to go with it...",
+            "Nothing to go with...",
             "Brutish goblins, you do not understand what a varied palette is!",
             "Outta my sight!"
         ]
