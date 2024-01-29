@@ -41,10 +41,10 @@ export namespace Dialogue {
 
         emitter!: Phaser.Events.EventEmitter
         state!: WalkerState
-        registry: Phaser.Data.DataManager
+        registry!: Phaser.Data.DataManager
 
-        constructor(registry: Phaser.Data.DataManager) {
-            this.registry = registry
+        constructor() {
+
         }
 
         /**
@@ -52,9 +52,10 @@ export namespace Dialogue {
          * @param dialogue The new dialogue to walk
          * @param emitter The emitter for the new dialogue
          */
-        startWithNewDialogue(dialogue: Dialogue, emitter: Phaser.Events.EventEmitter) {
+        startWithNewDialogue(dialogue: Dialogue, emitter: Phaser.Events.EventEmitter, registry: Phaser.Data.DataManager) {
             this.emitter = emitter
             this.state = WalkerState.CONTENT
+            this.registry = registry
 
             this.switchToNewBlock(dialogue)
         }
@@ -90,19 +91,10 @@ export namespace Dialogue {
             this.currentContentPosition++
             if (this.currentContentPosition < this.currentContent.length) return
             if (this.currentDialogue.dialogueFinished != undefined) this.currentDialogue.dialogueFinished(this.registry, this.emitter)
-            switch (this.currentOptions.length) {
-                // If there are no options, set the state as finished
-                case 0:
-                    this.state = WalkerState.FINISHED
-                    break;
-                // If theres only one option avaliable, automatically choose it
-                case 1:
-                    this.switchToNewBlock(this.currentOptions[0])
-                    break;
-                // Display all options if greater than 1 option
-                default:
-                    this.state = WalkerState.OPTIONS
-                    break;
+            if (this.currentOptions.length > 0) {
+                this.state = WalkerState.OPTIONS
+            } else {
+                this.state = WalkerState.FINISHED
             }
         }
 

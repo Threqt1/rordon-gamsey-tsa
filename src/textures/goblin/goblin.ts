@@ -49,13 +49,13 @@ export namespace GoblinTexture {
         })
         scene.anims.create({
             key: Animations.IdleBack,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 19, end: 24, prefix: "goblin_" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 19, end: 22, prefix: "goblin_" }),
             repeat: -1,
             frameRate: 3
         })
         scene.anims.create({
             key: Animations.WalkBack,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 25, end: 28, prefix: "goblin_" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 23, end: 28, prefix: "goblin_" }),
             repeat: -1,
             frameRate: 5
         })

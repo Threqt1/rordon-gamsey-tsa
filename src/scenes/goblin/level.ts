@@ -1,5 +1,6 @@
 import { GOBLIN_MINIGAME_LEVEL_ORDER, GoblinMinigameEvents, GoblinMinigameScene, GoblinMinigameState } from ".";
-import { PointObject, RectangleObject, SceneEnums, fadeIn, fadeOut, loadTilemap, scaleAndConfigureCamera } from "..";
+import { PointObject, RectangleObject, SceneEnums, fadeIn, fadeOut, getGUIScene, loadTilemap, scaleAndConfigureCamera } from "..";
+import { GoblinMinigameAlertedDialogue } from "../../dialogue/goblin";
 import { Direction } from "../../sprites";
 import { Player } from "../../sprites/game";
 import { GoblinMinigameNPC, GoblinMinigameStaticPathData, GoblinMinigameDynamicPathData, GoblinMinigamePathType, GoblinMinigamePathInformation, GoblinMinigameObjective } from "../../sprites/goblin";
@@ -61,11 +62,15 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
         this.sprites.initialize(map)
 
         /* SPRITES LOADING */
+        this.npcs = this.parseAndCreateNPCs(this.markers)
         this.player = new Player(this, 0, 0)
         this.sprites.controllables.push(this.player)
         this.sprites.physicsBodies.add(this.player.sprite)
         this.sprites.interactingBodies.add(this.player.sprite)
-        this.npcs = this.parseAndCreateNPCs(this.markers)
+
+        for (let npc of this.npcs) {
+            npc.makeCollisionsWithPlayer(this.player)
+        }
 
         this.updateTeleportAndSpawn()
 
@@ -169,11 +174,16 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
      */
     updateLevel(): void {
         fadeOut(this.parentScene, () => {
-            for (let npc of this.npcs) {
-                npc.updateState(this.parentScene.state)
-            }
-            this.updateTeleportAndSpawn()
-            fadeIn(this.parentScene)
+            this.scene.pause()
+            let dialogueEventEmitter = new Phaser.Events.EventEmitter()
+            getGUIScene(this).dialogue.start(this, GoblinMinigameAlertedDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
+                this.scene.resume()
+                for (let npc of this.npcs) {
+                    npc.updateState(this.parentScene.state)
+                }
+                this.updateTeleportAndSpawn()
+                fadeIn(this.parentScene)
+            })
         })
     }
 

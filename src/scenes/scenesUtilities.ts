@@ -1,14 +1,16 @@
-import { GUIScene } from ".";
+import { GUIScene, GameData } from ".";
 
 export namespace SceneEnums {
     export enum SceneNames {
         Preloader = "preloader",
         Menu = "menu",
         Game = "game",
+        ElfHub = "elfhub",
         ElfMinigame = "elfminigame",
+        ElfPostMinigame = "elfpostminigame",
         GoblinMinigame = "goblinminigame",
         GoblinMinigameLevel = "goblinminigamelevel",
-        ElfHub = "elfhub",
+        Final = "final",
         GUI = "gui"
     }
     export enum TilemapNames {
@@ -17,7 +19,16 @@ export namespace SceneEnums {
         GoblinMinigameLevel2 = "goblinminigame2",
         GoblinMinigameLevel3 = "goblinminigame3",
         ElfMinigame = "elfminigame",
-        ElfHub = "elfhub"
+        ElfHub = "elfhub",
+        Final = "final"
+    }
+    export enum MusicNames {
+        Main = "main",
+        ElfNeutral = "elfneutral",
+        ElfMinigame = "elfminigame",
+        GoblinNeutral = "goblinneutral",
+        GoblinAlerted = "goblinalerted",
+        Final = "final"
     }
     export enum CollisionCategories {
         MAP = 1,
@@ -27,26 +38,35 @@ export namespace SceneEnums {
     }
 }
 
-const CAMERA_LERP_X = 0.2
-const CAMERA_LERP_Y = 0.2
-
 /**
  * Scales and configures a scene's camera based on the map dimensions and player
  * @param scene The scene which the camera is on
  * @param map The map reference
  * @param player The player reference
  */
-export function scaleAndConfigureCamera(scene: Phaser.Scene, map: Phaser.Tilemaps.Tilemap, player?: Phaser.Physics.Arcade.Sprite) {
+export function scaleAndConfigureCamera(scene: Phaser.Scene, map: Phaser.Tilemaps.Tilemap, player?: Phaser.GameObjects.GameObject) {
     const camera = scene.cameras.main;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
     if (player)
-        camera.startFollow(player, true, CAMERA_LERP_X, CAMERA_LERP_Y);
+        switchCameraFollow(scene, player)
     // Set the zoom based on the smallest dimension
     if (scene.scale.height > scene.scale.width) {
         camera.setZoom(scene.scale.width / map.widthInPixels)
     } else[
         camera.setZoom(scene.scale.height / map.heightInPixels)
     ]
+}
+
+const CAMERA_LERP_X = 0.2
+const CAMERA_LERP_Y = 0.2
+
+/**
+ * Makes a camera follow a game object
+ * @param camera The scene
+ * @param object The object to follow
+ */
+export function switchCameraFollow(scene: Phaser.Scene, object: Phaser.GameObjects.GameObject) {
+    scene.cameras.main.startFollow(object, true, CAMERA_LERP_X, CAMERA_LERP_Y);
 }
 
 const MAPS_PATH = "/maps/tilemaps"
@@ -212,6 +232,7 @@ export function fadeIn(scene: Phaser.Scene, callback?: () => void): void {
 export function fadeSceneTransition(scene: Phaser.Scene, nextScene: SceneEnums.SceneNames): void {
     fadeOut(scene, () => {
         scene.scene.start(nextScene)
+        scene.scene.moveAbove(nextScene, SceneEnums.SceneNames.GUI)
         scene.scene.get(nextScene).events.once(Phaser.Scenes.Events.CREATE, () => {
             fadeIn(scene.scene.get(nextScene))
         })
@@ -225,6 +246,15 @@ export function fadeSceneTransition(scene: Phaser.Scene, nextScene: SceneEnums.S
  */
 export function getGUIScene(scene: Phaser.Scene): GUIScene {
     return scene.scene.get(SceneEnums.SceneNames.GUI) as GUIScene
+}
+
+/**
+ * Get the current game registry
+ * @param scene Te scene to call from
+ * @returns The registry with the proper type
+ */
+export function getGameRegistry(scene: Phaser.Scene): GameData {
+    return scene.registry.values as GameData
 }
 
 /**

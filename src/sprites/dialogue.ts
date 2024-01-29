@@ -32,7 +32,7 @@ export class BaseDialogue implements Controllable {
         this.dialogueSprite = new DialogueSprite(scene, width, height)
         this.dialogueSprite.setVisible(false)
         this.input = new BaseInput(scene, DialogueOptionKeybinds)
-        this.dialogueWalker = new Dialogue.Walker(scene.registry)
+        this.dialogueWalker = new Dialogue.Walker()
         this.controllable = false
 
         scene.sprites.controllables.push(this)
@@ -42,16 +42,16 @@ export class BaseDialogue implements Controllable {
      * Start the dialogue on a specific dialogue block
      * @param scene The scene the function was called from
      * @param dialogue The dialogue to start
-     * @param emitter THe emitter to emit events to
+     * @param emitter The emitter to emit events to
      * @param endCallback Function to run once dialogue is finished
      * @returns 
      */
-    start(scene: Phaser.Scene, dialogue: Dialogue.Dialogue, emitter: Phaser.Events.EventEmitter, endCallback?: () => void): void {
+    start(scene: Phaser.Scene, dialogue: Dialogue.Dialogue, emitter: Phaser.Events.EventEmitter, registry: Phaser.Data.DataManager, endCallback?: () => void): void {
         if (this.controllable) return
         this.activeScene = scene
         this.endCallback = endCallback
 
-        this.dialogueWalker.startWithNewDialogue(dialogue, emitter)
+        this.dialogueWalker.startWithNewDialogue(dialogue, emitter, registry)
         this.dialogueSprite.setVisible(true)
         this.activeScene.sprites.setControllable(false)
         this.input.input.resetKeys()
@@ -115,7 +115,6 @@ export class BaseDialogue implements Controllable {
                 this.handleOptionsInput()
                 break;
             case Dialogue.WalkerState.FINISHED:
-                if (this.endCallback !== undefined) this.endCallback()
                 this.stop()
                 break;
         }
@@ -129,6 +128,7 @@ export class BaseDialogue implements Controllable {
         this.controllable = false
         this.dialogueSprite.setVisible(false)
         this.activeScene.sprites.setControllable(true)
+        if (this.endCallback !== undefined) this.endCallback()
     }
 
     setControllable(controllable: boolean): void {

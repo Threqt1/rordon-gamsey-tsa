@@ -1,26 +1,46 @@
 import { Dialogue } from "../../"
 
 enum Events {
-    END = "end"
 }
 
 let Base: Dialogue.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "I-I've been beat...",
-            "Mr. Chef, you've mastered the art of the knife.",
-            "I have never seen this level of skil... it's one in a thousand.",
-            "Take this - the heirloom of the elves.",
-            "Grown in seclusion by the high elves themselves, it's the pinnacle of elf cultivation.",
-            "Now go, Master Chef, and make something to appease Rordon Gamsey."
+            "Would you look at that!",
+            "I see Ervin has trained quite the impressive pupil.",
+            "Very well, I am a lady of my word.",
+            "Here, your reward.",
+            "*Pumpkin Obtained!*"
         ]
-    },
-    dialogueFinished(_, emitter) {
-        emitter.emit(Events.END)
     },
     nextOptions: []
 }
+
+let Option1: Dialogue.Dialogue = {
+    getOptionText() { return "Yippee!" },
+    getContentText() {
+        return [
+            "While your end goal seems futile, I have high hopes for you.",
+            "But I must ask, do you not fear you'll befall the same fate as those before you?"
+        ]
+    },
+    nextOptions: []
+}
+
+let Option2: Dialogue.Dialogue = {
+    getOptionText() { return "Nah, I'll cook." },
+    getContentText() {
+        return [
+            "...",
+            "What?"
+        ]
+    },
+    nextOptions: []
+}
+
+Base.nextOptions = [Option1]
+Option1.nextOptions = [Option2]
 
 export const ElfMinigameEndDialogue = {
     Dialogue: Base,

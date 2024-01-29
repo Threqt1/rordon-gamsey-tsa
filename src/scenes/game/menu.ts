@@ -16,15 +16,23 @@ export class MenuScene extends Phaser.Scene {
             frameRate: 10
         })
 
-        this.anims.create({
-            key: "creditsButton_animate",
-            frames: this.anims.generateFrameNames("button", { start: 0, end: 9, prefix: "credits_", suffix: ".png" }),
-            repeat: -1,
-            frameRate: 10
-        })
+        // this.anims.create({
+        //     key: "creditsButton_animate",
+        //     frames: this.anims.generateFrameNames("button", { start: 0, end: 9, prefix: "credits_", suffix: ".png" }),
+        //     repeat: -1,
+        //     frameRate: 10
+        // })
     }
 
     create() {
+        let music = this.sound.add(SceneEnums.MusicNames.Main)
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+            music.stop()
+        })
+        music.play({
+            loop: true
+        })
+
         const cameraWidth = this.cameras.main.width
         const cameraHeight = this.cameras.main.height
 
@@ -33,9 +41,9 @@ export class MenuScene extends Phaser.Scene {
         startSprite.setScale(buttonScale)
         startSprite.setInteractive()
 
-        const creditsSprite = this.add.sprite(cameraWidth / 2, cameraHeight / 2 + (startSprite.displayHeight + startSprite.displayHeight / 4), "button", "credits_0.png")
-        creditsSprite.setScale(buttonScale)
-        creditsSprite.setInteractive()
+        // const creditsSprite = this.add.sprite(cameraWidth / 2, cameraHeight / 2 + (startSprite.displayHeight + startSprite.displayHeight / 4), "button", "credits_0.png")
+        // creditsSprite.setScale(buttonScale)
+        // creditsSprite.setInteractive()
 
         let switching = false
 
@@ -51,18 +59,18 @@ export class MenuScene extends Phaser.Scene {
         startSprite.on("pointerup", () => {
             if (!switching) {
                 switching = true
-                fadeSceneTransition(this, SceneEnums.SceneNames.Game)
+                fadeSceneTransition(this, SceneEnums.SceneNames.ElfHub)
             }
         })
 
-        creditsSprite.on("pointerover", () => {
-            creditsSprite.play("creditsButton_animate")
-        })
+        // creditsSprite.on("pointerover", () => {
+        //     creditsSprite.play("creditsButton_animate")
+        // })
 
-        creditsSprite.on("pointerout", () => {
-            creditsSprite.anims.stop()
-            creditsSprite.setFrame(this.anims.get("creditsButton_animate").frames[0].textureFrame)
-        })
+        // creditsSprite.on("pointerout", () => {
+        //     creditsSprite.anims.stop()
+        //     creditsSprite.setFrame(this.anims.get("creditsButton_animate").frames[0].textureFrame)
+        // })
 
         // creditsSprite.on("pointerup", () => {
         //     if (!switching) {

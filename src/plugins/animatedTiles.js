@@ -175,6 +175,7 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
             mapAnimData.animatedTiles.forEach((animatedTile) => {
                 // Reduce time for current tile, multiply elapsedTime with this tile's private rate
                 animatedTile.next -= elapsedTime * animatedTile.rate;
+
                 // Time for current tile is up!!!
                 if (animatedTile.next < 0) {
                     // Remember current frame index

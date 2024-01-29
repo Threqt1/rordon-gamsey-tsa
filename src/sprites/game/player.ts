@@ -31,6 +31,8 @@ export class Player implements Controllable {
         this.controllable = true
         this.speed = SPEED
         this.direction = Direction.DOWN
+
+        PlayerTexture.configurePlayerPhysicsBody(this.sprite.body as Phaser.Physics.Arcade.Body)
     }
 
     /**
@@ -91,19 +93,17 @@ export class Player implements Controllable {
                 }
                 break;
             case Direction.LEFT:
-                this.sprite.setFlipX(true)
                 if (velocityX === 0 && velocityY === 0) {
-                    this.sprite.anims.play(PlayerTexture.Animations.IdleSide, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.IdleLeft, true)
                 } else {
-                    this.sprite.anims.play(PlayerTexture.Animations.WalkSide, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.WalkLeft, true)
                 }
                 break;
             case Direction.RIGHT:
-                this.sprite.setFlipX(false)
                 if (velocityX === 0 && velocityY === 0) {
-                    this.sprite.anims.play(PlayerTexture.Animations.IdleSide, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.IdleRight, true)
                 } else {
-                    this.sprite.anims.play(PlayerTexture.Animations.WalkSide, true)
+                    this.sprite.anims.play(PlayerTexture.Animations.WalkRight, true)
                 }
                 break;
         }

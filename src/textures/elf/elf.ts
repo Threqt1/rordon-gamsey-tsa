@@ -21,25 +21,25 @@ export namespace ElfTexture {
         LOADED = true
         scene.anims.create({
             key: Animations.IdleFront,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 2, end: 5, prefix: "elf_" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 1, end: 4, prefix: "elf_" }),
             repeat: -1,
             frameRate: 3
         })
         scene.anims.create({
             key: Animations.WalkFront,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 6, end: 11, prefix: "elf_" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 5, end: 10, prefix: "elf_" }),
             repeat: -1,
             frameRate: 5
         })
         scene.anims.create({
             key: Animations.IdleSide,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 13, end: 16, prefix: "elf_" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 11, end: 14, prefix: "elf_" }),
             repeat: -1,
             frameRate: 3
         })
         scene.anims.create({
             key: Animations.WalkSide,
-            frames: scene.anims.generateFrameNames(TextureKey, { start: 17, end: 22, prefix: "elf_" }),
+            frames: scene.anims.generateFrameNames(TextureKey, { start: 15, end: 20, prefix: "elf_" }),
             repeat: -1,
             frameRate: 5
         })

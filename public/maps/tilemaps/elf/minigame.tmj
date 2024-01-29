@@ -9,7 +9,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 769, 769, 0, 769, 769, 0, 769, 769, 0, 769, 769, 0, 769, 769, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -167,6 +167,30 @@
                  "width":0,
                  "x":384,
                  "y":144
+                }, 
+                {
+                 "height":0,
+                 "id":29,
+                 "name":"",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":434.275772074815,
+                 "y":15.2182108162969
+                }, 
+                {
+                 "height":0,
+                 "id":31,
+                 "name":"TeleporterNPCLocation",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":415.345802522836,
+                 "y":68.2963607365521
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -581,7 +605,7 @@
          "y":0
         }],
  "nextlayerid":17,
- "nextobjectid":29,
+ "nextobjectid":33,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
@@ -590,7 +614,7 @@
         {
          "columns":30,
          "firstgid":1,
-         "image":"Tilemap fINAL.png",
+         "image":"..\/Piskel\/Final Game\/Elf Minigame\/Tilemap fINAL.png",
          "imageheight":320,
          "imagewidth":480,
          "margin":0,
@@ -605,7 +629,7 @@
                         {
                          "name":"test",
                          "type":"file",
-                         "value":"..\/Aesprite\/Spritesheet\/Sprite-0001.png"
+                         "value":"..\/..\/Aesprite\/Spritesheet\/Sprite-0001.png"
                         }]
                 }],
          "tilewidth":16
@@ -613,7 +637,7 @@
         {
          "columns":32,
          "firstgid":601,
-         "image":"Sprite-0001.png",
+         "image":"..\/Aesprite\/Spritesheet\/Sprite-0001.png",
          "imageheight":288,
          "imagewidth":512,
          "margin":0,
