@@ -1,11 +1,11 @@
-import { FinalScene } from "../../scenes/final";
-import { FoodTexture } from "../../textures";
+import { FinalScene } from "../scenes";
+import { FoodTexture } from "../../game/textures";
 
 const WALK_TO_TABLE_DURATION = 5000
 const FOOD_TO_TABLE_DURATION = 1000
 const FOOD_SCALE = 0.8
 
-export type FinalNPCTexture = {
+export type Texture = {
     key: string,
     food: string,
     idleFrontAnimation: (sprite: Phaser.GameObjects.PathFollower) => void,
@@ -14,21 +14,21 @@ export type FinalNPCTexture = {
     moveLeftAnimation: (sprite: Phaser.GameObjects.PathFollower) => void,
 }
 
-export enum FinalNPCEvents {
+export enum Events {
     NPC_REACHED_TABLE = "npcReachedTable",
     FOOD_REACHED_TABLE = "foodReachedTable",
     NPC_REACHED_START = "npcReachedStart"
 }
 
-export class FinalNPC {
-    scene: FinalScene
+export class Sprite {
+    scene: FinalScene.Scene
     sprites: Phaser.GameObjects.GameObject[]
     sprite: Phaser.GameObjects.PathFollower
     food: Phaser.GameObjects.PathFollower
-    texture: FinalNPCTexture
+    texture: Texture
     spriteEvents: Phaser.Events.EventEmitter
 
-    constructor(scene: FinalScene, x: number, y: number, texture: FinalNPCTexture, depth: number) {
+    constructor(scene: FinalScene.Scene, x: number, y: number, texture: Texture, depth: number) {
         this.scene = scene
         this.sprite = scene.add.follower(new Phaser.Curves.Path(), x, y, texture.key).setDepth(depth)
         this.food = scene.add.follower(new Phaser.Curves.Path(), this.sprite.x, this.sprite.y - this.sprite.height, FoodTexture.TextureKey, texture.food)
@@ -57,7 +57,7 @@ export class FinalNPC {
             duration: WALK_TO_TABLE_DURATION,
             onComplete: () => {
                 this.texture.idleRightAnimation(this.sprite)
-                this.spriteEvents.emit(FinalNPCEvents.NPC_REACHED_TABLE)
+                this.spriteEvents.emit(Events.NPC_REACHED_TABLE)
             },
             onUpdate: () => {
                 this.food?.setX(this.sprite.x)
@@ -79,7 +79,7 @@ export class FinalNPC {
         this.food.startFollow({
             duration: FOOD_TO_TABLE_DURATION,
             onComplete: () => {
-                this.spriteEvents.emit(FinalNPCEvents.FOOD_REACHED_TABLE)
+                this.spriteEvents.emit(Events.FOOD_REACHED_TABLE)
             }
         })
     }
@@ -98,7 +98,7 @@ export class FinalNPC {
             duration: WALK_TO_TABLE_DURATION,
             onComplete: () => {
                 this.texture.idleFrontAnimation(this.sprite)
-                this.spriteEvents.emit(FinalNPCEvents.NPC_REACHED_START)
+                this.spriteEvents.emit(Events.NPC_REACHED_START)
             }
         })
 

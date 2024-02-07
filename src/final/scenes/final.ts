@@ -1,31 +1,32 @@
-import { PointObject, SceneEnums, fadeIn, fadeOut, fadeSceneTransition, getGUIScene, loadTilemap, scaleAndConfigureCamera, switchCameraFollow } from ".."
-import { Dialogue } from "../../dialogue"
-import { FinalElfFoodDialogue, FinalElfTableDialogue, FinalEndDialogue, FinalGoblinFoodDialogue, FinalGoblinTableDialogue, FinalPlayerFoodDialogue, FinalPlayerTableDialogue, FinalStartDialogue } from "../../dialogue/final"
-import { FinalNPC, FinalNPCEvents, FinalNPCTexture } from "../../sprites/final"
-import { FoodTexture, PlayerTexture } from "../../textures"
-import { ElfTexture } from "../../textures/elf"
-import { GoblinTexture } from "../../textures/goblin"
+import { ElfTexture } from "../../elf/textures"
+import { SceneEnums } from "../../game/repository"
+import { DialogueSystem } from "../../game/systems"
+import { FoodTexture, PlayerTexture } from "../../game/textures"
+import { SceneUtil } from "../../game/util"
+import { GoblinTexture } from "../../goblin/textures"
+import { ElfDialogue, GameDialogue, GoblinDialogue, PlayerDialogue } from "../dialogue"
+import { NPC } from "../sprites"
 
-type FinalMarkers = {
-    SpawnLocation: PointObject,
-    EndLocation: PointObject,
-    FoodLocation: PointObject
+type Markers = {
+    SpawnLocation: SceneUtil.PointObject,
+    EndLocation: SceneUtil.PointObject,
+    FoodLocation: SceneUtil.PointObject
 }
 
-type FinalNPCDialogue = {
-    table: Dialogue.Dialogue,
-    food: Dialogue.Dialogue
+type NPCDialogue = {
+    table: DialogueSystem.Dialogue,
+    food: DialogueSystem.Dialogue
 }
 
-enum FinalNPCs {
+enum NPCs {
     Player,
     Elf,
     Goblin
 }
 
-const NPC_ORDER = [FinalNPCs.Elf, FinalNPCs.Goblin, FinalNPCs.Player]
+const NPC_ORDER = [NPCs.Elf, NPCs.Goblin, NPCs.Player]
 
-const playerTexture: FinalNPCTexture = {
+const playerTexture: NPC.Texture = {
     key: PlayerTexture.TextureKey,
     food: FoodTexture.Frames.Player,
     moveRightAnimation: (sprite) => {
@@ -42,12 +43,12 @@ const playerTexture: FinalNPCTexture = {
     }
 }
 
-const playerDialogue: FinalNPCDialogue = {
-    table: FinalPlayerTableDialogue.Dialogue,
-    food: FinalPlayerFoodDialogue.Dialogue
+const playerDialogue: NPCDialogue = {
+    table: PlayerDialogue.Table.Dialogue,
+    food: PlayerDialogue.Food.Dialogue
 }
 
-const elfTexture: FinalNPCTexture = {
+const elfTexture: NPC.Texture = {
     key: ElfTexture.TextureKey,
     food: FoodTexture.Frames.Elf,
     moveRightAnimation: (sprite) => {
@@ -68,12 +69,12 @@ const elfTexture: FinalNPCTexture = {
     }
 }
 
-const elfDialogue: FinalNPCDialogue = {
-    table: FinalElfTableDialogue.Dialogue,
-    food: FinalElfFoodDialogue.Dialogue
+const elfDialogue: NPCDialogue = {
+    table: ElfDialogue.Table.Dialogue,
+    food: ElfDialogue.Food.Dialogue
 }
 
-const goblinTexture: FinalNPCTexture = {
+const goblinTexture: NPC.Texture = {
     key: GoblinTexture.TextureKey,
     food: FoodTexture.Frames.Goblin,
     moveRightAnimation: (sprite) => {
@@ -88,9 +89,9 @@ const goblinTexture: FinalNPCTexture = {
     idleFrontAnimation: (sprite) => sprite.play(GoblinTexture.Animations.IdleFront, true)
 }
 
-const goblinDialogue: FinalNPCDialogue = {
-    table: FinalGoblinTableDialogue.Dialogue,
-    food: FinalGoblinFoodDialogue.Dialogue
+const goblinDialogue: NPCDialogue = {
+    table: ElfDialogue.Table.Dialogue,
+    food: ElfDialogue.Food.Dialogue
 }
 
 const TABLE_DIALOGUE_DELAY = 500
@@ -100,23 +101,23 @@ const END_DIALOGUE_DELAY = 1000
 const START_OFFSET = 50
 const NPC_SWITCH_DELAY = 1000
 
-export class FinalScene extends Phaser.Scene {
-    markers!: FinalMarkers
+export class Scene extends Phaser.Scene {
+    markers!: Markers
     npcsCurrentlyAtStart!: number
     currentOrderIndex!: number
     spriteDepth!: number
 
     constructor() {
-        super(SceneEnums.SceneNames.Final)
+        super(SceneEnums.Name.Final)
     }
 
     create() {
         /* MAP INITIALIZATION */
-        let { map, playerSpriteDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.Final)
-        this.markers = objects as FinalMarkers
+        let { map, playerSpriteDepth, objects } = SceneUtil.loadTilemap(this, SceneEnums.Tilemap.Final)
+        this.markers = objects as Markers
 
         this.sprites.initialize(map)
-        let music = this.sound.add(SceneEnums.MusicNames.Final)
+        let music = this.sound.add(SceneEnums.Music.Final)
         this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
             music.stop()
         })
@@ -125,7 +126,7 @@ export class FinalScene extends Phaser.Scene {
         })
 
         // /* CAMERA CONFIGURATION*/
-        scaleAndConfigureCamera(this, map)
+        SceneUtil.scaleAndConfigureCamera(this, map)
 
         this.npcsCurrentlyAtStart = 0
         this.currentOrderIndex = 0
@@ -134,33 +135,33 @@ export class FinalScene extends Phaser.Scene {
         this.cameras.main.alpha = 0
 
         let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-        getGUIScene(this).dialogue.start(this, FinalStartDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
-            fadeOut(this, () => {
+        SceneUtil.getGUIScene(this).dialogue.start(this, GameDialogue.Start.Dialogue, dialogueEventEmitter, this.data, () => {
+            SceneUtil.fadeOut(this, () => {
                 this.cameras.main.alpha = 1
                 this.startNextNPC()
-                fadeIn(this)
+                SceneUtil.fadeIn(this)
             })
         })
     }
 
-    getNPCTexture(npc: FinalNPCs): FinalNPCTexture {
+    getNPCTexture(npc: NPCs): NPC.Texture {
         switch (npc) {
-            case FinalNPCs.Elf:
+            case NPCs.Elf:
                 return elfTexture
-            case FinalNPCs.Goblin:
+            case NPCs.Goblin:
                 return goblinTexture
-            case FinalNPCs.Player:
+            case NPCs.Player:
                 return playerTexture
         }
     }
 
-    getNPCDialogue(npc: FinalNPCs): FinalNPCDialogue {
+    getNPCDialogue(npc: NPCs): NPCDialogue {
         switch (npc) {
-            case FinalNPCs.Elf:
+            case NPCs.Elf:
                 return elfDialogue
-            case FinalNPCs.Goblin:
+            case NPCs.Goblin:
                 return goblinDialogue
-            case FinalNPCs.Player:
+            case NPCs.Player:
                 return playerDialogue
         }
     }
@@ -168,44 +169,44 @@ export class FinalScene extends Phaser.Scene {
     startNextNPC(): void {
         let npcType = NPC_ORDER[this.currentOrderIndex]
         let texture = this.getNPCTexture(npcType)
-        let sprite = new FinalNPC(this, this.markers.SpawnLocation.x, this.markers.SpawnLocation.y, texture, this.spriteDepth)
+        let sprite = new NPC.Sprite(this, this.markers.SpawnLocation.x, this.markers.SpawnLocation.y, texture, this.spriteDepth)
         // Origin doesn't work, just push them up manually
         sprite.sprite.setPosition(this.markers.SpawnLocation.x, this.markers.SpawnLocation.y - sprite.sprite.height / 2)
-        switchCameraFollow(this, sprite.sprite)
+        SceneUtil.switchCameraFollow(this, sprite.sprite)
         this.moveSpriteToTable(sprite, npcType)
     }
 
-    moveSpriteToTable(sprite: FinalNPC, type: FinalNPCs): void {
+    moveSpriteToTable(sprite: NPC.Sprite, type: NPCs): void {
         sprite.moveSpriteToTable()
-        sprite.spriteEvents.once(FinalNPCEvents.NPC_REACHED_TABLE, () => {
+        sprite.spriteEvents.once(NPC.Events.NPC_REACHED_TABLE, () => {
             let tableDialogue = this.getNPCDialogue(type).table
             this.time.delayedCall(TABLE_DIALOGUE_DELAY, () => {
                 let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-                getGUIScene(this).dialogue.start(this, tableDialogue, dialogueEventEmitter, this.data, () => {
+                SceneUtil.getGUIScene(this).dialogue.start(this, tableDialogue, dialogueEventEmitter, this.data, () => {
                     this.moveFoodToTable(sprite, type)
                 })
             })
         })
     }
 
-    moveFoodToTable(sprite: FinalNPC, type: FinalNPCs): void {
+    moveFoodToTable(sprite: NPC.Sprite, type: NPCs): void {
         sprite.moveFoodToTable()
-        sprite.spriteEvents.once(FinalNPCEvents.FOOD_REACHED_TABLE, () => {
+        sprite.spriteEvents.once(NPC.Events.FOOD_REACHED_TABLE, () => {
             this.eatFood(sprite, type)
         })
     }
 
-    eatFood(sprite: FinalNPC, type: FinalNPCs): void {
-        fadeOut(this, () => {
+    eatFood(sprite: NPC.Sprite, type: NPCs): void {
+        SceneUtil.fadeOut(this, () => {
             this.time.delayedCall(FOOD_EATING_DELAY, () => {
                 let foodDialogue = this.getNPCDialogue(type).food
                 let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-                getGUIScene(this).dialogue.start(this, foodDialogue, dialogueEventEmitter, this.data, () => {
-                    if (type === FinalNPCs.Player) {
+                SceneUtil.getGUIScene(this).dialogue.start(this, foodDialogue, dialogueEventEmitter, this.data, () => {
+                    if (type === NPCs.Player) {
                         this.endGame()
                     } else {
                         sprite.food.setVisible(false)
-                        fadeIn(this, () => {
+                        SceneUtil.fadeIn(this, () => {
                             this.moveSpriteToStart(sprite)
                         })
                     }
@@ -214,10 +215,10 @@ export class FinalScene extends Phaser.Scene {
         })
     }
 
-    moveSpriteToStart(sprite: FinalNPC) {
+    moveSpriteToStart(sprite: NPC.Sprite) {
         this.time.delayedCall(MOVE_TO_START_DELAY, () => {
             sprite.moveSpriteToStart(this.npcsCurrentlyAtStart * START_OFFSET)
-            sprite.spriteEvents.once(FinalNPCEvents.NPC_REACHED_START, () => {
+            sprite.spriteEvents.once(NPC.Events.NPC_REACHED_START, () => {
                 this.time.delayedCall(NPC_SWITCH_DELAY, () => {
                     this.npcsCurrentlyAtStart++
                     this.currentOrderIndex++
@@ -231,8 +232,8 @@ export class FinalScene extends Phaser.Scene {
         this.time.delayedCall(END_DIALOGUE_DELAY, () => {
             this.scene.stop()
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-            getGUIScene(this).dialogue.start(this, FinalEndDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
-                fadeSceneTransition(this, SceneEnums.SceneNames.Menu)
+            SceneUtil.getGUIScene(this).dialogue.start(this, GameDialogue.End.Dialogue, dialogueEventEmitter, this.data, () => {
+                SceneUtil.fadeSceneTransition(this, SceneEnums.Name.Menu)
             })
         })
     }

@@ -1,0 +1,1 @@
+export * as NPC from "./npc"

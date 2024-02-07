@@ -1,9 +1,9 @@
-import { Dialogue } from "../.."
+import { DialogueSystem } from "../../../game/systems"
 
-enum Events {
+export enum Events {
 }
 
-let Base: Dialogue.Dialogue = {
+let Base: DialogueSystem.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
@@ -15,7 +15,4 @@ let Base: Dialogue.Dialogue = {
     nextOptions: []
 }
 
-export const FinalElfTableDialogue = {
-    Dialogue: Base,
-    Events
-}
+export const Dialogue = Base

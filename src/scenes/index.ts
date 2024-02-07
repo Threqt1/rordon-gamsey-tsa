@@ -1,5 +1,0 @@
-export * from "./game/game"
-export * from "./preloader"
-export * from "./game/menu"
-export * from "./scenesUtilities"
-export * from "./gui"
