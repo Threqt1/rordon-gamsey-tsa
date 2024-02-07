@@ -1,7 +1,7 @@
 import { DialogueSystem } from "../../../game/systems"
-import { ElfHubData } from "../../../scenes/elf"
+import { ElfHubScene } from "../../scenes"
 
-enum Events {
+export enum Events {
 }
 
 let Base: DialogueSystem.Dialogue = {
@@ -38,7 +38,7 @@ let Option2: DialogueSystem.Dialogue = {
 let Option3: DialogueSystem.Dialogue = {
     getOptionText() { return "Also, the kid out front said to talk to you." },
     canBeChosen(registry) {
-        return (registry.values as ElfHubData).talkedToPochi === true
+        return (registry.values as ElfHubScene.SceneData).talkedToPochi === true
     },
     getContentText() {
         return [
@@ -96,7 +96,4 @@ Option2.nextOptions = [Option3]
 Option3.nextOptions = [Option4]
 Option4.nextOptions = [Option5, Option6]
 
-export const Overseer = {
-    Dialogue: Base,
-    Events
-}
+export const Dialogue = Base

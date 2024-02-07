@@ -1,1 +1,1 @@
-export * from "./goblinTeleporter"
+export * as Teleporter from "./goblinTeleporter"

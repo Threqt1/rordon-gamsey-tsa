@@ -1,8 +1,8 @@
 import { SceneEnums } from "../../game/repository"
 import { SceneUtil } from "../../game/util"
-import { Player } from "../../sprites/game"
 import { TorchesTexture } from "../textures"
 import { PostMinigameSprites } from "../sprites"
+import { Player } from "../../game/sprites/player"
 
 type ElfPostMinigameMarkers = {
     Player: SceneUtil.PointObject

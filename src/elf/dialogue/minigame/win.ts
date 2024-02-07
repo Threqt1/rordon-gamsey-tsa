@@ -1,6 +1,6 @@
 import { DialogueSystem } from "../../../game/systems"
 
-enum Events {
+export enum Events {
 }
 
 let Base: DialogueSystem.Dialogue = {
@@ -42,7 +42,4 @@ let Option2: DialogueSystem.Dialogue = {
 Base.nextOptions = [Option1]
 Option1.nextOptions = [Option2]
 
-export const Win = {
-    Dialogue: Base,
-    Events
-}
+export const Dialogue = Base

@@ -1,4 +1,4 @@
-import { DebugPlugin, SpritesPlugin } from "../plugins"
+import { SpritesPlugin } from "../game/systems"
 import PhaserRaycaster from "phaser-raycaster"
 
 interface AnimatedTilesPlugin {
@@ -8,7 +8,7 @@ interface AnimatedTilesPlugin {
 
 declare module "phaser" {
     export interface Scene {
-        sprites: SpritesPlugin
+        sprites: SpritesPlugin.Plugin
         raycaster: PhaserRaycaster
         animatedTiles: AnimatedTilesPlugin
     }

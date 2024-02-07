@@ -7,25 +7,23 @@ let Base: DialogueSystem.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "Welcome to our quaint little village~",
-            "Now feel free to explore the place while I prepare your trial.",
-            "Don’t go too far, I would hate to see you wind up as a Goblins supper."
+            "You're back again?~",
+            "Well, I respect the dedication!",
+            "Are you ready to try again?",
         ]
     },
     nextOptions: []
 }
 
 let Option1: DialogueSystem.Dialogue = {
-    getOptionText() { return "Nah, I'd win" },
+    getOptionText() { return "Let me try again!" },
     getContentText() {
         return [
-            "They would cause you a bit of trouble, I'm sure.",
-            "Head over to the trialgiver when you're ready, young chef."
+            "Very well!"
         ]
     },
     nextOptions: []
 }
-
 
 Base.nextOptions = [Option1]
 

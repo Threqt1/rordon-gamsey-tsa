@@ -1,6 +1,6 @@
 import { DialogueSystem } from "../../../game/systems"
 
-enum Events {
+export enum Events {
 }
 
 let Base: DialogueSystem.Dialogue = {
@@ -58,39 +58,4 @@ Base.nextOptions = [Option1, Option3]
 Option1.nextOptions = [Option2]
 Option2.nextOptions = [Option3]
 
-export const Teleporter = {
-    Dialogue: Base,
-    Events
-}
-
-enum Events1 {
-}
-
-let Base1: DialogueSystem.Dialogue = {
-    getOptionText() { return "" },
-    getContentText() {
-        return [
-            "You're back again?~",
-            "Well, I respect the dedication!",
-            "Are you ready to try again?",
-        ]
-    },
-    nextOptions: []
-}
-
-let Option1_1: DialogueSystem.Dialogue = {
-    getOptionText() { return "Let me try again!" },
-    getContentText() {
-        return [
-            "Very well!"
-        ]
-    },
-    nextOptions: []
-}
-
-Base1.nextOptions = [Option1_1]
-
-export const TeleporterRetry = {
-    Dialogue: Base1,
-    Events1
-}
+export const Dialogue = Base

@@ -1,12 +1,10 @@
-import { GOBLIN_MINIGAME_LEVEL_ORDER, GoblinMinigameEvents, GoblinMinigameScene, GoblinMinigameState } from ".";
-import { PointObject, RectangleObject, SceneEnums, fadeIn, fadeOut, getGUIScene, loadTilemap, scaleAndConfigureCamera } from "..";
-import { GoblinMinigameAlertedDialogue } from "../../dialogue/goblin";
-import { Direction } from "../../sprites";
-import { Player } from "../../sprites/game";
-import { GoblinMinigameNPC, GoblinMinigameStaticPathData, GoblinMinigameDynamicPathData, GoblinMinigamePathType, GoblinMinigamePathInformation, GoblinMinigameObjective } from "../../sprites/goblin";
-import { GoblinMinigameLightEmitter, GoblinMinigameLightEmitterType } from "../../sprites/goblin/minigame/lightEmitter";
-import { GoblinMinigameTeleporterZone } from "../../sprites/goblin/minigame/zone";
-import { PlayerTexture } from "../../textures";
+import { GoblinMinigame } from ".";
+import { SceneEnums } from "../../game/repository";
+import { Player } from "../../game/sprites/player";
+import { PlayerTexture } from "../../game/textures";
+import { SceneUtil, SpriteUtil } from "../../game/util";
+import { MinigameDialogue } from "../dialogue";
+import { MinigameSprites } from "../sprites";
 
 const BONFIRE_LIGHT_RADIUS = 70
 
@@ -15,28 +13,28 @@ TODO:
 COMMENTS FOR THIS FILE
 */
 
-type GoblinMinigameObjects = {
-    [key: string]: PointObject | RectangleObject | undefined
-    entrance_zone: RectangleObject,
-    exit_zone?: RectangleObject
-    objective?: PointObject
-    bonfire?: PointObject
+type Markers = {
+    [key: string]: SceneUtil.PointObject | SceneUtil.RectangleObject | undefined
+    entrance_zone: SceneUtil.RectangleObject,
+    exit_zone?: SceneUtil.RectangleObject
+    objective?: SceneUtil.PointObject
+    bonfire?: SceneUtil.PointObject
 }
 
-export class GoblinMinigameLevelScene extends Phaser.Scene {
-    parentScene!: GoblinMinigameScene
+export class GoblinLevelScene extends Phaser.Scene {
+    parentScene!: GoblinMinigame.GoblinMinigameScene
     currentLevelIndex!: number
     player!: Player
-    npcs!: GoblinMinigameNPC[]
-    additionaLights!: GoblinMinigameLightEmitter[]
+    npcs!: MinigameSprites.NPC.Sprite[]
+    additionaLights!: MinigameSprites.LightEmitter.Sprite[]
     map!: Phaser.Tilemaps.Tilemap
     spawnPoint!: Phaser.Geom.Point
-    markers!: GoblinMinigameObjects
+    markers!: Markers
     playerRay!: Raycaster.Ray
     collisionsLayer!: Phaser.Tilemaps.TilemapLayer
 
     constructor() {
-        super(SceneEnums.SceneNames.GoblinMinigameLevel)
+        super(SceneEnums.Name.GoblinMinigameLevel)
     }
 
     /**
@@ -49,14 +47,14 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
         })
     }
 
-    create(config: { parent: GoblinMinigameScene, levelIndex: number }) {
-        this.parentScene = config.parent
+    create(config: { parentScene: GoblinMinigame.GoblinMinigameScene, levelIndex: number }) {
+        this.parentScene = config.parentScene
         this.currentLevelIndex = config.levelIndex
         this.additionaLights = []
         /* MAP LOADING */
-        let { collisionsLayer, map, playerSpriteDepth, objects } = loadTilemap(this, GOBLIN_MINIGAME_LEVEL_ORDER[config.levelIndex])
+        let { collisionsLayer, map, playerSpriteDepth, objects } = SceneUtil.loadTilemap(this, GoblinMinigame.LEVEL_ORDER[config.levelIndex])
         this.map = map
-        this.markers = objects as GoblinMinigameObjects
+        this.markers = objects as Markers
         this.collisionsLayer = collisionsLayer
 
         this.sprites.initialize(map)
@@ -76,7 +74,7 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
 
         // If theres an objective marker, add that too
         if (this.markers.objective !== undefined) {
-            let objective = new GoblinMinigameObjective(this, this.markers.objective.x, this.markers.objective.y)
+            let objective = new MinigameSprites.Objective(this, this.markers.objective.x, this.markers.objective.y)
             this.sprites.addInteractables(objective)
             this.sprites.physicsBodies.add(objective.sprite)
         }
@@ -84,7 +82,7 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
         // Make the bonfire, if any
         if (this.markers.bonfire !== undefined) {
             let sprite = this.add.sprite(this.markers.bonfire.x, this.markers.bonfire.y, PlayerTexture.TextureKey).setVisible(false)
-            this.additionaLights.push(new GoblinMinigameLightEmitter(this, sprite, GoblinMinigameLightEmitterType.CIRCLE, this.add.polygon(
+            this.additionaLights.push(new MinigameSprites.LightEmitter.Sprite(this, sprite, MinigameSprites.LightEmitter.EmitterType.CIRCLE, this.add.polygon(
                 sprite.x,
                 sprite.y,
                 new Phaser.Geom.Circle(BONFIRE_LIGHT_RADIUS, BONFIRE_LIGHT_RADIUS, BONFIRE_LIGHT_RADIUS).getPoints(36),
@@ -96,12 +94,12 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
         // Initialize all voids and their zones
         for (let [key, _rectangleObject] of Object.entries(this.markers)) {
             if (!key.toLowerCase().startsWith("void")) continue
-            let rectangleObject = _rectangleObject as RectangleObject
+            let rectangleObject = _rectangleObject as SceneUtil.RectangleObject
             let zone = this.add.zone(rectangleObject.x, rectangleObject.y, rectangleObject.width, rectangleObject.height).setOrigin(0, 0);
             this.physics.world.enable(zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
             (zone.body as Phaser.Physics.Arcade.Body).setImmovable(true)
             this.physics.add.collider(zone, this.player.sprite, () => {
-                this.parentScene.gameEvents.emit(GoblinMinigameEvents.DEAD)
+                this.parentScene.gameEvents.emit(GoblinMinigame.Events.DEAD)
             })
         }
 
@@ -109,8 +107,8 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
         this.sprites.makeCollisionsWithLayer(collisionsLayer)
 
         // Configure camera
-        scaleAndConfigureCamera(this, map, this.player.sprite)
-        scaleAndConfigureCamera(this.parentScene, this.map, this.player.sprite)
+        SceneUtil.scaleAndConfigureCamera(this, map, this.player.sprite)
+        SceneUtil.scaleAndConfigureCamera(this.parentScene, this.map, this.player.sprite)
 
         // Configure raycaster
         let raycaster = this.raycaster.createRaycaster()
@@ -133,15 +131,15 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
      * Update the active teleportation zone and spawn bbased on state
      */
     updateTeleportAndSpawn(): void {
-        let activeTeleporterZone: GoblinMinigameTeleporterZone | undefined;
+        let activeTeleporterZone: MinigameSprites.TeleporterZone | undefined;
         // If the state is normal, make the exit zone and spawn in the middle of entrance - trying to progress inward
-        if (this.parentScene.state === GoblinMinigameState.NORMAL) {
+        if (this.parentScene.state === GoblinMinigame.GameState.NORMAL) {
             let playerX = this.markers.entrance_zone.x + this.markers.entrance_zone.width / 2
             let playerY = this.markers.entrance_zone.y + this.markers.entrance_zone.height / 2
             this.spawnPoint = new Phaser.Geom.Point(playerX, playerY)
             this.player.sprite.setPosition(playerX, playerY)
             if (this.markers.exit_zone !== undefined) {
-                activeTeleporterZone = new GoblinMinigameTeleporterZone(this, this.markers.exit_zone, this.currentLevelIndex + 1)
+                activeTeleporterZone = new MinigameSprites.TeleporterZone(this, this.markers.exit_zone, this.currentLevelIndex + 1)
             }
         } else {
             // Otherwise, entrances are exits and exits are entrances - you're trying to escape
@@ -155,7 +153,7 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
                 this.spawnPoint = new Phaser.Geom.Point(playerX, playerY)
                 this.player.sprite.setPosition(playerX, playerY)
             }
-            activeTeleporterZone = new GoblinMinigameTeleporterZone(this, this.markers.entrance_zone, this.currentLevelIndex - 1)
+            activeTeleporterZone = new MinigameSprites.TeleporterZone(this, this.markers.entrance_zone, this.currentLevelIndex - 1)
         }
 
         if (activeTeleporterZone !== undefined)
@@ -173,16 +171,16 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
      * Update the level when the game state changes
      */
     updateLevel(): void {
-        fadeOut(this.parentScene, () => {
+        SceneUtil.fadeOut(this.parentScene, () => {
             this.scene.pause()
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-            getGUIScene(this).dialogue.start(this, GoblinMinigameAlertedDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
+            SceneUtil.getGUIScene(this).dialogue.start(this, MinigameDialogue.Alerted.Dialogue, dialogueEventEmitter, this.data, () => {
                 this.scene.resume()
                 for (let npc of this.npcs) {
                     npc.updateState(this.parentScene.state)
                 }
                 this.updateTeleportAndSpawn()
-                fadeIn(this.parentScene)
+                SceneUtil.fadeIn(this.parentScene)
             })
         })
     }
@@ -192,17 +190,17 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
     * @param markers The markers for the level
     * @returns The goblin NPCs
     */
-    parseAndCreateNPCs(markers: GoblinMinigameObjects): GoblinMinigameNPC[] {
+    parseAndCreateNPCs(markers: Markers): MinigameSprites.NPC.Sprite[] {
         // Create different maps for each possible type of data
         let normalNPCDynamicData: { [key: string]: Phaser.Math.Vector2[] } = {}
-        let normalNPCStaticData: { [key: string]: Omit<GoblinMinigameStaticPathData, "type"> } = {}
+        let normalNPCStaticData: { [key: string]: Omit<MinigameSprites.NPC.StaticPathData, "type"> } = {}
         let alertedNPCDynamicData: { [key: string]: Phaser.Math.Vector2[] } = {}
-        let alertedNPCStaticData: { [key: string]: Omit<GoblinMinigameStaticPathData, "type"> } = {}
+        let alertedNPCStaticData: { [key: string]: Omit<MinigameSprites.NPC.StaticPathData, "type"> } = {}
         // Track all the NPC numbers
         let npcNumbers = []
         // Parse markers and assign each point to the appropriate NPC number in the map
         for (let [key, point] of Object.entries(markers)) {
-            point = point as PointObject
+            point = point as SceneUtil.PointObject
             // key format: {path_type}_{goblin_number}_{path_point_number or direction keyword}
             let splitKey = key.split("_")
             let pathType = splitKey[0].trim().toLowerCase()
@@ -237,29 +235,29 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
         let npcs = []
         // Loop through all NPC numbers, creating path data and initializing goblin NPCs
         for (let npcNumber of npcNumbers) {
-            let normalPathData: GoblinMinigameStaticPathData | GoblinMinigameDynamicPathData;
+            let normalPathData: MinigameSprites.NPC.StaticPathData | MinigameSprites.NPC.DynamicPathData;
             if (normalNPCStaticData[npcNumber] !== undefined) {
                 normalPathData = {
-                    type: GoblinMinigamePathType.STATIC,
+                    type: MinigameSprites.NPC.PathType.STATIC,
                     ...normalNPCStaticData[npcNumber]
                 }
             } else {
                 normalPathData = {
-                    type: GoblinMinigamePathType.DYNAMIC,
+                    type: MinigameSprites.NPC.PathType.DYNAMIC,
                     points: normalNPCDynamicData[npcNumber].filter(r => r !== undefined)
                 }
             }
 
-            let alertPathData: GoblinMinigameStaticPathData | GoblinMinigameDynamicPathData;
+            let alertPathData: MinigameSprites.NPC.StaticPathData | MinigameSprites.NPC.DynamicPathData;
             if (alertedNPCStaticData[npcNumber] !== undefined) {
                 alertPathData = {
-                    type: GoblinMinigamePathType.STATIC,
+                    type: MinigameSprites.NPC.PathType.STATIC,
                     ...alertedNPCStaticData[npcNumber]
                 }
             } else {
                 if (alertedNPCDynamicData[npcNumber] !== undefined) {
                     alertPathData = {
-                        type: GoblinMinigamePathType.DYNAMIC,
+                        type: MinigameSprites.NPC.PathType.DYNAMIC,
                         points: alertedNPCDynamicData[npcNumber].filter(r => r !== undefined)
                     }
                 } else {
@@ -267,11 +265,11 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
                 }
             }
 
-            let pathInformation: GoblinMinigamePathInformation = {
+            let pathInformation: MinigameSprites.NPC.PathInformation = {
                 normal: normalPathData,
                 alerted: alertPathData
             }
-            let npc = new GoblinMinigameNPC(this, 0, 0, pathInformation)
+            let npc = new MinigameSprites.NPC.Sprite(this, 0, 0, pathInformation)
             npc.sprite.setMask(this.parentScene.playerVisibleAreaMask)
             this.sprites.physicsBodies.add(npc.sprite)
             npcs.push(npc)
@@ -285,18 +283,18 @@ export class GoblinMinigameLevelScene extends Phaser.Scene {
      * @param string The keyword (N E S W)
      * @returns The direction
      */
-    getDirectionFromKeyword(keyword: string): Direction {
+    getDirectionFromKeyword(keyword: string): SpriteUtil.Direction {
         switch (keyword.toLowerCase()) {
             case "n":
-                return Direction.UP
+                return SpriteUtil.Direction.UP
             case "e":
-                return Direction.RIGHT
+                return SpriteUtil.Direction.RIGHT
             case "w":
-                return Direction.LEFT
+                return SpriteUtil.Direction.LEFT
             case "s":
-                return Direction.DOWN
+                return SpriteUtil.Direction.DOWN
             default:
-                return Direction.UP
+                return SpriteUtil.Direction.UP
         }
     }
 }

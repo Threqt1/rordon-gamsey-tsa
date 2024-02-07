@@ -2,8 +2,8 @@ import { MinigameSprites } from "../sprites"
 import { SpriteUtil, SceneUtil } from "../../game/util";
 import { TorchesTexture } from "../textures";
 import { MinigameDialogue } from "../dialogue/";
-import { Player } from "../../sprites/game";
 import { SceneEnums } from "../../game/repository";
+import { Player } from "../../game/sprites/player";
 
 enum ElfMinigameEvents {
     DONE = "done"

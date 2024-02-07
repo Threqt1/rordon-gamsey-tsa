@@ -1,7 +1,6 @@
-import { Controllable } from "../../../../plugins"
 import { KeyboardTexture } from "../../../../game/textures"
 import { SlashesTexture, FruitsTexture } from "../../../textures"
-import { InputSystem } from "../../../../game/systems"
+import { InputSystem, SpritesPlugin } from "../../../../game/systems"
 import { ElfMinigameScene } from "../../../scenes"
 
 export enum FruitType {
@@ -9,7 +8,7 @@ export enum FruitType {
     PUMPKIN,
 }
 
-export interface Fruit extends Controllable {
+export interface Fruit extends SpritesPlugin.Controllable {
     /**
      * Initialize the fruit, displaying it and setting it up.
      * Not able to be interacted with though.

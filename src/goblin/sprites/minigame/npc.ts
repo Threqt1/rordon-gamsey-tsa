@@ -1,8 +1,9 @@
-import { Direction } from "../..";
-import { GoblinMinigameState, GoblinMinigameEvents, GoblinMinigameLevelScene } from "../../../scenes/goblin";
-import { GoblinTexture } from "../../../textures/goblin";
-import { Player } from "../../game";
-import { GoblinMinigameLightEmitter, GoblinMinigameLightEmitterType } from "./lightEmitter";
+import { LightEmitter } from ".";
+import { Player } from "../../../game/sprites/player";
+import { SpriteUtil } from "../../../game/util";
+import { GoblinLevelScene, GoblinMinigame } from "../../scenes";
+import { GameState } from "../../scenes/minigame";
+import { GoblinTexture } from "../../textures";
 
 const SWEEPING_PAUSE = 500
 const NPC_SPEED = 15
@@ -20,39 +21,39 @@ const ALERTED_RAY_CONE_DEG = 60
 /**
  * Represents the types of paths
  */
-export enum GoblinMinigamePathType {
+export enum PathType {
     // Where the NPC is still, facing a direction
     STATIC,
     // Where the NPC has a path to follow
     DYNAMIC
 }
 
-export type GoblinMinigameStaticPathData = {
-    type: GoblinMinigamePathType.STATIC,
+export type StaticPathData = {
+    type: PathType.STATIC,
     point: Phaser.Math.Vector2,
-    direction: Direction
+    direction: SpriteUtil.Direction
 }
 
-export type GoblinMinigameDynamicPathData = {
-    type: GoblinMinigamePathType.DYNAMIC,
+export type DynamicPathData = {
+    type: PathType.DYNAMIC,
     points: Phaser.Math.Vector2[]
 }
 
 /**
  * Path information for Goblin NPCs, different for both the normal and alerted game states
  */
-export type GoblinMinigamePathInformation = {
-    normal: GoblinMinigameStaticPathData | GoblinMinigameDynamicPathData,
-    alerted: GoblinMinigameStaticPathData | GoblinMinigameDynamicPathData
+export type PathInformation = {
+    normal: StaticPathData | DynamicPathData,
+    alerted: StaticPathData | DynamicPathData
 }
 
-export class GoblinMinigameNPC {
-    scene: GoblinMinigameLevelScene
+export class Sprite {
+    scene: GoblinLevelScene
     sprite: Phaser.GameObjects.PathFollower
     speed: number
-    lightEmitter: GoblinMinigameLightEmitter
-    pathInformation: GoblinMinigamePathInformation
-    currentPathType?: GoblinMinigamePathType
+    lightEmitter: LightEmitter.Sprite
+    pathInformation: PathInformation
+    currentPathType?: PathType
     currentPathPoints: Phaser.Math.Vector2[]
     currentPathIndex: number
     /**
@@ -60,15 +61,15 @@ export class GoblinMinigameNPC {
      */
     boundingBox: Phaser.GameObjects.Rectangle
     //ray: Raycaster.Ray
-    direction: Direction
+    direction: SpriteUtil.Direction
     stopped: boolean
     /**
      * Tween that sweeps the light from left to right
      */
     sweepTween?: Phaser.Tweens.TweenChain
-    state: GoblinMinigameState
+    state: GoblinMinigame.GameState
 
-    constructor(scene: GoblinMinigameLevelScene, x: number, y: number, pathInformation: GoblinMinigamePathInformation) {
+    constructor(scene: GoblinLevelScene, x: number, y: number, pathInformation: PathInformation) {
         this.scene = scene
         this.sprite = scene.add.follower(new Phaser.Curves.Path(), x, y, GoblinTexture.TextureKey);
         this.speed = NPC_SPEED
@@ -77,11 +78,11 @@ export class GoblinMinigameNPC {
         this.currentPathIndex = 0
 
         this.boundingBox = scene.add.rectangle(x, y, 0, 0)
-        this.lightEmitter = new GoblinMinigameLightEmitter(this.scene, this.sprite, GoblinMinigameLightEmitterType.CONE, this.boundingBox);
+        this.lightEmitter = new LightEmitter.Sprite(this.scene, this.sprite, LightEmitter.EmitterType.CONE, this.boundingBox);
 
-        this.direction = Direction.UP
+        this.direction = SpriteUtil.Direction.UP
         this.stopped = false
-        this.state = GoblinMinigameState.NORMAL
+        this.state = GoblinMinigame.GameState.NORMAL
 
         scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY);
         let body = this.sprite.body as Phaser.Physics.Arcade.Body
@@ -93,17 +94,17 @@ export class GoblinMinigameNPC {
 
     makeCollisionsWithPlayer(player: Player) {
         this.scene.physics.add.collider(this.sprite, player.sprite, () => {
-            this.scene.parentScene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
+            this.scene.parentScene.gameEvents.emit(GoblinMinigame.Events.CAUGHT)
         })
     }
 
     /**
      * Read the current game state and update NPC accordingly
      */
-    updateState(newState: GoblinMinigameState): void {
+    updateState(newState: GoblinMinigame.GameState): void {
         this.state = newState
         this.sprite.stopFollow()
-        if (this.state === GoblinMinigameState.NORMAL) {
+        if (this.state === GoblinMinigame.GameState.NORMAL) {
             this.speed = NPC_SPEED
             this.updateRaySettings()
             this.executePathData(this.pathInformation.normal)
@@ -118,7 +119,7 @@ export class GoblinMinigameNPC {
      * Update the raycaster based on the state
      */
     updateRaySettings(): void {
-        if (this.state === GoblinMinigameState.NORMAL) {
+        if (this.state === GoblinMinigame.GameState.NORMAL) {
             this.lightEmitter.ray.setConeDeg(NORMAL_RAY_CONE_DEG)
             this.boundingBox.setSize(NORMAL_NPC_BOUNDING_BOX * 2, NORMAL_NPC_BOUNDING_BOX * 2)
         } else {
@@ -133,7 +134,7 @@ export class GoblinMinigameNPC {
     playSweepTween(callback?: () => void, repeat = false) {
         let sweepingAngle = NORMAL_NPC_SWEEPING_ANGLE
         let sweepingDuration = NORMAL_NPC_SWEEPING_DURATION
-        if (this.state === GoblinMinigameState.ALERTED) {
+        if (this.state === GoblinMinigame.GameState.ALERTED) {
             sweepingAngle = ALERTED_NPC_SWEEPING_ANGLE
             sweepingDuration = ALERTED_NPC_SWEEPING_DURATION
         }
@@ -171,9 +172,9 @@ export class GoblinMinigameNPC {
      * Use path data and execute it on the NPC appropriately
      * @param pathData The path data to execute
      */
-    executePathData(pathData: GoblinMinigameStaticPathData | GoblinMinigameDynamicPathData): void {
+    executePathData(pathData: StaticPathData | DynamicPathData): void {
         this.currentPathType = pathData.type
-        if (pathData.type === GoblinMinigamePathType.DYNAMIC) {
+        if (pathData.type === PathType.DYNAMIC) {
             this.currentPathIndex = 0
             this.currentPathPoints = pathData.points
             // Reset sprite to first path point
@@ -193,7 +194,7 @@ export class GoblinMinigameNPC {
      * Start the next segment of the path
      */
     startNextPathSegment(): void {
-        if (this.stopped || this.currentPathType !== GoblinMinigamePathType.DYNAMIC) return
+        if (this.stopped || this.currentPathType !== PathType.DYNAMIC) return
         let nextPathIndex = this.currentPathIndex + 1
         if (nextPathIndex >= this.currentPathPoints.length) {
             nextPathIndex = 0
@@ -206,22 +207,22 @@ export class GoblinMinigameNPC {
         this.direction = this.getCurrentDirection(currentSegment)
 
         switch (this.direction) {
-            case Direction.UP:
+            case SpriteUtil.Direction.UP:
                 this.lightEmitter.ray.setAngleDeg(-90)
                 break;
-            case Direction.LEFT:
+            case SpriteUtil.Direction.LEFT:
                 this.lightEmitter.ray.setAngleDeg(-180)
                 break;
-            case Direction.RIGHT:
+            case SpriteUtil.Direction.RIGHT:
                 this.lightEmitter.ray.setAngleDeg(0)
                 break;
-            case Direction.DOWN:
+            case SpriteUtil.Direction.DOWN:
                 this.lightEmitter.ray.setAngleDeg(90)
                 break;
         }
 
         // Update the sweep tween if alerted
-        if (this.state === GoblinMinigameState.ALERTED) {
+        if (this.state === GameState.ALERTED) {
             this.playSweepTween(undefined, true)
         }
 
@@ -232,7 +233,7 @@ export class GoblinMinigameNPC {
             onComplete: () => {
                 this.currentPathIndex = nextPathIndex
                 // If the game's on normal state, have the pause and sweep behavior
-                if (this.state === GoblinMinigameState.NORMAL) {
+                if (this.state === GoblinMinigame.GameState.NORMAL) {
                     this.pauseAndSweep()
                 } else {
                     this.startNextPathSegment()
@@ -248,18 +249,18 @@ export class GoblinMinigameNPC {
      * @param line The line in question
      * @returns The direction
      */
-    getCurrentDirection(line: Phaser.Curves.Line): Direction {
+    getCurrentDirection(line: Phaser.Curves.Line): SpriteUtil.Direction {
         if (line.p0.x === line.p1.x) {
             if (line.p0.y > line.p1.y) {
-                return Direction.UP
+                return SpriteUtil.Direction.UP
             } else {
-                return Direction.DOWN
+                return SpriteUtil.Direction.DOWN
             }
         } else {
             if (line.p0.x > line.p1.x) {
-                return Direction.LEFT
+                return SpriteUtil.Direction.LEFT
             } else {
-                return Direction.RIGHT
+                return SpriteUtil.Direction.RIGHT
             }
         }
     }
@@ -281,16 +282,16 @@ export class GoblinMinigameNPC {
      */
     playIdleAnimation() {
         switch (this.direction) {
-            case Direction.UP:
+            case SpriteUtil.Direction.UP:
                 this.sprite.play(GoblinTexture.Animations.IdleBack, true);
                 break;
-            case Direction.RIGHT:
+            case SpriteUtil.Direction.RIGHT:
                 this.sprite.play(GoblinTexture.Animations.IdleRight, true);
                 break;
-            case Direction.LEFT:
+            case SpriteUtil.Direction.LEFT:
                 this.sprite.play(GoblinTexture.Animations.IdleLeft, true)
                 break;
-            case Direction.DOWN:
+            case SpriteUtil.Direction.DOWN:
                 this.sprite.play(GoblinTexture.Animations.IdleFront, true)
                 break;
         }
@@ -301,16 +302,16 @@ export class GoblinMinigameNPC {
      */
     playWalkAnimation() {
         switch (this.direction) {
-            case Direction.UP:
+            case SpriteUtil.Direction.UP:
                 this.sprite.play(GoblinTexture.Animations.WalkBack, true);
                 break;
-            case Direction.RIGHT:
+            case SpriteUtil.Direction.RIGHT:
                 this.sprite.play(GoblinTexture.Animations.WalkRight, true);
                 break;
-            case Direction.LEFT:
+            case SpriteUtil.Direction.LEFT:
                 this.sprite.play(GoblinTexture.Animations.WalkLeft, true)
                 break;
-            case Direction.DOWN:
+            case SpriteUtil.Direction.DOWN:
                 this.sprite.play(GoblinTexture.Animations.WalkFront, true)
                 break;
         }
@@ -321,7 +322,7 @@ export class GoblinMinigameNPC {
      */
     raycastAndUpdate(): void {
         // Make the bounding box move with the sprite
-        if (this.currentPathType === GoblinMinigamePathType.DYNAMIC) {
+        if (this.currentPathType === PathType.DYNAMIC) {
             this.lightEmitter.emitLight()
         }
     }

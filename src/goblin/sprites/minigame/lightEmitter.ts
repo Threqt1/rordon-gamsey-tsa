@@ -1,6 +1,6 @@
-import { GoblinMinigameEvents, GoblinMinigameLevelScene } from "../../../scenes/goblin";
+import { GoblinLevelScene, GoblinMinigame } from "../../scenes"
 
-export enum GoblinMinigameLightEmitterType {
+export enum EmitterType {
     CONE,
     CIRCLE
 }
@@ -11,14 +11,14 @@ const LIGHT_OPACITY = 0.09
 /**
  * A light emitter for the goblin game, usually attached to other objects
  */
-export class GoblinMinigameLightEmitter {
-    scene: GoblinMinigameLevelScene
+export class Sprite {
+    scene: GoblinLevelScene
     sprite: Phaser.GameObjects.Sprite
-    type: GoblinMinigameLightEmitterType
+    type: EmitterType
     boundingBox: Phaser.GameObjects.Shape
     ray: Raycaster.Ray
 
-    constructor(scene: GoblinMinigameLevelScene, sprite: Phaser.GameObjects.Sprite, type: GoblinMinigameLightEmitterType, boundingBox: Phaser.GameObjects.Shape) {
+    constructor(scene: GoblinLevelScene, sprite: Phaser.GameObjects.Sprite, type: EmitterType, boundingBox: Phaser.GameObjects.Shape) {
         this.scene = scene
         this.sprite = sprite
         this.type = type
@@ -42,10 +42,10 @@ export class GoblinMinigameLightEmitter {
         this.ray.setOrigin(this.sprite.x, this.sprite.y)
 
         switch (this.type) {
-            case GoblinMinigameLightEmitterType.CONE:
+            case EmitterType.CONE:
                 this.ray.castCone()
                 break;
-            case GoblinMinigameLightEmitterType.CIRCLE:
+            case EmitterType.CIRCLE:
                 this.ray.castCircle()
                 break;
         }
@@ -55,7 +55,7 @@ export class GoblinMinigameLightEmitter {
         }
 
         if (this.ray.overlap(this.scene.player.sprite).length > 0) {
-            this.scene.parentScene.gameEvents.emit(GoblinMinigameEvents.CAUGHT)
+            this.scene.parentScene.gameEvents.emit(GoblinMinigame.Events.CAUGHT)
         }
     }
 }

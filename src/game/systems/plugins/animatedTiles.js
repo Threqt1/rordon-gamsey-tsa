@@ -8,7 +8,7 @@
 // This plugin is based on Photonstorms Phaser 3 plugin template with added support for ES6.
 //
 
-export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
+export class AnimatedTilesPlugin extends Phaser.Plugins.ScenePlugin {
     /*
   
       TODO: 

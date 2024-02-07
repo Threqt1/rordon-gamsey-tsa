@@ -5,8 +5,9 @@ import PhaserRaycaster from "phaser-raycaster"
 import { PreloaderScene, MenuScene, GameScene, GUIScene } from './scenes';
 import { ElfHubScene, ElfMinigameScene, ElfPostMinigameScene } from './scenes/elf';
 import { GoblinMinigameScene, GoblinMinigameLevelScene } from './scenes/goblin';
-import { SpritesPlugin, PluginEnums, AnimatedTiles } from './plugins';
 import { FinalScene } from './scenes/final';
+import { PluginEnums } from './game/repository';
+import { AnimatedTilesPlugin, SpritesPlugin } from './game/systems';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
@@ -34,19 +35,19 @@ const config: Phaser.Types.Core.GameConfig = {
     ],
     plugins: {
         scene: [{
-            key: PluginEnums.PluginNames.RaycasterPlugin,
+            key: PluginEnums.Name.RaycasterPlugin,
             plugin: PhaserRaycaster,
-            mapping: PluginEnums.PluginKeys.RaycasterPlugin
+            mapping: PluginEnums.Key.RaycasterPlugin
         },
         {
-            key: PluginEnums.PluginNames.SpritePlugin,
-            plugin: SpritesPlugin,
-            mapping: PluginEnums.PluginKeys.SpritePlugin
+            key: PluginEnums.Name.SpritePlugin,
+            plugin: SpritesPlugin.Plugin,
+            mapping: PluginEnums.Key.SpritePlugin
         },
         {
-            key: PluginEnums.PluginNames.AnimatedTilesPlugin,
-            plugin: AnimatedTiles,
-            mapping: PluginEnums.PluginKeys.AnimatedTilesPlugin
+            key: PluginEnums.Name.AnimatedTilesPlugin,
+            plugin: AnimatedTilesPlugin,
+            mapping: PluginEnums.Key.AnimatedTilesPlugin
         }]
     },
     pixelArt: true,

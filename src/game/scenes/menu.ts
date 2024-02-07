@@ -1,11 +1,12 @@
-import { SceneEnums, fadeSceneTransition } from "..";
+import { SceneEnums } from "../repository"
+import { SceneUtil } from "../util"
 
 /**
  * TODO: REDO THIS GARBAGE SHIT, WHY IS THIS A THING
  */
 export class MenuScene extends Phaser.Scene {
     constructor() {
-        super(SceneEnums.SceneNames.Menu)
+        super(SceneEnums.Name.Menu)
     }
 
     preload() {
@@ -25,7 +26,7 @@ export class MenuScene extends Phaser.Scene {
     }
 
     create() {
-        let music = this.sound.add(SceneEnums.MusicNames.Main)
+        let music = this.sound.add(SceneEnums.Music.Main)
         this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
             music.stop()
         })
@@ -59,7 +60,7 @@ export class MenuScene extends Phaser.Scene {
         startSprite.on("pointerup", () => {
             if (!switching) {
                 switching = true
-                fadeSceneTransition(this, SceneEnums.SceneNames.ElfHub)
+                SceneUtil.fadeSceneTransition(this, SceneEnums.Name.ElfHub)
             }
         })
 

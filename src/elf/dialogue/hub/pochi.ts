@@ -1,8 +1,6 @@
 import { DialogueSystem } from "../../../game/systems"
 
-DialogueSystem
-
-enum Events {
+export enum Events {
 }
 
 let Base: DialogueSystem.Dialogue = {
@@ -117,7 +115,4 @@ Option4.nextOptions = [Option5]
 Option5.nextOptions = [Option6]
 Option6.nextOptions = [Option7]
 
-export const Pochi = {
-    Dialogue: Base,
-    Events
-}
+export const Dialogue = Base

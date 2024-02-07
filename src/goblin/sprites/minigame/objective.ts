@@ -1,12 +1,12 @@
-import { BaseNPC } from "../.."
-import { GoblinMinigameEvents, GoblinMinigameLevelScene } from "../../../scenes/goblin"
-import { FoodTexture } from "../../../textures"
+import { BaseNPC } from "../../../game/sprites"
+import { FoodTexture } from "../../../game/textures"
+import { GoblinLevelScene, GoblinMinigame } from "../../scenes"
 
-export class GoblinMinigameObjective extends BaseNPC {
-    scene: GoblinMinigameLevelScene
+export class Objective extends BaseNPC {
+    scene: GoblinLevelScene
     sprite: Phaser.Physics.Arcade.Sprite
 
-    constructor(scene: GoblinMinigameLevelScene, x: number, y: number) {
+    constructor(scene: GoblinLevelScene, x: number, y: number) {
         super(scene, x, y, 50, 50)
         this.sprite = scene.physics.add.sprite(x, y, FoodTexture.TextureKey, FoodTexture.Frames.GoblinMinigame)
         this.sprite.setPushable(false)
@@ -18,6 +18,6 @@ export class GoblinMinigameObjective extends BaseNPC {
     onInteract(): void {
         this.interactable = false
         this.sprite.setVisible(false)
-        this.scene.parentScene.gameEvents.emit(GoblinMinigameEvents.ALERT)
+        this.scene.parentScene.gameEvents.emit(GoblinMinigame.Events.ALERT)
     }
 }

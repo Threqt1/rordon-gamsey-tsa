@@ -1,2 +1,2 @@
-export * from "./win"
-export * from "./lose"
+export * as Win from "./win"
+export * as Lose from "./lose"
