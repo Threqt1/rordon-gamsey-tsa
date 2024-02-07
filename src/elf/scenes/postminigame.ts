@@ -1,29 +1,30 @@
+import { SceneEnums } from "../../game/repository"
+import { SceneUtil } from "../../game/util"
 import { Player } from "../../sprites/game"
-import { loadTilemap, SceneEnums, scaleAndConfigureCamera, PointObject } from "../"
-import { GoblinMinigameTeleporterNPC } from "../../sprites/elf/postminigame/teleporter"
-import { TorchesTexture } from "../../textures/elf"
+import { TorchesTexture } from "../textures"
+import { PostMinigameSprites } from "../sprites"
 
 type ElfPostMinigameMarkers = {
-    Player: PointObject
-    TeleporterNPCLocation: PointObject
-    Torch1: PointObject
-    Torch2: PointObject
-    Torch3: PointObject
-    Torch4: PointObject
-    Torch5: PointObject
+    Player: SceneUtil.PointObject
+    TeleporterNPCLocation: SceneUtil.PointObject
+    Torch1: SceneUtil.PointObject
+    Torch2: SceneUtil.PointObject
+    Torch3: SceneUtil.PointObject
+    Torch4: SceneUtil.PointObject
+    Torch5: SceneUtil.PointObject
 }
 
 export class ElfPostMinigameScene extends Phaser.Scene {
     constructor() {
-        super(SceneEnums.SceneNames.ElfPostMinigame)
+        super(SceneEnums.Name.ElfPostMinigame)
     }
 
     create() {
-        let { collisionsLayer, map, playerSpriteDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.ElfMinigame)
+        let { collisionsLayer, map, playerSpriteDepth, objects } = SceneUtil.loadTilemap(this, SceneEnums.Tilemap.ElfMinigame)
         let markers = objects as ElfPostMinigameMarkers
 
         this.sprites.initialize(map)
-        let music = this.sound.add(SceneEnums.MusicNames.ElfNeutral)
+        let music = this.sound.add(SceneEnums.Music.ElfNeutral)
         this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
             music.stop()
         })
@@ -31,7 +32,7 @@ export class ElfPostMinigameScene extends Phaser.Scene {
             loop: true
         })
 
-        let teleporter = new GoblinMinigameTeleporterNPC(this, markers.TeleporterNPCLocation.x, markers.TeleporterNPCLocation.y)
+        let teleporter = new PostMinigameSprites.GoblinTeleporter(this, markers.TeleporterNPCLocation.x, markers.TeleporterNPCLocation.y)
         let player = new Player(this, markers.Player.x, markers.Player.y)
 
         this.sprites.controllables.push(player)
@@ -61,7 +62,7 @@ export class ElfPostMinigameScene extends Phaser.Scene {
             .play(`-torch5-idle`)
             .setDepth(playerSpriteDepth)
 
-        scaleAndConfigureCamera(this, map, player.sprite)
+        SceneUtil.scaleAndConfigureCamera(this, map, player.sprite)
 
         this.sprites.makeCollisionsWithLayer(collisionsLayer)
     }

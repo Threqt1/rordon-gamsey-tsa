@@ -1,6 +1,6 @@
 import { BaseNPC } from "../../../game/sprites";
-import { ElfTexture } from "../../../textures/elf";
-import { GoblinMinigameTeleporterDialogue } from "../../../dialogue/elf/postminigame/goblinTeleporter";
+import { ElfTexture } from "../../textures";
+import { PostMinigameDialogue } from "../../dialogue"
 import { SceneUtil } from "../../../game/util";
 import { SceneEnums } from "../../../game/repository";
 
@@ -20,7 +20,7 @@ export class GoblinTeleporter extends BaseNPC {
 
     onInteract(): void {
         this.interactable = false
-        SceneUtil.getGUIScene(this.scene).dialogue.start(this.scene, GoblinMinigameTeleporterDialogue.Dialogue, this.emitter, this.scene.data, () => {
+        SceneUtil.getGUIScene(this.scene).dialogue.start(this.scene, PostMinigameDialogue.Teleporter.Dialogue, this.emitter, this.scene.data, () => {
             SceneUtil.fadeSceneTransition(this.scene, SceneEnums.Name.GoblinMinigame)
         })
     }

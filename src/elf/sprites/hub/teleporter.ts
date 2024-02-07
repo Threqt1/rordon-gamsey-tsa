@@ -1,8 +1,9 @@
-import { BaseNPC } from "../..";
-import { SceneEnums, fadeSceneTransition, getGUIScene, getGameRegistry } from "../../../scenes";
-import { ElfHubTeleporterAgainDialogue, ElfHubTeleporterDialogue } from "../../../dialogue/elf";
-import { ElfTexture } from "../../../textures/elf";
-import { Dialogue } from "../../../dialogue";
+import { SceneEnums } from "../../../game/repository";
+import { BaseNPC } from "../../../game/sprites";
+import { DialogueSystem } from "../../../game/systems";
+import { SceneUtil } from "../../../game/util";
+import { HubDialogue } from "../../dialogue";
+import { ElfTexture } from "../../textures";
 
 /**
  * The minigame teleporter teleports the player to the elf minigame
@@ -20,15 +21,15 @@ export class MinigameTeleporter extends BaseNPC {
 
     onInteract(): void {
         this.interactable = false
-        let dialogue: Dialogue.Dialogue;
+        let dialogue: DialogueSystem.Dialogue;
         // If the minigame has been lost already, display unique dialogue
-        if (getGameRegistry(this.scene).elfMinigameLost) {
-            dialogue = ElfHubTeleporterAgainDialogue.Dialogue
+        if (SceneUtil.getGameRegistry(this.scene).elfMinigameLost) {
+            dialogue = HubDialogue.TeleporterRetry.Dialogue
         } else {
-            dialogue = ElfHubTeleporterDialogue.Dialogue
+            dialogue = HubDialogue.Teleporter.Dialogue
         }
-        getGUIScene(this.scene).dialogue.start(this.scene, dialogue, this.emitter, this.scene.data, () => {
-            fadeSceneTransition(this.scene, SceneEnums.SceneNames.ElfMinigame)
+        SceneUtil.getGUIScene(this.scene).dialogue.start(this.scene, dialogue, this.emitter, this.scene.data, () => {
+            SceneUtil.fadeSceneTransition(this.scene, SceneEnums.Name.ElfMinigame)
         })
     }
 }

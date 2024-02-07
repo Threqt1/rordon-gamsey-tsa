@@ -1,13 +1,13 @@
 import { Player } from "../../sprites/game"
-import { loadTilemap, SceneEnums, scaleAndConfigureCamera, PointObject, getGameRegistry } from "../"
-import { ElfHubEstel, ElfHubOverseer, ElfHubPochi, ElfMinigameTeleporterNPC } from "../../sprites/elf"
-import { Direction } from "../../sprites"
+import { HubSprites } from "../sprites"
+import { SceneUtil, SpriteUtil } from "../../game/util"
+import { SceneEnums } from "../../game/repository"
 
 type Markers = {
-    EstelNPCLocation: PointObject
-    PochiNPCLocation: PointObject
-    OverseerNPCLocation: PointObject
-    TeleporterNPCLocation: PointObject
+    EstelNPCLocation: SceneUtil.PointObject
+    PochiNPCLocation: SceneUtil.PointObject
+    OverseerNPCLocation: SceneUtil.PointObject
+    TeleporterNPCLocation: SceneUtil.PointObject
 }
 
 export type SceneData = {
@@ -23,17 +23,17 @@ const PLAYER_OFFSET = 25;
 
 export class ElfHubScene extends Phaser.Scene {
     constructor() {
-        super(SceneEnums.SceneNames.ElfHub)
+        super(SceneEnums.Name.ElfHub)
     }
 
     create() {
-        let { collisionsLayer, map, playerSpriteDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.ElfHub)
+        let { collisionsLayer, map, playerSpriteDepth, objects } = SceneUtil.loadTilemap(this, SceneEnums.Tilemap.ElfHub)
         let markers = objects as Markers
 
         this.sprites.initialize(map)
 
         // Initialize the music
-        let music = this.sound.add(SceneEnums.MusicNames.ElfNeutral)
+        let music = this.sound.add(SceneEnums.Music.ElfNeutral)
         this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
             music.stop()
         })
@@ -45,11 +45,11 @@ export class ElfHubScene extends Phaser.Scene {
         this.data.set(DEFAULT_DATA)
 
         //position player in front of estel
-        let estel = new ElfHubEstel(this, markers.EstelNPCLocation.x, markers.EstelNPCLocation.y)
+        let estel = new HubSprites.Estel(this, markers.EstelNPCLocation.x, markers.EstelNPCLocation.y)
 
-        let teleporter = new ElfMinigameTeleporterNPC(this, markers.TeleporterNPCLocation.x, markers.TeleporterNPCLocation.y)
-        let overseer = new ElfHubOverseer(this, markers.OverseerNPCLocation.x, markers.OverseerNPCLocation.y)
-        let pochi = new ElfHubPochi(this, markers.PochiNPCLocation.x, markers.PochiNPCLocation.y)
+        let teleporter = new HubSprites.MinigameTeleporter(this, markers.TeleporterNPCLocation.x, markers.TeleporterNPCLocation.y)
+        let overseer = new HubSprites.Overseer(this, markers.OverseerNPCLocation.x, markers.OverseerNPCLocation.y)
+        let pochi = new HubSprites.Pochi(this, markers.PochiNPCLocation.x, markers.PochiNPCLocation.y)
 
         let player = new Player(this, 0, 0)
 
@@ -59,16 +59,16 @@ export class ElfHubScene extends Phaser.Scene {
         this.sprites.interactingBodies.add(player.sprite)
         this.sprites.physicsBodies.setDepth(playerSpriteDepth)
 
-        scaleAndConfigureCamera(this, map, player.sprite)
+        SceneUtil.scaleAndConfigureCamera(this, map, player.sprite)
 
         this.sprites.makeCollisionsWithLayer(collisionsLayer)
 
         //play correct player animation
-        player.direction = Direction.UP
+        player.direction = SpriteUtil.Direction.UP
         player.playDirectionAnimation(0, 0)
 
         //delay and play the initial estel dialogue if first time
-        if (!getGameRegistry(this).elfMinigameLost) {
+        if (!SceneUtil.getGameRegistry(this).elfMinigameLost) {
             // disable control initially
             this.sprites.setControllable(false)
             player.sprite.setPosition(markers.EstelNPCLocation.x, markers.EstelNPCLocation.y + PLAYER_OFFSET)

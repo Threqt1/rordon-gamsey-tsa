@@ -1,6 +1,6 @@
-import { SlashesTexture, FruitsTexture } from "../../../../textures/elf";
+import { ElfMinigameScene } from "../../../scenes";
+import { SlashesTexture, FruitsTexture } from "../../../textures"
 import { BaseFruit, FruitInfo, FruitInteraction } from "./fruit";
-import { ElfMinigameScene } from "../../../../scenes/elf";
 
 /**
  * The apple in the elf minigame

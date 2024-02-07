@@ -1,6 +1,6 @@
 import { SceneUtil } from "../../../game/util";
 import { BaseNPC } from "../../../game/sprites";
-import { ElfTexture } from "../../textures/elf";
+import { ElfTexture } from "../../textures";
 import { HubDialogue } from "../../dialogue/"
 /**
  * Estel is the main NPC in the Elf Hub, has starting dialogue
@@ -28,7 +28,7 @@ export class Estel extends BaseNPC {
 
     onInteract(): void {
         this.interactable = false
-        getGUIScene(this.scene).dialogue.start(this.scene, HubDialogue.EstelNormal.Dialogue, this.emitter, this.scene.data, () => {
+        SceneUtil.getGUIScene(this.scene).dialogue.start(this.scene, HubDialogue.EstelNormal.Dialogue, this.emitter, this.scene.data, () => {
             this.startCooldown()
         })
     }

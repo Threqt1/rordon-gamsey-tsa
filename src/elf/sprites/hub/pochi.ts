@@ -1,8 +1,8 @@
-import { getGUIScene } from "../../../scenes";
-import { BaseNPC } from "../..";
-import { ElfTexture } from "../../../textures/elf";
-import { ElfHubPochiDialogue } from "../../../dialogue/elf";
-import { ElfHubData } from "../../../scenes/elf";
+import { BaseNPC } from "../../../game/sprites";
+import { ElfTexture } from "../../textures";
+import { HubDialogue } from "../../dialogue";
+import { SceneUtil } from "../../../game/util";
+import { ElfHubScene } from "../../scenes";
 
 /**
  * Pochi is a lore NPc in the elf hub
@@ -20,8 +20,8 @@ export class Pochi extends BaseNPC {
 
     onInteract(): void {
         this.interactable = false
-        getGUIScene(this.scene).dialogue.start(this.scene, ElfHubPochiDialogue.Dialogue, this.emitter, this.scene.data, () => {
-            (this.scene.data.values as ElfHubData).talkedToPochi = true
+        SceneUtil.getGUIScene(this.scene).dialogue.start(this.scene, HubDialogue.Pochi.Dialogue, this.emitter, this.scene.data, () => {
+            (this.scene.data.values as ElfHubScene.SceneData).talkedToPochi = true
             this.startCooldown()
         })
     }

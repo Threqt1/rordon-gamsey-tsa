@@ -1,37 +1,39 @@
-import { ElfMinigameNPC, ElfMinigameFruit, ElfMinigameApple, ElfMinigamePumpkin, ElfMinigameFruitType, ElfMinigameFruitEvents, ElfMinigameFruitInformation } from "../../sprites/elf"
-import { fadeOut, fadeSceneTransition, getGameRegistry, getGUIScene, loadTilemap, PointObject, scaleAndConfigureCamera, SceneEnums } from "..";
-import { TorchesTexture } from "../../textures/elf";
-import { ElfMinigameEndDialogue, ElfMinigameLoseDialogue } from "../../dialogue/elf";
+import { MinigameSprites } from "../sprites"
+import { SpriteUtil, SceneUtil } from "../../game/util";
+import { TorchesTexture } from "../textures";
+import { MinigameDialogue } from "../dialogue/";
 import { Player } from "../../sprites/game";
-import { Direction } from "../../sprites";
+import { SceneEnums } from "../../game/repository";
 
 enum ElfMinigameEvents {
     DONE = "done"
 }
 
 type ElfMinigameMarkers = {
-    Torch1: PointObject
-    Torch2: PointObject
-    Torch3: PointObject
-    Torch4: PointObject
-    Torch5: PointObject
-    Elf: PointObject
-    Player: PointObject
-    MinY: PointObject
-    MaxY: PointObject
-    StartX: PointObject
-    EndX: PointObject
+    Torch1: SceneUtil.PointObject
+    Torch2: SceneUtil.PointObject
+    Torch3: SceneUtil.PointObject
+    Torch4: SceneUtil.PointObject
+    Torch5: SceneUtil.PointObject
+    Elf: SceneUtil.PointObject
+    Player: SceneUtil.PointObject
+    MinY: SceneUtil.PointObject
+    MaxY: SceneUtil.PointObject
+    StartX: SceneUtil.PointObject
+    EndX: SceneUtil.PointObject
 }
+
+const FRUIT_TYPE = MinigameSprites.Fruits.FruitType
 
 /**
  * What combination of fruits will be thrown every level
  */
-const LEVEL_LAYOUTS: ElfMinigameFruitType[][] = [
-    [ElfMinigameFruitType.APPLE],
-    [ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.APPLE],
-    [ElfMinigameFruitType.APPLE, ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.APPLE],
-    [ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.APPLE, ElfMinigameFruitType.PUMPKIN],
-    [ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.APPLE, ElfMinigameFruitType.PUMPKIN, ElfMinigameFruitType.PUMPKIN]
+const LEVEL_LAYOUTS: MinigameSprites.Fruits.FruitType[][] = [
+    [FRUIT_TYPE.APPLE],
+    [FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.APPLE],
+    [FRUIT_TYPE.APPLE, FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.APPLE],
+    [FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.APPLE, FRUIT_TYPE.PUMPKIN],
+    [FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.APPLE, FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.PUMPKIN]
 ]
 
 /**
@@ -67,16 +69,16 @@ export class ElfMinigameScene extends Phaser.Scene {
     markers!: ElfMinigameMarkers
 
     constructor() {
-        super(SceneEnums.SceneNames.ElfMinigame)
+        super(SceneEnums.Name.ElfMinigame)
     }
 
     create() {
         /* MAP LOADING */
-        let { map, playerSpriteDepth, objects } = loadTilemap(this, SceneEnums.TilemapNames.ElfMinigame)
+        let { map, playerSpriteDepth, objects } = SceneUtil.loadTilemap(this, SceneEnums.Tilemap.ElfMinigame)
         this.markers = objects as ElfMinigameMarkers
 
         this.sprites.initialize(map);
-        let music = this.sound.add(SceneEnums.MusicNames.ElfMinigame)
+        let music = this.sound.add(SceneEnums.Music.ElfMinigame)
         this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
             music.stop()
         })
@@ -86,11 +88,11 @@ export class ElfMinigameScene extends Phaser.Scene {
 
         /* SPRITES LOADING */
         let player = new Player(this, this.markers.Player.x, this.markers.Player.y)
-        player.direction = Direction.LEFT
+        player.direction = SpriteUtil.Direction.LEFT
         player.setControllable(false)
         player.sprite.setDepth(playerSpriteDepth)
 
-        let npc = new ElfMinigameNPC(this, this.markers.Elf.x, this.markers.Elf.y)
+        let npc = new MinigameSprites.ElfMinigameNPC(this, this.markers.Elf.x, this.markers.Elf.y)
         npc.sprite.setDepth(playerSpriteDepth)
 
         let torch1 = this.add
@@ -112,7 +114,7 @@ export class ElfMinigameScene extends Phaser.Scene {
         this.torches = [torch1, torch2, torch3, torch4, torch5]
 
         /* CAMERA CONFIGURATION */
-        scaleAndConfigureCamera(this, map)
+        SceneUtil.scaleAndConfigureCamera(this, map)
 
         /* VARIABLE INITIALIZATION */
         this.currentLevelIndex = -1
@@ -131,13 +133,13 @@ export class ElfMinigameScene extends Phaser.Scene {
         this.currentLevelIndex++;
 
         if (this.currentLevelIndex >= LEVEL_LAYOUTS.length) {
-            return this.endGame()
+            return this.winGame()
         }
 
         let fruitsInLevel = LEVEL_LAYOUTS[this.currentLevelIndex]
         // Store level-specific tweens
         let tweens: Phaser.Tweens.Tween[] = []
-        let fruitObjects: ElfMinigameFruit[] = []
+        let fruitObjects: MinigameSprites.Fruits.Fruit[] = []
 
         // How far each fruit should be spaced apart on the Y-axis
         let yIncrement = (this.markers.MaxY.y - this.markers.MinY.y) / (fruitsInLevel.length + 1)
@@ -168,14 +170,14 @@ export class ElfMinigameScene extends Phaser.Scene {
             let y = this.markers.MinY.y + yIncrement * (i + 1)
             let fruit = this.getFruitObject(fruitsInLevel[i], y, fruitInfo)
 
-            fruit.fruitEvents.once(ElfMinigameFruitEvents.SUCCESS, () => {
+            fruit.fruitEvents.once(MinigameSprites.Fruits.FruitEvent.SUCCESS, () => {
                 progressFruits(i)
             })
-            fruit.fruitEvents.once(ElfMinigameFruitEvents.FAIL, () => {
+            fruit.fruitEvents.once(MinigameSprites.Fruits.FruitEvent.FAIL, () => {
                 // Prevent double game endeds
                 if (!this.gameEnded) {
                     if (this.currentLevelIndex >= MINIMUM_LEVEL_PASSED - 1) {
-                        this.endGame()
+                        this.winGame()
                     } else {
                         this.loseGame()
                     }
@@ -234,12 +236,12 @@ export class ElfMinigameScene extends Phaser.Scene {
      * @param info The fruit info
      * @returns The fruit object
      */
-    getFruitObject(fruit: ElfMinigameFruitType, y: number, info: ElfMinigameFruitInformation): ElfMinigameApple | ElfMinigamePumpkin {
+    getFruitObject(fruit: MinigameSprites.Fruits.FruitType, y: number, info: MinigameSprites.Fruits.FruitInfo): MinigameSprites.Fruits.Apple | MinigameSprites.Fruits.Pumpkin {
         switch (fruit) {
-            case ElfMinigameFruitType.APPLE:
-                return new ElfMinigameApple(this, this.markers.StartX.x, y, info)
-            case ElfMinigameFruitType.PUMPKIN:
-                return new ElfMinigamePumpkin(this, this.markers.StartX.x, y, info)
+            case MinigameSprites.Fruits.FruitType.APPLE:
+                return new MinigameSprites.Fruits.Apple(this, this.markers.StartX.x, y, info)
+            case MinigameSprites.Fruits.FruitType.PUMPKIN:
+                return new MinigameSprites.Fruits.Pumpkin(this, this.markers.StartX.x, y, info)
         }
     }
 
@@ -273,27 +275,27 @@ export class ElfMinigameScene extends Phaser.Scene {
      */
     loseGame(): void {
         this.gameEnded = true
-        fadeOut(this, () => {
+        SceneUtil.fadeOut(this, () => {
             this.scene.stop()
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-            getGUIScene(this).dialogue.start(this, ElfMinigameLoseDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
-                getGameRegistry(this).elfMinigameLost = true
-                fadeSceneTransition(this, SceneEnums.SceneNames.ElfHub)
+            SceneUtil.getGUIScene(this).dialogue.start(this, MinigameDialogue.Lose.Dialogue, dialogueEventEmitter, this.data, () => {
+                SceneUtil.getGameRegistry(this).elfMinigameLost = true
+                SceneUtil.fadeSceneTransition(this, SceneEnums.Name.ElfHub)
             })
         })
     }
 
     /**
-     * End the game
+     * Win the game
      */
-    endGame(): void {
+    winGame(): void {
         this.gameEnded = true
         // Fade in, run dialogue, switch scenes
-        fadeOut(this, () => {
+        SceneUtil.fadeOut(this, () => {
             this.scene.stop()
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-            getGUIScene(this).dialogue.start(this, ElfMinigameEndDialogue.Dialogue, dialogueEventEmitter, this.data, () => {
-                fadeSceneTransition(this, SceneEnums.SceneNames.ElfPostMinigame)
+            SceneUtil.getGUIScene(this).dialogue.start(this, MinigameDialogue.Win.Dialogue, dialogueEventEmitter, this.data, () => {
+                SceneUtil.fadeSceneTransition(this, SceneEnums.Name.ElfPostMinigame)
             })
         })
     }

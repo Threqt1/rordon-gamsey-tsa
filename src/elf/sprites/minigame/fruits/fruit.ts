@@ -1,8 +1,8 @@
 import { Controllable } from "../../../../plugins"
-import { ElfMinigameScene } from "../../../../scenes/elf"
-import { KeyboardTexture } from "../../../../textures"
-import { SlashesTexture, FruitsTexture } from "../../../../textures/elf"
-import { BaseInput, Keybinds } from "../../../"
+import { KeyboardTexture } from "../../../../game/textures"
+import { SlashesTexture, FruitsTexture } from "../../../textures"
+import { InputSystem } from "../../../../game/systems"
+import { ElfMinigameScene } from "../../../scenes"
 
 export enum FruitType {
     APPLE,
@@ -42,7 +42,7 @@ export enum FruitInteraction {
     SliceRight
 }
 
-export const InteractionKeybinds: Keybinds = {
+export const InteractionKeybinds: InputSystem.Keybinds = {
     [FruitInteraction.SliceUp]: "W",
     [FruitInteraction.SliceDown]: "S",
     [FruitInteraction.SliceLeft]: "A",
@@ -76,7 +76,7 @@ export abstract class BaseFruit implements Fruit {
     finished: boolean;
 
     scene: Phaser.Scene;
-    baseInput: BaseInput
+    baseInput: InputSystem.System
     controllable: boolean
 
     mainBodySprites: Phaser.Physics.Arcade.Sprite
@@ -94,7 +94,7 @@ export abstract class BaseFruit implements Fruit {
         this.sliceTextures = sliceTextures
         this.slashPattern = slashPattern
         this.scene = scene
-        this.baseInput = new BaseInput(scene, InteractionKeybinds)
+        this.baseInput = new InputSystem.System(scene, InteractionKeybinds)
         this.controllable = false;
         this.started = false;
         this.finished = false;

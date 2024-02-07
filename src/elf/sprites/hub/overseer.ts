@@ -1,7 +1,7 @@
-import { getGUIScene } from "../../../scenes";
-import { BaseNPC } from "../..";
-import { ElfTexture } from "../../../textures/elf";
-import { ElfHubOverseerDialogue } from "../../../dialogue/elf";
+import { BaseNPC } from "../../../game/sprites";
+import { ElfTexture } from "../../textures";
+import { HubDialogue } from "../../dialogue/";
+import { SceneUtil } from "../../../game/util";
 
 /**
  * The Overseer is a lore NPC in the elf hub
@@ -19,7 +19,7 @@ export class Overseer extends BaseNPC {
 
     onInteract(): void {
         this.interactable = false
-        getGUIScene(this.scene).dialogue.start(this.scene, ElfHubOverseerDialogue.Dialogue, this.emitter, this.scene.data, () => {
+        SceneUtil.getGUIScene(this.scene).dialogue.start(this.scene, HubDialogue.Overseer.Dialogue, this.emitter, this.scene.data, () => {
             this.startCooldown()
         })
     }

@@ -1,4 +1,4 @@
-import { ElfTexture } from "../../../textures/elf";
+import { ElfTexture } from "../../textures";
 
 /**
  * The throwing NPC in the elf minigame

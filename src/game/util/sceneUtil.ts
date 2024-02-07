@@ -1,4 +1,4 @@
-import { GUIScene } from ".";
+import { GUIScene } from "../scenes";
 import { GameData, SceneEnums } from "../repository";
 
 /**
