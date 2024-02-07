@@ -1,7 +1,7 @@
-import { BaseNPC } from "../../../game/sprites";
+import { BaseNPC } from "../../../shared/sprites";
 import { ElfTexture } from "../../textures";
 import { HubDialogue } from "../../dialogue/";
-import { SceneUtil } from "../../../game/util";
+import { SceneUtil } from "../../../shared/util";
 
 /**
  * The Overseer is a lore NPC in the elf hub

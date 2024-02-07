@@ -1,7 +1,7 @@
-import { SceneEnums } from "../../../game/repository";
-import { BaseNPC } from "../../../game/sprites";
-import { DialogueSystem } from "../../../game/systems";
-import { SceneUtil } from "../../../game/util";
+import { SceneEnums } from "../../../shared/repository";
+import { BaseNPC } from "../../../shared/sprites";
+import { DialogueSystem } from "../../../shared/systems";
+import { SceneUtil } from "../../../shared/util";
 import { HubDialogue } from "../../dialogue";
 import { ElfTexture } from "../../textures";
 

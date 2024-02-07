@@ -1,5 +1,5 @@
 import { FinalScene } from "../scenes";
-import { FoodTexture } from "../../game/textures";
+import { FoodTexture } from "../../shared/textures";
 
 const WALK_TO_TABLE_DURATION = 5000
 const FOOD_TO_TABLE_DURATION = 1000

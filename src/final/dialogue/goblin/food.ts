@@ -1,4 +1,4 @@
-import { DialogueSystem } from "../../../game/systems"
+import { DialogueSystem } from "../../../shared/systems"
 
 export enum Events {
 }

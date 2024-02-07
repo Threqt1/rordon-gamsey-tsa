@@ -1,7 +1,7 @@
 import { HubSprites } from "../sprites"
-import { SceneUtil, SpriteUtil } from "../../game/util"
-import { SceneEnums } from "../../game/repository"
-import { Player } from "../../game/sprites/player"
+import { SceneUtil, SpriteUtil } from "../../shared/util"
+import { SceneEnums } from "../../shared/repository"
+import { Player } from "../../shared/sprites/player"
 
 type Markers = {
     EstelNPCLocation: SceneUtil.PointObject

@@ -1,5 +1,5 @@
-import { SceneUtil } from "../../../game/util";
-import { BaseNPC } from "../../../game/sprites";
+import { SceneUtil } from "../../../shared/util";
+import { BaseNPC } from "../../../shared/sprites";
 import { ElfTexture } from "../../textures";
 import { HubDialogue } from "../../dialogue/"
 /**

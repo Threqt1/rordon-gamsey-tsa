@@ -1,8 +1,8 @@
 import { GoblinMinigame } from ".";
-import { SceneEnums } from "../../game/repository";
-import { Player } from "../../game/sprites/player";
-import { PlayerTexture } from "../../game/textures";
-import { SceneUtil, SpriteUtil } from "../../game/util";
+import { SceneEnums } from "../../shared/repository";
+import { Player } from "../../shared/sprites/player";
+import { PlayerTexture } from "../../shared/textures";
+import { SceneUtil, SpriteUtil } from "../../shared/util";
 import { MinigameDialogue } from "../dialogue";
 import { MinigameSprites } from "../sprites";
 

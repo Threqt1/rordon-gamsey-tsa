@@ -1,4 +1,4 @@
-import { SpritesPlugin } from "../game/systems"
+import { SpritesPlugin } from "../shared/systems"
 import PhaserRaycaster from "phaser-raycaster"
 
 interface AnimatedTilesPlugin {

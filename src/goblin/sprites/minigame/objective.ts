@@ -1,5 +1,5 @@
-import { BaseNPC } from "../../../game/sprites"
-import { FoodTexture } from "../../../game/textures"
+import { BaseNPC } from "../../../shared/sprites"
+import { FoodTexture } from "../../../shared/textures"
 import { GoblinLevel, GoblinMinigame } from "../../scenes"
 
 export class Objective extends BaseNPC {

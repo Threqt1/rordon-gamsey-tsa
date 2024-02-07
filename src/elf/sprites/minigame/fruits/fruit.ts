@@ -1,6 +1,6 @@
-import { KeyboardTexture } from "../../../../game/textures"
+import { KeyboardTexture } from "../../../../shared/textures"
 import { SlashesTexture, FruitsTexture } from "../../../textures"
-import { InputSystem, SpritesPlugin } from "../../../../game/systems"
+import { InputSystem, SpritesPlugin } from "../../../../shared/systems"
 import { ElfMinigameScene } from "../../../scenes"
 
 export enum FruitType {

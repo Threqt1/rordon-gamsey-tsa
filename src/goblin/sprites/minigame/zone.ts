@@ -1,5 +1,5 @@
-import { BaseNPC } from "../../../game/sprites"
-import { SceneUtil } from "../../../game/util"
+import { BaseNPC } from "../../../shared/sprites"
+import { SceneUtil } from "../../../shared/util"
 import { GoblinLevel, GoblinMinigame } from "../../scenes"
 
 

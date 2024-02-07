@@ -2,10 +2,10 @@ import './style.css'
 
 import { Game } from 'phaser';
 import PhaserRaycaster from "phaser-raycaster"
-import { PluginEnums } from './game/repository';
-import { AnimatedTilesPlugin, SpritesPlugin } from './game/systems';
-import { GUIScene, PreloaderScene } from './game/scenes';
-import { MenuScene } from './game/scenes/menu';
+import { PluginEnums } from './shared/repository';
+import { AnimatedTilesPlugin, SpritesPlugin } from './shared/systems';
+import { GUIScene, PreloaderScene } from './shared/scenes';
+import { MenuScene } from './shared/scenes/menu';
 import { ElfHubScene, ElfMinigameScene, ElfPostMinigameScene } from './elf/scenes';
 import { GoblinLevel, GoblinMinigame } from './goblin/scenes';
 import { FinalScene } from './final/scenes';

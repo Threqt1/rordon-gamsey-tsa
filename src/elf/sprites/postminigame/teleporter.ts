@@ -1,8 +1,8 @@
-import { BaseNPC } from "../../../game/sprites";
+import { BaseNPC } from "../../../shared/sprites";
 import { ElfTexture } from "../../textures";
 import { PostMinigameDialogue } from "../../dialogue"
-import { SceneUtil } from "../../../game/util";
-import { SceneEnums } from "../../../game/repository";
+import { SceneUtil } from "../../../shared/util";
+import { SceneEnums } from "../../../shared/repository";
 
 /**
  * The NPC that teleports the player to the goblin minigame

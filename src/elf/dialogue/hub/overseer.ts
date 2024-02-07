@@ -1,4 +1,4 @@
-import { DialogueSystem } from "../../../game/systems"
+import { DialogueSystem } from "../../../shared/systems"
 import { ElfHubScene } from "../../scenes"
 
 export enum Events {

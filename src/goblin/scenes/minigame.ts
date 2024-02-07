@@ -1,6 +1,6 @@
 import { GoblinLevel } from "."
-import { SceneEnums } from "../../game/repository"
-import { SceneUtil } from "../../game/util"
+import { SceneEnums } from "../../shared/repository"
+import { SceneUtil } from "../../shared/util"
 import { MinigameDialogue } from "../dialogue"
 
 let BASE_MASK_DEPTH = 100

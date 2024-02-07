@@ -1,6 +1,6 @@
 import { LightEmitter } from ".";
-import { Player } from "../../../game/sprites/player";
-import { SpriteUtil } from "../../../game/util";
+import { Player } from "../../../shared/sprites/player";
+import { SpriteUtil } from "../../../shared/util";
 import { GoblinLevel, GoblinMinigame } from "../../scenes";
 import { GameState } from "../../scenes/minigame";
 import { GoblinTexture } from "../../textures";
