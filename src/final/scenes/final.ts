@@ -90,8 +90,8 @@ const goblinTexture: NPC.Texture = {
 }
 
 const goblinDialogue: NPCDialogue = {
-    table: ElfDialogue.Table.Dialogue,
-    food: ElfDialogue.Food.Dialogue
+    table: GoblinDialogue.Table.Dialogue,
+    food: GoblinDialogue.Food.Dialogue
 }
 
 const TABLE_DIALOGUE_DELAY = 500

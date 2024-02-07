@@ -2,12 +2,13 @@ import './style.css'
 
 import { Game } from 'phaser';
 import PhaserRaycaster from "phaser-raycaster"
-import { PreloaderScene, MenuScene, GameScene, GUIScene } from './scenes';
-import { ElfHubScene, ElfMinigameScene, ElfPostMinigameScene } from './scenes/elf';
-import { GoblinMinigameScene, GoblinMinigameLevelScene } from './scenes/goblin';
-import { FinalScene } from './scenes/final';
 import { PluginEnums } from './game/repository';
 import { AnimatedTilesPlugin, SpritesPlugin } from './game/systems';
+import { GUIScene, PreloaderScene } from './game/scenes';
+import { MenuScene } from './game/scenes/menu';
+import { ElfHubScene, ElfMinigameScene, ElfPostMinigameScene } from './elf/scenes';
+import { GoblinLevelScene, GoblinMinigame } from './goblin/scenes';
+import { FinalScene } from './final/scenes';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
@@ -23,14 +24,13 @@ const config: Phaser.Types.Core.GameConfig = {
     scene: [
         PreloaderScene,
         MenuScene,
-        GameScene,
         ElfMinigameScene,
         ElfPostMinigameScene,
-        GoblinMinigameScene,
-        GoblinMinigameLevelScene,
+        GoblinMinigame.Scene,
+        GoblinLevelScene,
         GUIScene,
-        ElfHubScene,
-        FinalScene
+        ElfHubScene.ElfHubScene,
+        FinalScene.Scene
 
     ],
     plugins: {

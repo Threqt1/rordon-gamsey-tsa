@@ -22,7 +22,7 @@ type Markers = {
 }
 
 export class GoblinLevelScene extends Phaser.Scene {
-    parentScene!: GoblinMinigame.GoblinMinigameScene
+    parentScene!: GoblinMinigame.Scene
     currentLevelIndex!: number
     player!: Player
     npcs!: MinigameSprites.NPC.Sprite[]
@@ -47,7 +47,7 @@ export class GoblinLevelScene extends Phaser.Scene {
         })
     }
 
-    create(config: { parentScene: GoblinMinigame.GoblinMinigameScene, levelIndex: number }) {
+    create(config: { parentScene: GoblinMinigame.Scene, levelIndex: number }) {
         this.parentScene = config.parentScene
         this.currentLevelIndex = config.levelIndex
         this.additionaLights = []

@@ -38,7 +38,7 @@ export enum GameState {
 /**
  * Scene for the goblin minigame
  */
-export class GoblinMinigameScene extends Phaser.Scene {
+export class Scene extends Phaser.Scene {
     currentLevelIndex!: number
     music!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound
     /**
