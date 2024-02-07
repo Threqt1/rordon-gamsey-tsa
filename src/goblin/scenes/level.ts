@@ -21,7 +21,12 @@ type Markers = {
     bonfire?: SceneUtil.PointObject
 }
 
-export class GoblinLevelScene extends Phaser.Scene {
+export type Config = {
+    parentScene: GoblinMinigame.Scene,
+    levelIndex: number
+}
+
+export class Scene extends Phaser.Scene {
     parentScene!: GoblinMinigame.Scene
     currentLevelIndex!: number
     player!: Player
@@ -47,7 +52,7 @@ export class GoblinLevelScene extends Phaser.Scene {
         })
     }
 
-    create(config: { parentScene: GoblinMinigame.Scene, levelIndex: number }) {
+    create(config: Config) {
         this.parentScene = config.parentScene
         this.currentLevelIndex = config.levelIndex
         this.additionaLights = []

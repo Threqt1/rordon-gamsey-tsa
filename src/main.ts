@@ -7,7 +7,7 @@ import { AnimatedTilesPlugin, SpritesPlugin } from './game/systems';
 import { GUIScene, PreloaderScene } from './game/scenes';
 import { MenuScene } from './game/scenes/menu';
 import { ElfHubScene, ElfMinigameScene, ElfPostMinigameScene } from './elf/scenes';
-import { GoblinLevelScene, GoblinMinigame } from './goblin/scenes';
+import { GoblinLevel, GoblinMinigame } from './goblin/scenes';
 import { FinalScene } from './final/scenes';
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -27,7 +27,7 @@ const config: Phaser.Types.Core.GameConfig = {
         ElfMinigameScene,
         ElfPostMinigameScene,
         GoblinMinigame.Scene,
-        GoblinLevelScene,
+        GoblinLevel.Scene,
         GUIScene,
         ElfHubScene.ElfHubScene,
         FinalScene.Scene

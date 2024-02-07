@@ -1,4 +1,4 @@
-import { GoblinLevelScene } from "."
+import { GoblinLevel } from "."
 import { SceneEnums } from "../../game/repository"
 import { SceneUtil } from "../../game/util"
 import { MinigameDialogue } from "../dialogue"
@@ -50,7 +50,7 @@ export class Scene extends Phaser.Scene {
      * Area visible to the NPCs
      */
     npcVisibleArea!: Phaser.GameObjects.Graphics
-    currentLevel!: GoblinLevelScene
+    currentLevel!: GoblinLevel.Scene
     state!: GameState
     gameInProgress!: boolean
     gameResetting!: boolean
@@ -143,12 +143,13 @@ export class Scene extends Phaser.Scene {
             if (this.scene.isActive(SceneEnums.Name.GoblinMinigameLevel)) {
                 this.scene.stop(SceneEnums.Name.GoblinMinigameLevel)
             }
-            this.scene.launch(SceneEnums.Name.GoblinMinigameLevel, {
-                parent: this,
+            let levelConfig: GoblinLevel.Config = {
+                parentScene: this,
                 levelIndex
-            })
+            }
+            this.scene.launch(SceneEnums.Name.GoblinMinigameLevel, levelConfig)
             this.scene.moveAbove(SceneEnums.Name.GoblinMinigameLevel, SceneEnums.Name.GoblinMinigame)
-            this.currentLevel = this.scene.get(SceneEnums.Name.GoblinMinigameLevel) as GoblinLevelScene
+            this.currentLevel = this.scene.get(SceneEnums.Name.GoblinMinigameLevel) as GoblinLevel.Scene
             this.currentLevel.events.once(Phaser.Scenes.Events.CREATE, () => {
                 this.gameInProgress = true
                 SceneUtil.fadeIn(this)

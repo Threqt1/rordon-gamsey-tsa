@@ -1,2 +1,2 @@
 export * as GoblinMinigame from "./minigame"
-export * from "./level"
+export * as GoblinLevel from "./level"

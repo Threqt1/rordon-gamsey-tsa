@@ -1,7 +1,7 @@
 import { LightEmitter } from ".";
 import { Player } from "../../../game/sprites/player";
 import { SpriteUtil } from "../../../game/util";
-import { GoblinLevelScene, GoblinMinigame } from "../../scenes";
+import { GoblinLevel, GoblinMinigame } from "../../scenes";
 import { GameState } from "../../scenes/minigame";
 import { GoblinTexture } from "../../textures";
 
@@ -48,7 +48,7 @@ export type PathInformation = {
 }
 
 export class Sprite {
-    scene: GoblinLevelScene
+    scene: GoblinLevel.Scene
     sprite: Phaser.GameObjects.PathFollower
     speed: number
     lightEmitter: LightEmitter.Sprite
@@ -69,7 +69,7 @@ export class Sprite {
     sweepTween?: Phaser.Tweens.TweenChain
     state: GoblinMinigame.GameState
 
-    constructor(scene: GoblinLevelScene, x: number, y: number, pathInformation: PathInformation) {
+    constructor(scene: GoblinLevel.Scene, x: number, y: number, pathInformation: PathInformation) {
         this.scene = scene
         this.sprite = scene.add.follower(new Phaser.Curves.Path(), x, y, GoblinTexture.TextureKey);
         this.speed = NPC_SPEED

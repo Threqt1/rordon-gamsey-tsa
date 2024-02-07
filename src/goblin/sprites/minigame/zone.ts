@@ -1,16 +1,16 @@
 import { BaseNPC } from "../../../game/sprites"
 import { SceneUtil } from "../../../game/util"
-import { GoblinLevelScene, GoblinMinigame } from "../../scenes"
+import { GoblinLevel, GoblinMinigame } from "../../scenes"
 
 
 /**
  * Represents an entrance/exit zone in the Goblin Minigame
  */
 export class TeleporterZone extends BaseNPC {
-    scene: GoblinLevelScene
+    scene: GoblinLevel.Scene
     nextLevelIndex: number
 
-    constructor(scene: GoblinLevelScene, data: SceneUtil.RectangleObject, nextLevelIndex: number) {
+    constructor(scene: GoblinLevel.Scene, data: SceneUtil.RectangleObject, nextLevelIndex: number) {
         super(scene, data.x, data.y, data.width, data.height)
         this.scene = scene
         this.nextLevelIndex = nextLevelIndex

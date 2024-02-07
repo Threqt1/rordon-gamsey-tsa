@@ -1,4 +1,4 @@
-import { GoblinLevelScene, GoblinMinigame } from "../../scenes"
+import { GoblinLevel, GoblinMinigame } from "../../scenes"
 
 export enum EmitterType {
     CONE,
@@ -12,13 +12,13 @@ const LIGHT_OPACITY = 0.09
  * A light emitter for the goblin game, usually attached to other objects
  */
 export class Sprite {
-    scene: GoblinLevelScene
+    scene: GoblinLevel.Scene
     sprite: Phaser.GameObjects.Sprite
     type: EmitterType
     boundingBox: Phaser.GameObjects.Shape
     ray: Raycaster.Ray
 
-    constructor(scene: GoblinLevelScene, sprite: Phaser.GameObjects.Sprite, type: EmitterType, boundingBox: Phaser.GameObjects.Shape) {
+    constructor(scene: GoblinLevel.Scene, sprite: Phaser.GameObjects.Sprite, type: EmitterType, boundingBox: Phaser.GameObjects.Shape) {
         this.scene = scene
         this.sprite = sprite
         this.type = type
