@@ -1,2 +1,2 @@
-# Testing Phaser Game  
-The phaser game for TSA project
+# Rordon Gamsey TSA
+The code for our school's TSA Game Development submission, Rordon Gamsey
