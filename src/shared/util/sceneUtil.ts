@@ -76,7 +76,7 @@ export type RectangleObject = {
  */
 type LoadedTilemap = {
     map: Phaser.Tilemaps.Tilemap
-    collisionsLayer: Phaser.Tilemaps.TilemapLayer
+    collisionsLayer?: Phaser.Tilemaps.TilemapLayer
     playerSpriteDepth: number
     objects: { [key: string]: any }
 }
@@ -109,22 +109,23 @@ export function loadTilemap(scene: Phaser.Scene, name: SceneEnums.Tilemap): Load
     // FInd the player and collision layers and configure them accordingly
     let rawTileLayers = Phaser.Tilemaps.Parsers.Tiled.ParseTileLayers(rawTilemapJSON, true)
     let collisionsLayerName = rawTileLayers.find(r => r.name.toLowerCase() === COLLISION_LAYER_NAME)
-    if (!collisionsLayerName) throw new Error(`no collision layer found for ${name}`)
     let playerLayerName = rawTileLayers.find(r => r.name.toLowerCase() === PLAYER_LAYER_NAME)
-    if (!playerLayerName) throw new Error(`no player layer found for ${name}`)
-    const collisionsLayer = tilemap.createLayer(collisionsLayerName.name, tilesetImageNames)!
-    collisionsLayer.setDepth(0)
-    collisionsLayer.setCollisionCategory(SceneEnums.CollisionCategory.MAP)
-    tilemap.setCollisionBetween(1, tilemap.tiles.length, true, undefined, collisionsLayer)
+    let collisionsLayer;
+    if (collisionsLayerName) {
+        collisionsLayer = tilemap.createLayer(collisionsLayerName.name, tilesetImageNames)!
+        collisionsLayer.setDepth(0)
+        collisionsLayer.setCollisionCategory(SceneEnums.CollisionCategory.MAP)
+        tilemap.setCollisionBetween(1, tilemap.tiles.length, true, undefined, collisionsLayer)
+    }
 
     // Configure all the tile layers
     let depth = 0;
     let playerDepth = -1;
     let objects: { [key: string]: any } = {}
     for (let rawLayer of rawTileLayers) {
-        if (rawLayer.name === collisionsLayerName.name) continue;
+        if (collisionsLayerName && rawLayer.name === collisionsLayerName.name) continue;
         depth++;
-        if (rawLayer.name === playerLayerName.name) {
+        if (playerLayerName && rawLayer.name === playerLayerName.name) {
             playerDepth = depth
             continue;
         };

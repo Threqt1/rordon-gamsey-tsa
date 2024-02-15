@@ -21,6 +21,7 @@ export class ElfPostMinigameScene extends Phaser.Scene {
 
     create() {
         let { collisionsLayer, map, playerSpriteDepth, objects } = SceneUtil.loadTilemap(this, SceneEnums.Tilemap.ElfMinigame)
+        collisionsLayer = collisionsLayer!
         let markers = objects as ElfPostMinigameMarkers
 
         this.sprites.initialize(map)

@@ -1,0 +1,1 @@
+export * as MinigameSprites from "./minigame"

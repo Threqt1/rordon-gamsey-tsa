@@ -25,6 +25,12 @@ type ElfMinigameMarkers = {
 
 const FRUIT_TYPE = MinigameSprites.Fruits.FruitType
 
+/*
+orc levels = [
+    1, 2, 3, 4, 5, 6, 7, 8
+]
+*/
+
 /**
  * What combination of fruits will be thrown every level
  */

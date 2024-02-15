@@ -9,6 +9,7 @@ import { MenuScene } from './shared/scenes/menu';
 import { ElfHubScene, ElfMinigameScene, ElfPostMinigameScene } from './elf/scenes';
 import { GoblinLevel, GoblinMinigame } from './goblin/scenes';
 import { FinalScene } from './final/scenes';
+import { OrcMinigameScene } from './orc/scenes';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
@@ -30,6 +31,7 @@ const config: Phaser.Types.Core.GameConfig = {
         GoblinLevel.Scene,
         GUIScene,
         ElfHubScene.ElfHubScene,
+        OrcMinigameScene,
         FinalScene.Scene
 
     ],

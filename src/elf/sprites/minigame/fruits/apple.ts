@@ -1,12 +1,13 @@
+import { SpriteUtil } from "../../../../shared/util";
 import { ElfMinigameScene } from "../../../scenes";
 import { SlashesTexture, FruitsTexture } from "../../../textures"
-import { BaseFruit, FruitInfo, FruitInteraction } from "./fruit";
+import { BaseFruit, FruitInfo } from "./fruit";
 
 /**
  * The apple in the elf minigame
  */
 export class Apple extends BaseFruit {
-    private static pattern = [FruitInteraction.SliceUp, FruitInteraction.SliceDown]
+    private static pattern = [SpriteUtil.Direction.UP, SpriteUtil.Direction.DOWN]
     private static patternTextures: [string, string][] = [
         [FruitsTexture.Frames.Apple.Base, FruitsTexture.Frames.Apple.Base],
         [FruitsTexture.Frames.Apple.Core1, FruitsTexture.Frames.Apple.Chunk1],

@@ -1,7 +1,9 @@
-import { ElfTexture, FruitsTexture, SlashesTexture, TorchesTexture } from "../../elf/textures";
-import { GoblinTexture } from "../../goblin/textures";
+import { loadElf, preloadElf } from "../../elf/export";
+import { loadFinal, preloadFinal } from "../../final/export";
+import { loadGoblin, preloadGoblin } from "../../goblin/export";
+import { loadOrc, preloadOrc } from "../../orc/export";
+import { loadShared, preloadShared } from "../export";
 import { GameData, SceneEnums } from "../repository";
-import { DialogueTexture, FoodTexture, KeyboardTexture, PlayerTexture } from "../textures";
 import { SceneUtil } from "../util";
 
 /**
@@ -25,31 +27,11 @@ export class PreloaderScene extends Phaser.Scene {
 
         /* BEGIN LOADING */
 
-        SceneUtil.preloadTilemap(this, SceneEnums.Tilemap.GoblinMinigameLevel1, "goblin/map1.tmj", "goblin/goblin.png")
-        SceneUtil.preloadTilemap(this, SceneEnums.Tilemap.GoblinMinigameLevel2, "goblin/map2.tmj", "goblin/goblin.png")
-        SceneUtil.preloadTilemap(this, SceneEnums.Tilemap.GoblinMinigameLevel3, "goblin/map3.tmj", "goblin/goblin.png")
-        SceneUtil.preloadTilemap(this, SceneEnums.Tilemap.ElfMinigame, "elf/minigame.tmj", "elf/1.png", "elf/2.png")
-        SceneUtil.preloadTilemap(this, SceneEnums.Tilemap.ElfHub, "elf/hub.tmj", "elf/2.png", "goblin/goblin.png")
-        SceneUtil.preloadTilemap(this, SceneEnums.Tilemap.Final, "final/castle.tmj", "final/castle.png")
-
-        PlayerTexture.preload(this)
-        KeyboardTexture.preload(this)
-        DialogueTexture.preload(this)
-        FoodTexture.preload(this)
-        SlashesTexture.preload(this)
-        ElfTexture.preload(this)
-        FruitsTexture.preload(this)
-        TorchesTexture.preload(this)
-        GoblinTexture.preload(this)
-
-        this.load.audio(SceneEnums.Music.Main, "/music/main.mp3", {
-
-        })
-        this.load.audio(SceneEnums.Music.ElfNeutral, "/music/elfneutral.mp3")
-        this.load.audio(SceneEnums.Music.ElfMinigame, "/music/elfminigame.mp3")
-        this.load.audio(SceneEnums.Music.GoblinNeutral, "/music/goblinneutral.mp3")
-        this.load.audio(SceneEnums.Music.GoblinAlerted, "/music/goblinalerted.mp3")
-        this.load.audio(SceneEnums.Music.Final, "/music/final.mp3")
+        preloadShared(this)
+        preloadElf(this)
+        preloadGoblin(this)
+        preloadOrc(this)
+        preloadFinal(this)
 
         this.load.atlas("button", "/textures/buttons.png", "/textures/buttons.json");
 
@@ -69,15 +51,11 @@ export class PreloaderScene extends Phaser.Scene {
     }
 
     create() {
-        PlayerTexture.load(this)
-        KeyboardTexture.load(this)
-        DialogueTexture.load(this)
-        FoodTexture.load(this)
-        SlashesTexture.load(this)
-        ElfTexture.load(this)
-        FruitsTexture.load(this)
-        TorchesTexture.load(this)
-        GoblinTexture.load(this)
+        loadShared(this)
+        loadElf(this)
+        loadGoblin(this)
+        loadOrc(this)
+        loadFinal(this)
 
         this.registry.set(GameData.DefaultGameData)
 

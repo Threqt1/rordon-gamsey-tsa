@@ -2,6 +2,7 @@ import { KeyboardTexture } from "../../../../shared/textures"
 import { SlashesTexture, FruitsTexture } from "../../../textures"
 import { InputSystem, SpritesPlugin } from "../../../../shared/systems"
 import { ElfMinigameScene } from "../../../scenes"
+import { SpriteUtil } from "../../../../shared/util"
 
 export enum FruitType {
     APPLE,
@@ -34,18 +35,11 @@ export enum FruitEvent {
     FAIL = "fail"
 }
 
-export enum FruitInteraction {
-    SliceUp,
-    SliceDown,
-    SliceLeft,
-    SliceRight
-}
-
 export const InteractionKeybinds: InputSystem.Keybinds = {
-    [FruitInteraction.SliceUp]: "W",
-    [FruitInteraction.SliceDown]: "S",
-    [FruitInteraction.SliceLeft]: "A",
-    [FruitInteraction.SliceRight]: "D",
+    [SpriteUtil.Direction.UP]: "W",
+    [SpriteUtil.Direction.DOWN]: "S",
+    [SpriteUtil.Direction.LEFT]: "A",
+    [SpriteUtil.Direction.RIGHT]: "D",
 }
 
 /**
@@ -66,7 +60,7 @@ const CHUNK_SPEED = 30
 const SLASH_SCALE = 1;
 
 export abstract class BaseFruit implements Fruit {
-    slicePattern: FruitInteraction[]
+    slicePattern: SpriteUtil.Direction[]
     sliceTextures: [string, string][]
     slashPattern: string[]
     currentPatternLocation: number;
@@ -88,7 +82,7 @@ export abstract class BaseFruit implements Fruit {
     interactionPrompt: Phaser.GameObjects.Sprite
     fruitEvents: Phaser.Events.EventEmitter
 
-    constructor(scene: ElfMinigameScene, x: number, y: number, info: FruitInfo, slicePattern: FruitInteraction[], sliceTextures: [string, string][], slashPattern: string[]) {
+    constructor(scene: ElfMinigameScene, x: number, y: number, info: FruitInfo, slicePattern: SpriteUtil.Direction[], sliceTextures: [string, string][], slashPattern: string[]) {
         this.slicePattern = slicePattern;
         this.sliceTextures = sliceTextures
         this.slashPattern = slashPattern

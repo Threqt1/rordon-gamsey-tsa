@@ -1,16 +1,17 @@
+import { SpriteUtil } from "../../../../shared/util";
 import { ElfMinigameScene } from "../../../scenes";
 import { SlashesTexture, FruitsTexture } from "../../../textures"
-import { BaseFruit, FruitInfo, FruitInteraction } from "./fruit";
+import { BaseFruit, FruitInfo } from "./fruit";
 
 /**
  * The pumpkin in the elf minigame
  */
 export class Pumpkin extends BaseFruit {
     private static pattern = [
-        FruitInteraction.SliceUp,
-        FruitInteraction.SliceDown,
-        FruitInteraction.SliceLeft,
-        FruitInteraction.SliceRight
+        SpriteUtil.Direction.UP,
+        SpriteUtil.Direction.DOWN,
+        SpriteUtil.Direction.LEFT,
+        SpriteUtil.Direction.RIGHT
     ]
     private static patternTextures: [string, string][] = [
         [FruitsTexture.Frames.Pumpkin.Base, FruitsTexture.Frames.Pumpkin.Base],

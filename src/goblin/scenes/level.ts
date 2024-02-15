@@ -60,7 +60,7 @@ export class Scene extends Phaser.Scene {
         let { collisionsLayer, map, playerSpriteDepth, objects } = SceneUtil.loadTilemap(this, GoblinMinigame.LEVEL_ORDER[config.levelIndex])
         this.map = map
         this.markers = objects as Markers
-        this.collisionsLayer = collisionsLayer
+        this.collisionsLayer = collisionsLayer!
 
         this.sprites.initialize(map)
 
@@ -109,7 +109,7 @@ export class Scene extends Phaser.Scene {
         }
 
         this.sprites.physicsBodies.setDepth(playerSpriteDepth)
-        this.sprites.makeCollisionsWithLayer(collisionsLayer)
+        this.sprites.makeCollisionsWithLayer(this.collisionsLayer)
 
         // Configure camera
         SceneUtil.scaleAndConfigureCamera(this, map, this.player.sprite)

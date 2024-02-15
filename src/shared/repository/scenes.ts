@@ -8,6 +8,7 @@ export namespace SceneEnums {
         ElfPostMinigame = "elfpostminigame",
         GoblinMinigame = "goblinminigame",
         GoblinMinigameLevel = "goblinminigamelevel",
+        OrcMinigame = "orcminigame",
         Final = "final",
         GUI = "gui"
     }
@@ -18,6 +19,7 @@ export namespace SceneEnums {
         GoblinMinigameLevel3 = "goblinminigame3",
         ElfMinigame = "elfminigame",
         ElfHub = "elfhub",
+        OrcMinigame = "orcminigame",
         Final = "final"
     }
     export enum Music {

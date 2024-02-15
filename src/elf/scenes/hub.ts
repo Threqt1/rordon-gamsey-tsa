@@ -28,6 +28,7 @@ export class ElfHubScene extends Phaser.Scene {
 
     create() {
         let { collisionsLayer, map, playerSpriteDepth, objects } = SceneUtil.loadTilemap(this, SceneEnums.Tilemap.ElfHub)
+        collisionsLayer = collisionsLayer!
         let markers = objects as Markers
 
         this.sprites.initialize(map)

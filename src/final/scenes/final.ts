@@ -125,7 +125,7 @@ export class Scene extends Phaser.Scene {
             loop: true
         })
 
-        // /* CAMERA CONFIGURATION*/
+        /* CAMERA CONFIGURATION*/
         SceneUtil.scaleAndConfigureCamera(this, map)
 
         this.npcsCurrentlyAtStart = 0
