@@ -10,7 +10,7 @@ const FONT_SIZE = 40
 /**
  * The sprite that displays dialogue on the screen
  */
-export class DisplaySprite {
+export class DialogueSprite {
     dialogueBoxSprite: Phaser.GameObjects.Sprite
     dialogueText: Phaser.GameObjects.Text
 

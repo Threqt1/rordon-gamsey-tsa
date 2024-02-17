@@ -1,2 +1,2 @@
 export * from "./grillSpot"
-export * from "./grillItem"
+export * as GrillItem from "./grillItem"

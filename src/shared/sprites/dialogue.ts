@@ -19,15 +19,17 @@ const Keybinds: InputSystem.Keybinds = {
  * Handles communicating between player input and the internal dialogue walker
  */
 export class BaseDialogue implements SpritesPlugin.Controllable {
+    baseScene: Phaser.Scene
     activeScene!: Phaser.Scene
-    dialogueSprite: DialogueSystem.DisplaySprite
+    dialogueSprite: DialogueSystem.DialogueSprite
     input: InputSystem.System
     dialogueWalker: DialogueSystem.Walker
     controllable: boolean
     endCallback?: (() => void)
 
     constructor(scene: Phaser.Scene, width: number, height: number) {
-        this.dialogueSprite = new DialogueSystem.DisplaySprite(scene, width, height)
+        this.baseScene = scene
+        this.dialogueSprite = new DialogueSystem.DialogueSprite(scene, width, height)
         this.dialogueSprite.setVisible(false)
         this.input = new InputSystem.System(scene, Keybinds)
         this.dialogueWalker = new DialogueSystem.Walker()
@@ -49,7 +51,8 @@ export class BaseDialogue implements SpritesPlugin.Controllable {
         dialogue: DialogueSystem.Dialogue,
         emitter: Phaser.Events.EventEmitter,
         registry: Phaser.Data.DataManager,
-        endCallback?: () => void
+        endCallback?: () => void,
+        timeout?: number
     ): void {
         if (this.controllable) return
         this.activeScene = scene
@@ -57,9 +60,16 @@ export class BaseDialogue implements SpritesPlugin.Controllable {
 
         this.dialogueWalker.startWithNewDialogue(dialogue, emitter, registry)
         this.dialogueSprite.setVisible(true)
-        this.activeScene.sprites.setControllable(false)
-        this.input.input.resetKeys()
-        this.controllable = true
+        if (timeout) {
+            this.controllable = false
+            this.baseScene.time.delayedCall(timeout, () => {
+                this.stop()
+            })
+        } else {
+            this.activeScene.sprites.setControllable(false)
+            this.input.input.resetKeys()
+            this.controllable = true
+        }
         this.displayCurrentDialogue()
     }
 
