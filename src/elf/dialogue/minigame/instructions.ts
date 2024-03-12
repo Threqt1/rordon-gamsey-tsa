@@ -1,16 +1,15 @@
 import { DialogueSystem } from "../../../shared/systems"
 
 export enum Events {
-
 }
 
 let Base: DialogueSystem.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "NO! YOU CAN'T STEAL THAT! WE STOLE IT FIRST!",
-            "AARGH! WHAT AM I GOING TO WIPE WITH NOW?!",
-            "[Sacred Apple AND Contraband Sausages obtained!]"
+            "[TUTORIAL]",
+            "[PRESS THE KEYS UNDER EACH FRUIT TO SLICE IT]",
+            "[COMPLETELY SLICE ALL THE FRUITS IN EACH LEVEL TO WIN]"
         ]
     },
     nextOptions: []

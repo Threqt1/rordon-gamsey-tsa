@@ -1,17 +1,22 @@
 import { GrillSpot } from "."
-import { FruitsTexture } from "../../../elf/textures"
 import { OrcMinigameScene } from "../../scenes"
+import { GrillFoodTexture } from "../../textures/grillfood"
 
-const FOOD_DEPTH = 999
+/*
+Show E to interact when hovering over a flippable item
+*/
+
+const FOOD_DEPTH = 998
 const BURN_OFFSET = 3 * 1000
+const FINISH_TIMEOUT = 1000
+const ROTATION_VELOCITY = 320
 
 export enum Item {
-    APPLE,
-    PUMPKIN
+    BURGER
 }
 
 export enum State {
-    NORMAL,
+    UNFLIPPED,
     FLIPPED,
     BURNT,
     FINISHED
@@ -19,63 +24,78 @@ export enum State {
 
 type Texture = {
     texture: string,
-    normal: string,
+    unflipped: string,
     flipped: string,
+    flipAnimation: string,
     burnt: string
 }
 
 const Textures: {
     [key: number]: Texture
 } = {
-    [Item.APPLE]: {
-        texture: FruitsTexture.TextureKey,
-        normal: FruitsTexture.Frames.Apple.Base,
-        flipped: FruitsTexture.Frames.Apple.Core1,
-        burnt: FruitsTexture.Frames.Apple.Chunk1
-    },
-    [Item.PUMPKIN]: {
-        texture: FruitsTexture.TextureKey,
-        normal: FruitsTexture.Frames.Pumpkin.Base,
-        flipped: FruitsTexture.Frames.Pumpkin.Core1,
-        burnt: FruitsTexture.Frames.Pumpkin.Chunk1
+    [Item.BURGER]: {
+        texture: GrillFoodTexture.TextureKey,
+        unflipped: GrillFoodTexture.Frames.Burger.Unflipped,
+        flipped: GrillFoodTexture.Frames.Burger.Flipped,
+        flipAnimation: GrillFoodTexture.Frames.Burger.FlipAnimation,
+        burnt: GrillFoodTexture.Frames.Burger.Flipped
     }
 }
 
 export class Sprite {
     scene: OrcMinigameScene
     item: Item
-    spot?: GrillSpot
-    sprite: Phaser.GameObjects.Sprite
+    spot: GrillSpot
+    sprite: Phaser.Physics.Arcade.Sprite
     state: State
-    canInteract: boolean
-    shine?: Phaser.FX.Shine
+    canInteract!: boolean
+    glow?: Phaser.FX.Glow
+    offTheMapX: number
 
     constructor(scene: OrcMinigameScene, spot: GrillSpot, item: Item) {
         this.scene = scene
         this.item = item
         this.spot = spot
-        this.sprite = scene.add.sprite(spot.sizeInfo.x + spot.sizeInfo.width / 2, spot.sizeInfo.y + spot.sizeInfo.height / 2, Textures[item].texture, Textures[item].normal)
+        this.sprite = scene.physics.add.sprite(spot.sizeInfo.x + spot.sizeInfo.width / 2, spot.sizeInfo.y + spot.sizeInfo.height / 2, Textures[item].texture, Textures[item].unflipped)
             .setDepth(FOOD_DEPTH)
-            .setScale(2)
-        this.state = State.NORMAL
-        this.canInteract = true
-        this.addShine()
-
-        this.startBurnTimeout(this.state)
+        this.state = State.UNFLIPPED
+        this.setInteractability(false)
+        this.offTheMapX = this.scene.sprites.map!.widthInPixels + this.sprite.displayWidth
+        this.startCookingTimeout()
     }
 
-    addShine(): void {
-        this.removeShine()
-        this.shine = this.sprite.postFX!.addShine(1)
+    addGlow(): void {
+        this.removeGlow()
+        this.glow = this.sprite.postFX!.addGlow(undefined, 100)
     }
 
-    removeShine(): void {
-        if (this.shine) this.sprite.postFX!.remove(this.shine)
+    removeGlow(): void {
+        if (this.glow) this.sprite.postFX!.remove(this.glow)
+    }
+
+    setInteractability(interactable: boolean) {
+        this.canInteract = interactable
+        if (interactable) {
+            this.spot.moveSelectionPrompt()
+        } else {
+            this.spot.unmoveSelectionPrompt()
+        }
+    }
+
+    startCookingTimeout() {
+        this.setInteractability(false)
+        this.removeGlow()
+        this.scene.time.delayedCall(this.scene.currentStageInformation.timeUntilCooked, () => {
+            this.setInteractability(true)
+            this.addGlow()
+
+            this.startBurnTimeout(this.state)
+        })
     }
 
     interact(): void {
         if (!this.canInteract) return
-        if (this.state === State.NORMAL) {
+        if (this.state === State.UNFLIPPED) {
             this.flip()
         } else if (this.state === State.FLIPPED) {
             this.finish()
@@ -83,7 +103,7 @@ export class Sprite {
     }
 
     startBurnTimeout(currentState: State): void {
-        this.scene.time.delayedCall(this.scene.currentStageInformation.interactionTimeout + BURN_OFFSET, () => {
+        this.scene.time.delayedCall(this.scene.currentStageInformation.timeUntilCooked + BURN_OFFSET, () => {
             if (this.state == currentState) this.burn()
         })
     }
@@ -92,20 +112,13 @@ export class Sprite {
         this.state = State.FLIPPED
         this.sprite.setFrame(Textures[this.item].flipped)
 
-        this.canInteract = false
-        this.removeShine()
-        this.scene.time.delayedCall(this.scene.currentStageInformation.interactionTimeout, () => {
-            this.canInteract = true
-            this.addShine()
-
-            this.startBurnTimeout(this.state)
-        })
-        /** ONCE FLIP ANIMATION, ADD TIMEOUT THAT RESETS CONTROLLABLE HERE*/
+        this.startCookingTimeout()
+        this.sprite.anims.play(Textures[this.item].flipAnimation, true)
     }
 
     burn(): void {
-        this.canInteract = false
-        this.removeShine()
+        this.setInteractability(false)
+        this.removeGlow()
         this.sprite.postFX!.addColorMatrix().contrast(-100, false)
         this.state = State.BURNT
         this.sprite.setFrame(Textures[this.item].burnt)
@@ -116,16 +129,22 @@ export class Sprite {
     }
 
     finish(): void {
+        this.setInteractability(false)
         this.state = State.FINISHED
-        this.removeShine()
-        this.sprite.setVisible(false)
-        this.cleanup()
-        /** ONCE FLIP ANIMATION, ADD TIMEOUT THAT RESETS CONTROLLABLE HERE*/
+        let endTween = this.scene.tweens.add({
+            targets: [this.sprite],
+            x: this.offTheMapX,
+            duration: FINISH_TIMEOUT
+        })
+        this.sprite.setAngularVelocity(ROTATION_VELOCITY).setDepth(999)
+        endTween.play().on(Phaser.Tweens.Events.TWEEN_COMPLETE, () => {
+            this.sprite.setVisible(false)
+            this.cleanup()
+        })
     }
 
     cleanup(): void {
-        this.spot!.item = undefined
-        this.spot = undefined
+        this.spot.item = undefined
         this.sprite.destroy()
     }
 }

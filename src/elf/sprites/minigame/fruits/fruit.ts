@@ -72,7 +72,7 @@ export abstract class BaseFruit implements Fruit {
     baseInput: InputSystem.System
     controllable: boolean
 
-    mainBodySprites: Phaser.Physics.Arcade.Sprite
+    mainBodySprite: Phaser.Physics.Arcade.Sprite
     slashSprite: Phaser.Physics.Arcade.Sprite
     fruitChunkSprites: Phaser.Physics.Arcade.Sprite[]
 
@@ -91,7 +91,7 @@ export abstract class BaseFruit implements Fruit {
         this.controllable = false;
         this.started = false;
         this.finished = false;
-        this.mainBodySprites = scene.physics.add.sprite(x, y, FruitsTexture.TextureKey, this.sliceTextures[0][0]).setDepth(info.spriteDepth).setVisible(false)
+        this.mainBodySprite = scene.physics.add.sprite(x, y, FruitsTexture.TextureKey, this.sliceTextures[0][0]).setDepth(info.spriteDepth).setVisible(false)
         //this.colorMatrix = this.mainBodySprites.postFX!.addColorMatrix()
         this.fruitChunkSprites = []
         this.slashSprite = scene.physics.add.sprite(x, y, SlashesTexture.TextureKey, SlashesTexture.Frames.Empty).setDepth(info.spriteDepth).setScale(SLASH_SCALE)
@@ -102,7 +102,7 @@ export abstract class BaseFruit implements Fruit {
 
         // Tween for moving the fruit
         let movementTween = scene.tweens.add({
-            targets: [this.mainBodySprites, this.slashSprite, this.interactionPrompt],
+            targets: [this.mainBodySprite, this.slashSprite, this.interactionPrompt],
             x: info.endX,
             duration: info.lifetime,
             onComplete: () => {
@@ -112,7 +112,7 @@ export abstract class BaseFruit implements Fruit {
             },
             paused: true,
         })
-        this.mainBodySprites.setAngularVelocity(ROTATION_VELOCITY)
+        this.mainBodySprite.setAngularVelocity(ROTATION_VELOCITY)
 
         // Once slash sprite is done animating, reset to invisible frame
         this.slashSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
@@ -123,7 +123,7 @@ export abstract class BaseFruit implements Fruit {
     }
 
     initialize(): void {
-        this.mainBodySprites.setVisible(true)
+        this.mainBodySprite.setVisible(true)
         for (let tween of this.tweens) tween.resume()
     }
 
@@ -144,7 +144,7 @@ export abstract class BaseFruit implements Fruit {
 
         // Set new textures
         let newTextures = this.sliceTextures[this.currentPatternLocation]
-        this.mainBodySprites.setFrame(newTextures[0])
+        this.mainBodySprite.setFrame(newTextures[0])
 
         if (this.currentPatternLocation > 0) this.createNewFruitChunk()
 
@@ -157,11 +157,11 @@ export abstract class BaseFruit implements Fruit {
     createNewFruitChunk(): void {
         // Get the current textures, creatte the sprite, and update its post FX
         let newTextures = this.sliceTextures[this.currentPatternLocation]
-        let newChunk = this.scene.physics.add.sprite(this.mainBodySprites.x, this.mainBodySprites.y, FruitsTexture.TextureKey, newTextures[1]).setDepth(this.mainBodySprites.depth)
+        let newChunk = this.scene.physics.add.sprite(this.mainBodySprite.x, this.mainBodySprite.y, FruitsTexture.TextureKey, newTextures[1]).setDepth(this.mainBodySprite.depth)
         //newChunk.postFX!.addColorMatrix().grayscale(0.6)
 
         // Launch the chunk perpendicular to the main body at the same rotational velocity
-        let vector = new Phaser.Math.Vector2(0, 1).rotate(this.mainBodySprites.rotation - Phaser.Math.DegToRad(90)).scale(CHUNK_SPEED)
+        let vector = new Phaser.Math.Vector2(0, 1).rotate(this.mainBodySprite.rotation - Phaser.Math.DegToRad(90)).scale(CHUNK_SPEED)
         newChunk.setVelocity(vector.x, vector.y)
         newChunk.setAngularVelocity(ROTATION_VELOCITY)
 
@@ -229,7 +229,7 @@ export abstract class BaseFruit implements Fruit {
          * CLeanup to do after the fade out tween
          */
         const cleanupAfterTween = () => {
-            this.mainBodySprites.destroy()
+            this.mainBodySprite.destroy()
             this.slashSprite.destroy()
             for (let sprite of this.fruitChunkSprites) sprite.destroy()
             for (let tween of this.tweens) {
@@ -239,7 +239,7 @@ export abstract class BaseFruit implements Fruit {
 
         // Fade out tween
         this.scene.tweens.add({
-            targets: [...this.fruitChunkSprites, this.mainBodySprites],
+            targets: [...this.fruitChunkSprites, this.mainBodySprite],
             alpha: 0,
             duration: END_FADE_DURATION,
             onComplete: cleanupAfterTween

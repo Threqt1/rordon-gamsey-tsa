@@ -147,6 +147,7 @@ export class Sprite {
             duration: sweepingDuration,
             onUpdate: (tween) => {
                 this.lightEmitter.ray.setAngleDeg(tween.getValue())
+                this.boundingBox.setAngle(tween.getValue())
             },
             yoyo: true,
         }
@@ -156,6 +157,7 @@ export class Sprite {
             duration: sweepingDuration,
             onUpdate: (tween) => {
                 this.lightEmitter.ray.setAngleDeg(tween.getValue())
+                this.boundingBox.setAngle(tween.getValue())
             },
             yoyo: true,
         }

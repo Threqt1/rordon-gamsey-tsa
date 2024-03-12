@@ -1,5 +1,6 @@
 import { SceneEnums } from "../../shared/repository";
 import { DialogueSystem, InputSystem } from "../../shared/systems";
+import { KeyboardTexture } from "../../shared/textures";
 import { SceneUtil, SpriteUtil } from "../../shared/util";
 import { RectangleObject } from "../../shared/util/sceneUtil";
 import { MinigameDialogue } from "../dialogue";
@@ -16,7 +17,7 @@ enum Stage {
 }
 
 type StageInformation = {
-    interactionTimeout: number
+    timeUntilCooked: number
     itemsPerAddition: number
     additionTimeRange: [number, number]
     dialogue: DialogueSystem.Dialogue
@@ -26,19 +27,19 @@ type StageInformation = {
 
 const STAGE_INFORMATION: { [key: number]: StageInformation } = {
     [Stage.OPEN_SHOP]: {
-        interactionTimeout: 2.5 * 1000,
+        timeUntilCooked: 2.5 * 1000,
         itemsPerAddition: 1,
         additionTimeRange: [1.5 * 1000, 3.5 * 1000],
         dialogue: MinigameDialogue.OpenShop.Dialogue,
-        duration: 5 * 1000,
+        duration: 15 * 1000,
         nextStage: Stage.RUSH_HOUR,
     },
     [Stage.RUSH_HOUR]: {
-        interactionTimeout: 2.5 * 1000,
-        additionTimeRange: [0.5 * 1000, 2.4 * 1000],
+        timeUntilCooked: 2.5 * 1000,
+        additionTimeRange: [0.8 * 1000, 2.9 * 1000],
         itemsPerAddition: 2,
         dialogue: MinigameDialogue.RushHour.Dialogue,
-        duration: 10 * 1000
+        duration: 45 * 1000
     }
 }
 
@@ -65,7 +66,7 @@ const INTERACTION_KEYBINDS: InputSystem.Keybinds = {
     [MinigameInteractions.INTERACT]: "E"
 }
 
-const ITEMS = [MinigameSprites.GrillItem.Item.APPLE, MinigameSprites.GrillItem.Item.PUMPKIN]
+const ITEMS = [MinigameSprites.GrillItem.Item.BURGER]
 
 export class OrcMinigameScene extends Phaser.Scene {
     selectionGraphics!: Phaser.GameObjects.Graphics
@@ -74,6 +75,7 @@ export class OrcMinigameScene extends Phaser.Scene {
     baseInput!: InputSystem.System
     currentStageInformation!: StageInformation
     currentAdditionTime!: number
+    interactionPrompt!: Phaser.GameObjects.Sprite
     totalDeltaTimeSum!: number
     currentDeltaTimeSum!: number
     controllable!: boolean
@@ -103,13 +105,17 @@ export class OrcMinigameScene extends Phaser.Scene {
         let spot7 = new MinigameSprites.GrillSpot(this, markers.grid_7)
         let spot8 = new MinigameSprites.GrillSpot(this, markers.grid_8)
 
+        this.interactionPrompt = this.add.sprite(0, 0, KeyboardTexture.TextureKey, KeyboardTexture.KeyPictures["E"])
+            .setDepth(SELECTION_GRAPHICS_DEPTH)
+            .setVisible(false)
+
         this.grillSpots = [
             spot1, spot2, spot3, spot4,
             spot5, spot6, spot7, spot8
         ]
 
         this.currentLocation = [0, 0]
-        this.getSpotAtIndex(0, 0).drawSelectionRectangle()
+        this.getSpotAtIndex(0, 0).select()
 
         this.currentStageInformation = STAGE_INFORMATION[Stage.OPEN_SHOP]
         this.currentAdditionTime = Phaser.Math.Between(this.currentStageInformation.additionTimeRange[0], this.currentStageInformation.additionTimeRange[1])
@@ -147,9 +153,9 @@ export class OrcMinigameScene extends Phaser.Scene {
     }
 
     selectNewGrillSpotLocation(x: number, y: number): void {
-        this.selectionGraphics.clear()
+        this.getSpotAtIndex(this.currentLocation[0], this.currentLocation[1]).unselect()
         this.currentLocation = [x, y]
-        this.getSpotAtIndex(x, y).drawSelectionRectangle()
+        this.getSpotAtIndex(x, y).select()
     }
 
     interactWithSpot() {
@@ -220,7 +226,7 @@ export class OrcMinigameScene extends Phaser.Scene {
             this.scene.stop()
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
             SceneUtil.getGUIScene(this).dialogue.start(this, MinigameDialogue.Win.Dialogue, dialogueEventEmitter, this.data, () => {
-                SceneUtil.fadeSceneTransition(this, SceneEnums.Name.Menu)
+                SceneUtil.fadeSceneTransition(this, SceneEnums.Name.Final)
             })
         })
     }

@@ -7,9 +7,10 @@ import { AnimatedTilesPlugin, SpritesPlugin } from './shared/systems';
 import { GUIScene, PreloaderScene } from './shared/scenes';
 import { MenuScene } from './shared/scenes/menu';
 import { ElfHubScene, ElfMinigameScene, ElfPostMinigameScene } from './elf/scenes';
-import { GoblinLevel, GoblinMinigame } from './goblin/scenes';
+import { GoblinLevel, GoblinMinigame, GoblinPostMinigameScene } from './goblin/scenes';
 import { FinalScene } from './final/scenes';
 import { OrcMinigameScene } from './orc/scenes';
+import { InitialScene } from './initial/scenes';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
@@ -24,6 +25,7 @@ const config: Phaser.Types.Core.GameConfig = {
     },
     scene: [
         PreloaderScene,
+        InitialScene,
         MenuScene,
         ElfMinigameScene,
         ElfPostMinigameScene,
@@ -31,6 +33,7 @@ const config: Phaser.Types.Core.GameConfig = {
         GoblinLevel.Scene,
         GUIScene,
         ElfHubScene.ElfHubScene,
+        GoblinPostMinigameScene,
         OrcMinigameScene,
         FinalScene.Scene
 

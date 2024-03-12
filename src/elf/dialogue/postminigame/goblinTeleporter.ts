@@ -17,8 +17,7 @@ let Option1: DialogueSystem.Dialogue = {
     getOptionText() { return "What's wrong?" },
     getContentText() {
         return [
-            "Goblins! They took the apple I collected from the woods!",
-            "I got it from the \"Great Branch\" too...",
+            "Goblins! They stole the Sacred Apple!",
             "Please, get it back!"
         ]
     },
@@ -26,13 +25,11 @@ let Option1: DialogueSystem.Dialogue = {
 }
 
 let Option2: DialogueSystem.Dialogue = {
-    getOptionText() { return "Great Branch?" },
+    getOptionText() { return "THATS MY APPLE!!!" },
     getContentText() {
         return [
-            "The Great branch was a gift of Xuiye!",
-            "It grants us with a beautiful apple after every winter solstice...",
-            "If the goblins take its fruit, Xuiye will disgrace us!",
-            "Please, get it back!"
+            "STOP YELLING AT ME!!!",
+            "JUST GET IT BACK!!!!!!"
         ]
     },
     nextOptions: []
@@ -42,9 +39,9 @@ let Option3: DialogueSystem.Dialogue = {
     getOptionText() { return "You have my word." },
     getContentText() {
         return [
-            "Thank you, thank you, thank you!",
+            "The switch-up is crazy... but thank you.",
             "Follow this path, you will find their chasm.",
-            "Please be careful, they are vicious fiends..."
+            "Maybe you can steal their sausage too - it's top tier, y'know."
         ]
     },
     nextOptions: []
@@ -52,7 +49,7 @@ let Option3: DialogueSystem.Dialogue = {
 
 
 Base.nextOptions = [Option1]
-Option1.nextOptions = [Option2, Option3]
+Option1.nextOptions = [Option2]
 Option2.nextOptions = [Option3]
 
 export const Dialogue = Base

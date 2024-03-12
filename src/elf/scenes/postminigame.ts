@@ -33,15 +33,6 @@ export class ElfPostMinigameScene extends Phaser.Scene {
             loop: true
         })
 
-        let teleporter = new PostMinigameSprites.GoblinTeleporter(this, markers.TeleporterNPCLocation.x, markers.TeleporterNPCLocation.y)
-        let player = new Player(this, markers.Player.x, markers.Player.y)
-
-        this.sprites.controllables.push(player)
-        this.sprites.addInteractables(teleporter)
-        this.sprites.physicsBodies.addMultiple([player.sprite, teleporter.sprite])
-        this.sprites.interactingBodies.add(player.sprite)
-        this.sprites.physicsBodies.setDepth(playerSpriteDepth)
-
         this.add
             .sprite(markers.Torch1.x, markers.Torch1.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch1)
             .play(`-torch1-idle`)
@@ -54,14 +45,23 @@ export class ElfPostMinigameScene extends Phaser.Scene {
             .sprite(markers.Torch3.x, markers.Torch3.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch3)
             .play(`-torch3-idle`)
             .setDepth(playerSpriteDepth)
-        this.add
-            .sprite(markers.Torch4.x, markers.Torch4.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch4)
-            .play(`-torch4-idle`)
-            .setDepth(playerSpriteDepth)
-        this.add
-            .sprite(markers.Torch5.x, markers.Torch5.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch5)
-            .play(`-torch5-idle`)
-            .setDepth(playerSpriteDepth)
+        // this.add
+        //     .sprite(markers.Torch4.x, markers.Torch4.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch4)
+        //     .play(`-torch4-idle`)
+        //     .setDepth(playerSpriteDepth)
+        // this.add
+        //     .sprite(markers.Torch5.x, markers.Torch5.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch5)
+        //     .play(`-torch5-idle`)
+        //     .setDepth(playerSpriteDepth)
+
+        let teleporter = new PostMinigameSprites.GoblinTeleporter(this, markers.TeleporterNPCLocation.x, markers.TeleporterNPCLocation.y)
+        let player = new Player(this, markers.Player.x, markers.Player.y)
+
+        this.sprites.controllables.push(player)
+        this.sprites.addInteractables(teleporter)
+        this.sprites.physicsBodies.addMultiple([player.sprite, teleporter.sprite])
+        this.sprites.interactingBodies.add(player.sprite)
+        this.sprites.physicsBodies.setDepth(playerSpriteDepth)
 
         SceneUtil.scaleAndConfigureCamera(this, map, player.sprite)
 

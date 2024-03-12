@@ -8,8 +8,7 @@ let Base: DialogueSystem.Dialogue = {
     getContentText() {
         return [
             "Not even being able to pass this simple trial...",
-            "You aren't ready for the real world, dearie...",
-            "Lay these foolish ambitions to rest."
+            "Lay these foolish ambitions to rest!"
         ]
     },
     nextOptions: []

@@ -5,8 +5,8 @@ export enum EmitterType {
     CIRCLE
 }
 
-const LIGHT_COLOR = 0xffffff
-const LIGHT_OPACITY = 0.09
+const LIGHT_COLOR = 0x30e1b9
+const LIGHT_OPACITY = 0.016
 
 /**
  * A light emitter for the goblin game, usually attached to other objects

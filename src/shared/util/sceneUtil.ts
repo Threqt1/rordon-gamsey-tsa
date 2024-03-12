@@ -94,10 +94,9 @@ const TILE_SPACING = 2
  */
 export function loadTilemap(scene: Phaser.Scene, name: SceneEnums.Tilemap): LoadedTilemap {
     // Get and parse the raw JSON
-    const rawTilemapJSON = scene.cache.json.get(`${name}_raw`)
-    const mapData = Phaser.Tilemaps.Parsers.Tiled.ParseJSONTiled(name, rawTilemapJSON, true)!
+    const rawTilemapJSON: any = scene.cache.json.get(`${name}_raw`)
     // Create the base tilemap object
-    const tilemap = scene.make.tilemap({ key: `${name}_map`, tileHeight: mapData.tileHeight, tileWidth: mapData.tileWidth })
+    const tilemap = scene.make.tilemap({ key: `${name}_map`, tileHeight: rawTilemapJSON.tileheight, tileWidth: rawTilemapJSON.tilewidth })
 
     //Get all the tilesets in the raw JSON and upload the corresponding image assets for them
     const tilesetImageNames: string[] = []

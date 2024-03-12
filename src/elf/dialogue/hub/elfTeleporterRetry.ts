@@ -7,9 +7,9 @@ let Base: DialogueSystem.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "You're back again?~",
-            "Well, I respect the dedication!",
-            "Are you ready to try again?",
+            "You again?",
+            "You failed our simple trial...",
+            "Why would we give you our Apple?"
         ]
     },
     nextOptions: []
@@ -19,7 +19,8 @@ let Option1: DialogueSystem.Dialogue = {
     getOptionText() { return "Let me try again!" },
     getContentText() {
         return [
-            "Very well!"
+            "...",
+            "I guess I can make an exception..."
         ]
     },
     nextOptions: []

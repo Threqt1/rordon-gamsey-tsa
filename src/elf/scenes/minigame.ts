@@ -25,20 +25,14 @@ type ElfMinigameMarkers = {
 
 const FRUIT_TYPE = MinigameSprites.Fruits.FruitType
 
-/*
-orc levels = [
-    1, 2, 3, 4, 5, 6, 7, 8
-]
-*/
-
 /**
  * What combination of fruits will be thrown every level
  */
 const LEVEL_LAYOUTS: MinigameSprites.Fruits.FruitType[][] = [
     [FRUIT_TYPE.APPLE],
-    [FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.APPLE],
+    //[FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.APPLE],
     [FRUIT_TYPE.APPLE, FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.APPLE],
-    [FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.APPLE, FRUIT_TYPE.PUMPKIN],
+    //[FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.APPLE, FRUIT_TYPE.PUMPKIN],
     [FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.APPLE, FRUIT_TYPE.PUMPKIN, FRUIT_TYPE.PUMPKIN]
 ]
 
@@ -63,7 +57,7 @@ const MINIGAME_LEVEL_COOLDOWN = 1300
 const MINIGAME_TORCH_DELAY = 500
 const MINIGAME_TIME_SCALE = 0.8
 const MINIGAME_GRAYSCALE_SCALE = 0.6
-const MINIMUM_LEVEL_PASSED = 3
+const MINIMUM_LEVEL_PASSED = 2
 
 export class ElfMinigameScene extends Phaser.Scene {
     currentLevelIndex!: number
@@ -110,14 +104,14 @@ export class ElfMinigameScene extends Phaser.Scene {
         let torch3 = this.add
             .sprite(this.markers.Torch3.x, this.markers.Torch3.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch3)
             .setDepth(playerSpriteDepth)
-        let torch4 = this.add
-            .sprite(this.markers.Torch4.x, this.markers.Torch4.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch4)
-            .setDepth(playerSpriteDepth)
-        let torch5 = this.add
-            .sprite(this.markers.Torch5.x, this.markers.Torch5.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch5)
-            .setDepth(playerSpriteDepth)
+        // let torch4 = this.add
+        //     .sprite(this.markers.Torch4.x, this.markers.Torch4.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch4)
+        //     .setDepth(playerSpriteDepth)
+        // let torch5 = this.add
+        //     .sprite(this.markers.Torch5.x, this.markers.Torch5.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch5)
+        //     .setDepth(playerSpriteDepth)
 
-        this.torches = [torch1, torch2, torch3, torch4, torch5]
+        this.torches = [torch1, torch2, torch3]
 
         /* CAMERA CONFIGURATION */
         SceneUtil.scaleAndConfigureCamera(this, map)

@@ -7,9 +7,10 @@ let Base: DialogueSystem.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "And so, with the pumpkin, apple, and sausages, the player cooked.",
+            "And so, with the Sacred Apple, and... Illegal Sausages? The player cooked.",
             "And cooked some more.",
-            "And as they finished, the deadline for Rordon Gamsey's holy feeding ceremony arrived.",
+            "And as he completed his masterpiece...",
+            "The deadline for Rordon Gamsey's holy feeding ceremony arrived.",
             "Representatives from all tribes gathered to feed the ruler himself."
         ]
     },

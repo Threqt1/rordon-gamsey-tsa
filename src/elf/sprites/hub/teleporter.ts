@@ -2,7 +2,7 @@ import { SceneEnums } from "../../../shared/repository";
 import { BaseNPC } from "../../../shared/sprites";
 import { DialogueSystem } from "../../../shared/systems";
 import { SceneUtil } from "../../../shared/util";
-import { HubDialogue } from "../../dialogue";
+import { HubDialogue, MinigameDialogue } from "../../dialogue";
 import { ElfTexture } from "../../textures";
 
 /**
@@ -29,7 +29,12 @@ export class MinigameTeleporter extends BaseNPC {
             dialogue = HubDialogue.Teleporter.Dialogue
         }
         SceneUtil.getGUIScene(this.scene).dialogue.start(this.scene, dialogue, this.emitter, this.scene.data, () => {
-            SceneUtil.fadeSceneTransition(this.scene, SceneEnums.Name.ElfMinigame)
+            SceneUtil.fadeOut(this.scene, () => {
+                this.scene.scene.stop()
+                SceneUtil.getGUIScene(this.scene).dialogue.start(this.scene, MinigameDialogue.Instructions.Dialogue, this.emitter, this.scene.data, () => {
+                    SceneUtil.fadeSceneTransition(this.scene, SceneEnums.Name.ElfMinigame)
+                })
+            })
         })
     }
 }

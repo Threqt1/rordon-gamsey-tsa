@@ -1,7 +1,9 @@
 import { GoblinLevel } from "."
 import { SceneEnums } from "../../shared/repository"
 import { SceneUtil } from "../../shared/util"
-import { MinigameDialogue } from "../dialogue"
+import * as GoblinDialogue from "../dialogue"
+import * as OrcDialogue from "../../orc/dialogue"
+
 
 let BASE_MASK_DEPTH = 100
 let NPC_LIGHT_MASK_DEPTH = 101
@@ -13,7 +15,7 @@ let PLAYER_LIGHT_LAYER_OPACITY = 0.45
 // The order of the levels in the goblin minigame
 export const LEVEL_ORDER = [
     SceneEnums.Tilemap.GoblinMinigameLevel1,
-    SceneEnums.Tilemap.GoblinMinigameLevel2,
+    //SceneEnums.Tilemap.GoblinMinigameLevel2,
     SceneEnums.Tilemap.GoblinMinigameLevel3
 ]
 
@@ -130,7 +132,11 @@ export class Scene extends Phaser.Scene {
             this.launchNewLevel(this.currentLevelIndex)
         })
 
-        this.launchNewLevel(0, false)
+        this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+            SceneUtil.getGUIScene(this).dialogue.start(this, GoblinDialogue.MinigameDialogue.Instructions.Dialogue, new Phaser.Events.EventEmitter(), this.data, () => {
+                this.launchNewLevel(0, false)
+            })
+        })
     }
 
     /**
@@ -216,8 +222,10 @@ export class Scene extends Phaser.Scene {
             this.currentLevel.scene.stop()
             this.scene.stop()
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-            SceneUtil.getGUIScene(this).dialogue.start(this, MinigameDialogue.End.Dialogue, dialogueEventEmitter, this.data, () => {
-                SceneUtil.fadeSceneTransition(this, SceneEnums.Name.Final)
+            SceneUtil.getGUIScene(this).dialogue.start(this, GoblinDialogue.MinigameDialogue.End.Dialogue, dialogueEventEmitter, this.data, () => {
+                SceneUtil.getGUIScene(this).dialogue.start(this, OrcDialogue.MinigameDialogue.Instructions.Dialogue, dialogueEventEmitter, this.data, () => {
+                    SceneUtil.fadeSceneTransition(this, SceneEnums.Name.OrcMinigame)
+                })
             })
         })
     }
