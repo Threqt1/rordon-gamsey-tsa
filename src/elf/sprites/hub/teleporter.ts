@@ -29,12 +29,7 @@ export class MinigameTeleporter extends BaseNPC {
             dialogue = HubDialogue.Teleporter.Dialogue
         }
         SceneUtil.getGUIScene(this.scene).dialogue.start(this.scene, dialogue, this.emitter, this.scene.data, () => {
-            SceneUtil.fadeOut(this.scene, () => {
-                this.scene.scene.stop()
-                SceneUtil.getGUIScene(this.scene).dialogue.start(this.scene, MinigameDialogue.Instructions.Dialogue, this.emitter, this.scene.data, () => {
-                    SceneUtil.fadeSceneTransition(this.scene, SceneEnums.Name.ElfMinigame)
-                })
-            })
+            SceneUtil.fadeSceneTransition(this.scene, SceneEnums.Name.ElfMinigame)
         })
     }
 }

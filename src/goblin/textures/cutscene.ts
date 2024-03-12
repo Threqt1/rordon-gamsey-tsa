@@ -16,5 +16,6 @@ export namespace CutsceneTexture {
     export function load(scene: Phaser.Scene) {
         if (LOADED) return
         LOADED = true
+        scene;
     }
 }

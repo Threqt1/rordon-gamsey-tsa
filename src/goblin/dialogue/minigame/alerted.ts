@@ -10,7 +10,8 @@ let Base: DialogueSystem.Dialogue = {
         return [
             "HEY! SOMEONE STOLE THE APPLE!",
             "THEY STOLE MY SAUSAGES TOO!!!",
-            "FIND THEM!!!"
+            "FIND THEM!!!",
+            "[ESCAPE THE CAVE BY RETRACING YOUR STEPS]"
         ]
     },
     nextOptions: []

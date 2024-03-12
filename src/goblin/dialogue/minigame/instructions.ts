@@ -8,8 +8,9 @@ let Base: DialogueSystem.Dialogue = {
     getContentText() {
         return [
             "[TUTORIAL]",
-            "[SNEAK THROUGH THE CAVE, AVOIDING THE BLUE LIGHTS]",
-            "[OBTAIN THE APPLE AND SAUSAGES WHILE ESCAPING TO WIN]"
+            "[SNEAK THROUGH THE CAVE, AVOIDING THE BLUE LIGHTS AND VOIDS]",
+            "[USE THE LADDERS TO PROGRESS BETWEEN STAGES]",
+            "[OBTAIN THE APPLE AND SAUSAGES AND ESCAPE BACK TO THE ENTRANCE TO WIN]"
         ]
     },
     nextOptions: []

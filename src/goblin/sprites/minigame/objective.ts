@@ -10,6 +10,7 @@ export class Objective extends BaseNPC {
         super(scene, x, y, 50, 50)
         this.sprite = scene.physics.add.sprite(x, y, FoodTexture.TextureKey, FoodTexture.Frames.GoblinMinigame)
         this.sprite.setPushable(false)
+        this.sprite.postFX!.addGlow(undefined, 100)
         this.updatePromptPosition(this.sprite)
 
         this.scene = scene

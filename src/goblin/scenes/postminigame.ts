@@ -3,10 +3,10 @@ import { PlayerTexture } from "../../shared/textures"
 import { SceneUtil } from "../../shared/util"
 import { CutsceneTexture, GoblinTexture } from "../textures"
 
-const PLAYER_SPEED = 80
+const PLAYER_SPEED = 60
 const PLAYER_MINECART_OFFSET = 5
 const MAX_GOBLINS = 50
-const GOBLIN_SPEED = 100
+const GOBLIN_SPEED = 80
 const GOBLIN_MAX_ANGULAR_VELOCITY = 300
 const GOBLIN_MAX_SPLINE_OFFSET_Y = 100
 const ORC_MINECART_OFFSET = 5
@@ -126,9 +126,7 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
             onComplete: () => {
                 this.time.delayedCall(ORC_RAM_PAUSE, () => {
                     this.setGoblinPause(false)
-                    this.time.delayedCall(END_SCENE_DELAY, () => {
-                        SceneUtil.fadeSceneTransition(this, SceneEnums.Name.Menu)
-                    })
+                    this.endGame()
                 })
             }
         })
@@ -167,5 +165,11 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
             this.goblins.push(this.createAndStartGoblin())
         }
         this.elapsedDt += dt
+    }
+
+    endGame() {
+        this.time.delayedCall(END_SCENE_DELAY, () => {
+            SceneUtil.fadeSceneTransition(this, SceneEnums.Name.OrcMinigame)
+        })
     }
 }

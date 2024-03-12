@@ -41,6 +41,7 @@ export enum GameState {
  * Scene for the goblin minigame
  */
 export class Scene extends Phaser.Scene {
+    initialized!: boolean
     currentLevelIndex!: number
     music!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound
     /**
@@ -63,6 +64,17 @@ export class Scene extends Phaser.Scene {
     }
 
     create() {
+        this.initialized = false
+        SceneUtil.getGUIScene(this).dialogue.start(this, GoblinDialogue.MinigameDialogue.Instructions.Dialogue, new Phaser.Events.EventEmitter(), this.data, () => {
+            SceneUtil.fadeOut(this, () => {
+                this.initGame()
+                this.initialized = true
+                SceneUtil.fadeIn(this)
+            })
+        })
+    }
+
+    initGame() {
         this.currentLevelIndex = 0
 
         this.music = this.sound.add(SceneEnums.Music.GoblinNeutral)
@@ -132,11 +144,7 @@ export class Scene extends Phaser.Scene {
             this.launchNewLevel(this.currentLevelIndex)
         })
 
-        this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
-            SceneUtil.getGUIScene(this).dialogue.start(this, GoblinDialogue.MinigameDialogue.Instructions.Dialogue, new Phaser.Events.EventEmitter(), this.data, () => {
-                this.launchNewLevel(0, false)
-            })
-        })
+        this.launchNewLevel(0, false)
     }
 
     /**
@@ -171,6 +179,7 @@ export class Scene extends Phaser.Scene {
     }
 
     update() {
+        if (!this.initialized) return
         this.playerVisibleArea.clear()
         this.npcVisibleArea.clear()
         // Raycast for the player and handle clearing the lit area graphics
@@ -223,9 +232,7 @@ export class Scene extends Phaser.Scene {
             this.scene.stop()
             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
             SceneUtil.getGUIScene(this).dialogue.start(this, GoblinDialogue.MinigameDialogue.End.Dialogue, dialogueEventEmitter, this.data, () => {
-                SceneUtil.getGUIScene(this).dialogue.start(this, OrcDialogue.MinigameDialogue.Instructions.Dialogue, dialogueEventEmitter, this.data, () => {
-                    SceneUtil.fadeSceneTransition(this, SceneEnums.Name.OrcMinigame)
-                })
+                SceneUtil.fadeSceneTransition(this, SceneEnums.Name.GoblinPostMinigame)
             })
         })
     }

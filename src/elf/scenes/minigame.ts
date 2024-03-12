@@ -73,6 +73,15 @@ export class ElfMinigameScene extends Phaser.Scene {
     }
 
     create() {
+        SceneUtil.getGUIScene(this).dialogue.start(this, MinigameDialogue.Instructions.Dialogue, new Phaser.Events.EventEmitter(), this.data, () => {
+            SceneUtil.fadeOut(this, () => {
+                this.initGame()
+                SceneUtil.fadeIn(this)
+            })
+        })
+    }
+
+    initGame() {
         /* MAP LOADING */
         let { map, playerSpriteDepth, objects } = SceneUtil.loadTilemap(this, SceneEnums.Tilemap.ElfMinigame)
         this.markers = objects as ElfMinigameMarkers

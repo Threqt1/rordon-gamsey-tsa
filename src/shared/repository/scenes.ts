@@ -9,7 +9,7 @@ export namespace SceneEnums {
         GoblinMinigame = "goblinminigame",
         GoblinMinigameLevel = "goblinminigamelevel",
         GoblinPostMinigame = "goblinpostminigame",
-        OrcCutscene1 = "orccutscene1",
+        OrcMinigame = "orcminigame",
         Final = "final",
         GUI = "gui"
     }
