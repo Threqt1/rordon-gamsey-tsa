@@ -2,7 +2,6 @@ import { GoblinLevel } from "."
 import { SceneEnums } from "../../shared/repository"
 import { SceneUtil } from "../../shared/util"
 import * as GoblinDialogue from "../dialogue"
-import * as OrcDialogue from "../../orc/dialogue"
 
 
 let BASE_MASK_DEPTH = 100
