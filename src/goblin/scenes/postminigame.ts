@@ -169,7 +169,7 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
 
     endGame() {
         this.time.delayedCall(END_SCENE_DELAY, () => {
-            SceneUtil.fadeSceneTransition(this, SceneEnums.Name.OrcMinigame)
+            SceneUtil.fadeSceneTransition(this, SceneEnums.Name.OrcHub)
         })
     }
 }

@@ -10,6 +10,7 @@ export namespace SceneEnums {
         GoblinMinigameLevel = "goblinminigamelevel",
         GoblinPostMinigame = "goblinpostminigame",
         OrcMinigame = "orcminigame",
+        OrcHub = "orchub",
         Final = "final",
         GUI = "gui"
     }
@@ -20,6 +21,7 @@ export namespace SceneEnums {
         ElfMinigame = "elfminigame",
         ElfHub = "elfhub",
         OrcMinigame = "orcminigame",
+        OrcHub = "orchub",
         GoblinPostMinigame = "goblinpostminigame",
         Final = "final"
     }

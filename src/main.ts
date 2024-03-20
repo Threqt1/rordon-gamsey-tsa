@@ -9,7 +9,7 @@ import { MenuScene } from './shared/scenes/menu';
 import { ElfHubScene, ElfMinigameScene, ElfPostMinigameScene } from './elf/scenes';
 import { GoblinLevel, GoblinMinigame, GoblinPostMinigameScene } from './goblin/scenes';
 import { FinalScene } from './final/scenes';
-import { OrcMinigameScene } from './orc/scenes';
+import { OrcHubScene, OrcMinigameScene } from './orc/scenes';
 import { InitialScene } from './initial/scenes';
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -20,7 +20,7 @@ const config: Phaser.Types.Core.GameConfig = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            //debug: true
+            debug: true
         }
     },
     scene: [
@@ -35,6 +35,7 @@ const config: Phaser.Types.Core.GameConfig = {
         ElfHubScene.ElfHubScene,
         GoblinPostMinigameScene,
         OrcMinigameScene,
+        OrcHubScene,
         FinalScene.Scene
 
     ],
