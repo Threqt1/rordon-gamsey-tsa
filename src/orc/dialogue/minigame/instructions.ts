@@ -8,6 +8,7 @@ let Base: DialogueSystem.Dialogue = {
     getContentText() {
         return [
             "[TUTORIAL]",
+            "[USE WASD TO MOVE THE SELECTED GRILL SPOT]",
             "[PRESS E ON PATTIES TO FLIP THEM WHEN THEY ARE READY]",
             "[FLIP AS MANY AS YOU CAN TO PLEASE THE ORC CHEF]"
         ]
