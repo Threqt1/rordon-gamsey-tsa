@@ -47,6 +47,15 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
 
         this.sprites.initialize(map)
 
+        let music = this.sound.add(SceneEnums.Music.GoblinAlerted)
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+            music.stop()
+        })
+        music.play("", {
+            loop: true,
+            rate: 1.5
+        })
+
         this.playerMinecart = this.add.follower(new Phaser.Curves.Path(), this.markers.MinecartStartPosition.x, this.markers.MinecartStartPosition.y, CutsceneTexture.TextureKey, CutsceneTexture.Frames.Minecart)
             .setDepth(this.depth)
 

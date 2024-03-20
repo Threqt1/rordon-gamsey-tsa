@@ -9,10 +9,8 @@ const FOOD_SCALE = 0.8
 export type Texture = {
     key: string,
     food: string,
-    idleFrontAnimation: (sprite: Phaser.GameObjects.PathFollower) => void,
     moveRightAnimation: (sprite: Phaser.GameObjects.PathFollower) => void,
     idleRightAnimation: (sprite: Phaser.GameObjects.PathFollower) => void,
-    moveLeftAnimation: (sprite: Phaser.GameObjects.PathFollower) => void,
 }
 
 export enum Events {
@@ -40,8 +38,6 @@ export class Sprite {
         this.sprites = [this.sprite, this.food]
         this.texture = texture
         this.spriteEvents = new Phaser.Events.EventEmitter()
-
-        this.texture.idleFrontAnimation(this.sprite)
     }
 
     moveSpriteToTable() {

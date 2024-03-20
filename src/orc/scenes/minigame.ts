@@ -29,17 +29,17 @@ const STAGE_INFORMATION: { [key: number]: StageInformation } = {
     [Stage.OPEN_SHOP]: {
         timeUntilCooked: 2.5 * 1000,
         itemsPerAddition: 1,
-        additionTimeRange: [1.5 * 1000, 3.5 * 1000],
+        additionTimeRange: [1 * 1000, 3 * 1000],
         dialogue: MinigameDialogue.OpenShop.Dialogue,
-        duration: 15 * 1000,
+        duration: 10 * 1000,
         nextStage: Stage.RUSH_HOUR,
     },
     [Stage.RUSH_HOUR]: {
-        timeUntilCooked: 2.5 * 1000,
-        additionTimeRange: [0.8 * 1000, 2.9 * 1000],
+        timeUntilCooked: 2 * 1000,
+        additionTimeRange: [0.5 * 1000, 2.5 * 1000],
         itemsPerAddition: 2,
         dialogue: MinigameDialogue.RushHour.Dialogue,
-        duration: 45 * 1000
+        duration: 20 * 1000
     }
 }
 
@@ -99,6 +99,15 @@ export class OrcMinigameScene extends Phaser.Scene {
         let markers = objects as Markers
 
         this.sprites.initialize(map)
+
+        let music = this.sound.add(SceneEnums.Music.OrcMinigame)
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+            music.stop()
+        })
+        music.play("", {
+            loop: true
+        })
+
         this.baseInput = new InputSystem.System(this, INTERACTION_KEYBINDS)
 
         /* GAME OBJECT CONFIGURATION */

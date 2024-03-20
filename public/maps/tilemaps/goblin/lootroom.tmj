@@ -6,7 +6,7 @@
          "data":[649, 649, 649, 649, 649, 649, 649, 649, 649, 649, 649, 649, 649, 649, 649, 649,
             649, 648, 648, 648, 648, 648, 648, 648, 648, 648, 648, 648, 648, 648, 648, 649,
             649, 648, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 648, 649,
-            649, 648, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 648, 649,
+            649, 648, 0, 0, 0, 0, 649, 649, 649, 0, 0, 0, 0, 0, 648, 649,
             649, 648, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 648, 649,
             649, 648, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 648, 649,
             649, 648, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 648, 649,
@@ -63,6 +63,40 @@
          "y":0
         }, 
         {
+         "draworder":"topdown",
+         "id":5,
+         "name":"Object Layer 1",
+         "objects":[
+                {
+                 "height":0,
+                 "id":1,
+                 "name":"entrance_zone",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":216.25,
+                 "y":94.75
+                }, 
+                {
+                 "height":0,
+                 "id":3,
+                 "name":"objective",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":47.75,
+                 "y":53.25
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
          "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -99,40 +133,6 @@
          "type":"tilelayer",
          "visible":true,
          "width":16,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
-         "id":5,
-         "name":"Object Layer 1",
-         "objects":[
-                {
-                 "height":0,
-                 "id":1,
-                 "name":"entrance_zone",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":216.25,
-                 "y":94.75
-                }, 
-                {
-                 "height":0,
-                 "id":3,
-                 "name":"objective",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":47.75,
-                 "y":53.25
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
          "x":0,
          "y":0
         }],

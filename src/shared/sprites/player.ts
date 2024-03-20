@@ -2,7 +2,7 @@ import { PlayerTexture } from "../textures"
 import { InputSystem, SpritesPlugin } from "../systems"
 import { SpriteUtil } from "../util"
 
-const SPEED = 56
+const SPEED = 65
 const DIAGONAL_SPEED_BOOST_FACTOR = 1.25
 
 export class Player implements SpritesPlugin.Controllable {

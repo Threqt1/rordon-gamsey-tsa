@@ -8,7 +8,6 @@ let Base: DialogueSystem.Dialogue = {
     getContentText() {
         return [
             "*munch munch*",
-            "W-what is this..!!",
             "Such a variety of flavors...",
             "I can taste some from every tribe, and they complement each other so well...",
             "I want more... I MUST HAVE MORE!!",

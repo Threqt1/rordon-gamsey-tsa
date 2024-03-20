@@ -7,11 +7,9 @@ let Base: DialogueSystem.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "*munch munch*",
-            "BLEEEEGHHH!",
-            "So much... meat!",
-            "Brutish goblins, you do not understand what a varied palette is!",
-            "Outta my sight!"
+            "Ol' geezer Gamsey,",
+            "Try our sauce this year, will ya?",
+            "Come on... give it a shot!"
         ]
     },
     nextOptions: []

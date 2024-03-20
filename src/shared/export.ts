@@ -7,9 +7,6 @@ export function preloadShared(scene: Phaser.Scene) {
     DialogueTexture.preload(scene)
     FoodTexture.preload(scene)
 
-    scene.load.audio(SceneEnums.Music.GoblinNeutral, "/music/goblinneutral.mp3")
-    scene.load.audio(SceneEnums.Music.GoblinAlerted, "/music/goblinalerted.mp3")
-
     scene.load.audio(SceneEnums.Music.Main, "/music/main.mp3")
 }
 

@@ -32,6 +32,14 @@ export class OrcHubScene extends Phaser.Scene {
 
         this.sprites.initialize(map)
 
+        let music = this.sound.add(SceneEnums.Music.Main)
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+            music.stop()
+        })
+        music.play("", {
+            loop: true
+        })
+
         this.minecart = this.add.sprite(this.markers.MinecartStartPosition.x, this.markers.MinecartStartPosition.y, CutsceneTexture.TextureKey, CutsceneTexture.Frames.Minecart)
             .setDepth(playerSpriteDepth)
 

@@ -7,11 +7,13 @@ let Base: DialogueSystem.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
+            "...",
+            "Are you serious?",
+            "*sigh*",
             "*munch munch*",
-            "BLEEEEGHHH!",
-            "So much... meat!",
-            "Brutish goblins, you do not understand what a varied palette is!",
-            "Outta my sight!"
+            "BLEEEEGH!!",
+            "DEAR LORD, SO MUCH GLASS!!!",
+            "O-OUTTA MY SIGHHHT!"
         ]
     },
     nextOptions: []

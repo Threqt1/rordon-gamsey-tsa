@@ -30,6 +30,7 @@ export namespace SceneEnums {
         ElfMinigame = "elfminigame",
         GoblinNeutral = "goblinneutral",
         GoblinAlerted = "goblinalerted",
+        OrcMinigame = "orcminigame",
         Final = "final"
     }
     export enum CollisionCategory {

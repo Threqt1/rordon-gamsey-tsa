@@ -5,7 +5,7 @@
         "x": 0,
         "y": 0,
         "w": 34,
-        "h": 26
+        "h": 33
       },
       "rotated": false,
       "trimmed": false,
@@ -13,11 +13,11 @@
         "x": 0,
         "y": 0,
         "w": 34,
-        "h": 26
+        "h": 33
       },
       "sourceSize": {
         "w": 34,
-        "h": 26
+        "h": 33
       },
       "pivot": {
         "x": 0.5,
@@ -95,6 +95,30 @@
         "x": 0.5,
         "y": 0.5
       }
+    },
+    "food_orc": {
+      "frame": {
+        "x": 61,
+        "y": 15,
+        "w": 8,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 8,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
     }
   },
   "meta": {
@@ -104,7 +128,7 @@
     "format": "RGBA8888",
     "size": {
       "w": 105,
-      "h": 26
+      "h": 33
     },
     "scale": 1
   }

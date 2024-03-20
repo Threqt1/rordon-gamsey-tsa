@@ -4,8 +4,9 @@ import { DialogueSystem } from "../../shared/systems"
 import { FoodTexture, PlayerTexture } from "../../shared/textures"
 import { SceneUtil } from "../../shared/util"
 import { GoblinTexture } from "../../goblin/textures"
-import { ElfDialogue, GameDialogue, GoblinDialogue, PlayerDialogue } from "../dialogue"
+import { ElfDialogue, GameDialogue, GoblinDialogue, OrcDialogue, PlayerDialogue } from "../dialogue"
 import { NPC } from "../sprites"
+import { OrcMinecartTexture } from "../../orc/textures"
 
 type Markers = {
     SpawnLocation: SceneUtil.PointObject,
@@ -21,10 +22,11 @@ type NPCDialogue = {
 enum NPCs {
     Player,
     Elf,
-    Goblin
+    Goblin,
+    Orc
 }
 
-const NPC_ORDER = [NPCs.Elf, NPCs.Goblin, NPCs.Player]
+const NPC_ORDER = [NPCs.Elf, NPCs.Goblin, NPCs.Orc, NPCs.Player]
 
 const playerTexture: NPC.Texture = {
     key: PlayerTexture.TextureKey,
@@ -34,12 +36,6 @@ const playerTexture: NPC.Texture = {
     },
     idleRightAnimation: (sprite) => {
         sprite.play(PlayerTexture.Animations.IdleRight, true)
-    },
-    moveLeftAnimation: (sprite) => {
-        sprite.play(PlayerTexture.Animations.WalkLeft, true)
-    },
-    idleFrontAnimation: (sprite) => {
-        sprite.play(PlayerTexture.Animations.IdleFront, true)
     }
 }
 
@@ -58,14 +54,6 @@ const elfTexture: NPC.Texture = {
     idleRightAnimation: (sprite) => {
         sprite.setFlipX(false)
         sprite.play(ElfTexture.Animations.IdleSide, true)
-    },
-    moveLeftAnimation: (sprite) => {
-        sprite.setFlipX(true)
-        sprite.play(ElfTexture.Animations.WalkSide, true)
-    },
-    idleFrontAnimation: (sprite) => {
-        sprite.setFlipX(false)
-        sprite.play(ElfTexture.Animations.IdleFront, true)
     }
 }
 
@@ -82,16 +70,28 @@ const goblinTexture: NPC.Texture = {
     },
     idleRightAnimation: (sprite) => {
         sprite.play(GoblinTexture.Animations.IdleRight, true)
-    },
-    moveLeftAnimation: (sprite) => {
-        sprite.play(GoblinTexture.Animations.WalkLeft, true)
-    },
-    idleFrontAnimation: (sprite) => sprite.play(GoblinTexture.Animations.IdleFront, true)
+    }
 }
 
 const goblinDialogue: NPCDialogue = {
     table: GoblinDialogue.Table.Dialogue,
     food: GoblinDialogue.Food.Dialogue
+}
+
+const orcTexture: NPC.Texture = {
+    key: OrcMinecartTexture.TextureKey,
+    food: FoodTexture.Frames.Orc,
+    moveRightAnimation: (sprite) => {
+        sprite.play(OrcMinecartTexture.Animations.IdleRight, true)
+    },
+    idleRightAnimation: (sprite) => {
+        sprite.play(OrcMinecartTexture.Animations.IdleRight, true)
+    }
+}
+
+const orcDialogue: NPCDialogue = {
+    table: OrcDialogue.Table.Dialogue,
+    food: OrcDialogue.Food.Dialogue
 }
 
 const START_SPAWN_DELAY = 1000
@@ -153,6 +153,8 @@ export class Scene extends Phaser.Scene {
                 return goblinTexture
             case NPCs.Player:
                 return playerTexture
+            case NPCs.Orc:
+                return orcTexture
         }
     }
 
@@ -164,6 +166,8 @@ export class Scene extends Phaser.Scene {
                 return goblinDialogue
             case NPCs.Player:
                 return playerDialogue
+            case NPCs.Orc:
+                return orcDialogue
         }
     }
 

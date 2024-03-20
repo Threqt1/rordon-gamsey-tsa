@@ -5,6 +5,7 @@ export namespace FoodTexture {
     export const Frames = {
         Goblin: TextureKey + "_goblin",
         Elf: TextureKey + "_elf",
+        Orc: TextureKey + "_orc",
         Player: TextureKey + "_player",
         GoblinMinigame: TextureKey + "_goblin_minigame"
     }
