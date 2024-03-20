@@ -1,3 +1,4 @@
+import { OrcTexture } from "../../orc/textures/orc"
 import { SceneEnums } from "../../shared/repository"
 import { PlayerTexture } from "../../shared/textures"
 import { SceneUtil } from "../../shared/util"
@@ -9,7 +10,7 @@ const MAX_GOBLINS = 50
 const GOBLIN_SPEED = 80
 const GOBLIN_MAX_ANGULAR_VELOCITY = 300
 const GOBLIN_MAX_SPLINE_OFFSET_Y = 100
-const ORC_MINECART_OFFSET = 5
+const ORC_MINECART_OFFSET = 20
 const ORC_MINECART_SPEED = 300
 
 const GOBLIN_SPAWN_DELAY = 2000
@@ -85,6 +86,10 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
         })
         this.playerMinecart.startFollow({
             duration: playerMinecartPath.getLength() / ORC_MINECART_SPEED * 1000,
+            onComplete: () => {
+                this.player.setVisible(false)
+                this.playerMinecart.setVisible(false)
+            }
         })
     }
 
@@ -107,12 +112,12 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
             .lineTo(this.markers.MinecartStartPosition.x, this.markers.MinecartStartPosition.y)
         let minecart = this.add.follower(orcPath, orcPath.startPoint.x, orcPath.startPoint.y, CutsceneTexture.TextureKey, CutsceneTexture.Frames.Minecart)
             .setDepth(this.depth - 1)
-        let orc = this.add.follower(orcPath, orcPath.startPoint.x, orcPath.startPoint.y - ORC_MINECART_OFFSET, PlayerTexture.TextureKey)
+        let orc = this.add.follower(orcPath, orcPath.startPoint.x, orcPath.startPoint.y - ORC_MINECART_OFFSET, OrcTexture.TextureKey)
             .setDepth(this.depth - 1)
         orc.startFollow({
             duration: orcPath.getLength() / ORC_MINECART_SPEED * 1000,
             onStart: () => {
-                orc.play(PlayerTexture.Animations.IdleFront)
+                orc.play(OrcTexture.Animations.IdleFrontNormal)
             }
         })
         minecart.startFollow({

@@ -8,7 +8,8 @@ import { HubSprites } from "../sprites"
 type OrcHubMarkers = {
     OrcEntrance: RectangleObject
     MinecartStartPosition: PointObject
-    MinecartEndPosition: PointObject
+    MinecartEndPosition: PointObject,
+    OrcSpawn: PointObject
 }
 
 const PLAYER_MINECART_OFFSET = 10
@@ -26,7 +27,6 @@ export class OrcHubScene extends Phaser.Scene {
 
     create() {
         let { map, objects, playerSpriteDepth, collisionsLayer } = SceneUtil.loadTilemap(this, SceneEnums.Tilemap.OrcHub)
-        playerSpriteDepth = 100
         this.markers = objects as OrcHubMarkers
         this.animatedTiles.setRate(0.65)
 
@@ -35,14 +35,16 @@ export class OrcHubScene extends Phaser.Scene {
         this.minecart = this.add.sprite(this.markers.MinecartStartPosition.x, this.markers.MinecartStartPosition.y, CutsceneTexture.TextureKey, CutsceneTexture.Frames.Minecart)
             .setDepth(playerSpriteDepth)
 
+        const chef = new HubSprites.Chef(this, this.markers.OrcSpawn.x, this.markers.OrcSpawn.y)
+
         this.player = new Player(this, this.markers.MinecartStartPosition.x, this.markers.MinecartStartPosition.y - PLAYER_MINECART_OFFSET)
 
         const teleporterZone = new HubSprites.TeleporterZone(this, this.markers.OrcEntrance)
 
         this.sprites.controllables.push(this.player)
-        this.sprites.physicsBodies.add(this.player.sprite)
+        this.sprites.physicsBodies.addMultiple([this.player.sprite, chef.sprite])
         this.sprites.interactingBodies.add(this.player.sprite)
-        this.sprites.addInteractables(teleporterZone)
+        this.sprites.addInteractables(teleporterZone, chef)
         this.sprites.physicsBodies.setDepth(playerSpriteDepth)
 
         this.sprites.setControllable(false)

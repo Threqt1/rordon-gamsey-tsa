@@ -7,7 +7,7 @@ let Base: DialogueSystem.Dialogue = {
     getOptionText() { return "" },
     getContentText() {
         return [
-            "Alright, let's open shop..."
+            "Alright, open shop!"
         ]
     },
     nextOptions: []

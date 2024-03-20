@@ -34,15 +34,15 @@ export class ElfPostMinigameScene extends Phaser.Scene {
         })
 
         this.add
-            .sprite(markers.Torch1.x, markers.Torch1.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch1)
+            .sprite(markers.Torch2.x, markers.Torch2.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch1)
             .play(`-torch1-idle`)
             .setDepth(playerSpriteDepth)
         this.add
-            .sprite(markers.Torch2.x, markers.Torch2.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch2)
+            .sprite(markers.Torch3.x, markers.Torch3.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch2)
             .play(`-torch2-idle`)
             .setDepth(playerSpriteDepth)
         this.add
-            .sprite(markers.Torch3.x, markers.Torch3.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch3)
+            .sprite(markers.Torch4.x, markers.Torch4.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch3)
             .play(`-torch3-idle`)
             .setDepth(playerSpriteDepth)
         // this.add

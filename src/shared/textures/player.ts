@@ -81,6 +81,6 @@ export namespace PlayerTexture {
     }
 
     export function configurePlayerPhysicsBody(body: Phaser.Physics.Arcade.Body): void {
-        body.setSize(10, 16).setOffset(3, 15)
+        body.setSize(10, 16).setOffset(3, 16)
     }
 }

@@ -16,8 +16,7 @@ export namespace SceneEnums {
     }
     export enum Tilemap {
         GoblinMinigameLevel1 = "goblinminigame1",
-        GoblinMinigameLevel2 = "goblinminigame2",
-        GoblinMinigameLevel3 = "goblinminigame3",
+        GoblinLootroom = "goblinlootroom",
         ElfMinigame = "elfminigame",
         ElfHub = "elfhub",
         OrcMinigame = "orcminigame",

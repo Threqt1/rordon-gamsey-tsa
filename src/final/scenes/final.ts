@@ -94,18 +94,16 @@ const goblinDialogue: NPCDialogue = {
     food: GoblinDialogue.Food.Dialogue
 }
 
-const TABLE_DIALOGUE_DELAY = 500
+const START_SPAWN_DELAY = 1000
 const FOOD_EATING_DELAY = 500
-const MOVE_TO_START_DELAY = 100
+const TABLE_DIALOGUE_DELAY = 500
 const END_DIALOGUE_DELAY = 1000
-const START_OFFSET = 50
-const NPC_SWITCH_DELAY = 1000
 
 export class Scene extends Phaser.Scene {
     markers!: Markers
-    npcsCurrentlyAtStart!: number
-    currentOrderIndex!: number
     spriteDepth!: number
+    npcSprites!: NPC.Sprite[]
+    currentOrderIndex!: number
 
     constructor() {
         super(SceneEnums.Name.Final)
@@ -114,6 +112,7 @@ export class Scene extends Phaser.Scene {
     create() {
         /* MAP INITIALIZATION */
         let { map, playerSpriteDepth, objects } = SceneUtil.loadTilemap(this, SceneEnums.Tilemap.Final)
+        this.spriteDepth = playerSpriteDepth
         this.markers = objects as Markers
 
         this.sprites.initialize(map)
@@ -128,9 +127,11 @@ export class Scene extends Phaser.Scene {
         /* CAMERA CONFIGURATION*/
         SceneUtil.scaleAndConfigureCamera(this, map)
 
-        this.npcsCurrentlyAtStart = 0
         this.currentOrderIndex = 0
-        this.spriteDepth = playerSpriteDepth
+        this.npcSprites = []
+        // this.npcsCurrentlyAtStart = 0
+        // this.currentOrderIndex = 0
+        // this.spriteDepth = playerSpriteDepth
 
         this.cameras.main.alpha = 0
 
@@ -173,30 +174,80 @@ export class Scene extends Phaser.Scene {
         // Origin doesn't work, just push them up manually
         sprite.sprite.setPosition(this.markers.SpawnLocation.x, this.markers.SpawnLocation.y - sprite.sprite.height / 2)
         SceneUtil.switchCameraFollow(this, sprite.sprite)
-        this.moveSpriteToTable(sprite, npcType)
+        this.npcSprites.push(sprite)
+
+        this.moveNPCToTable()
     }
 
-    moveSpriteToTable(sprite: NPC.Sprite, type: NPCs): void {
+    moveNPCToTable(): void {
+        let sprite = this.npcSprites[this.currentOrderIndex]
         sprite.moveSpriteToTable()
-        sprite.spriteEvents.once(NPC.Events.NPC_REACHED_TABLE, () => {
-            let tableDialogue = this.getNPCDialogue(type).table
-            this.time.delayedCall(TABLE_DIALOGUE_DELAY, () => {
-                let dialogueEventEmitter = new Phaser.Events.EventEmitter()
-                SceneUtil.getGUIScene(this).dialogue.start(this, tableDialogue, dialogueEventEmitter, this.data, () => {
-                    this.moveFoodToTable(sprite, type)
+        if (this.currentOrderIndex == NPC_ORDER.length - 1) {
+            sprite.spriteEvents.once(NPC.Events.NPC_REACHED_TABLE, () => {
+                this.currentOrderIndex = 0
+                this.time.delayedCall(TABLE_DIALOGUE_DELAY, () => {
+                    this.startNextNPCTableDialogue()
                 })
+            })
+        } else {
+            this.time.delayedCall(START_SPAWN_DELAY, () => {
+                this.currentOrderIndex++
+                this.startNextNPC()
+            })
+        }
+    }
+
+    startNextNPCTableDialogue(): void {
+        let type = NPC_ORDER[this.currentOrderIndex]
+        let tableDialogue = this.getNPCDialogue(type).table
+        this.time.delayedCall(TABLE_DIALOGUE_DELAY, () => {
+            SceneUtil.getGUIScene(this).dialogue.start(this, tableDialogue, new Phaser.Events.EventEmitter(), this.data, () => {
+                this.moveFoodToTable()
             })
         })
     }
 
-    moveFoodToTable(sprite: NPC.Sprite, type: NPCs): void {
+    moveFoodToTable(): void {
+        let sprite = this.npcSprites[this.currentOrderIndex]
         sprite.moveFoodToTable()
         sprite.spriteEvents.once(NPC.Events.FOOD_REACHED_TABLE, () => {
-            this.eatFood(sprite, type)
+            this.eatFood()
         })
     }
 
-    eatFood(sprite: NPC.Sprite, type: NPCs): void {
+    // startNextNPC(): void {
+    //     let npcType = NPC_ORDER[this.currentOrderIndex]
+    //     let texture = this.getNPCTexture(npcType)
+    //     let sprite = new NPC.Sprite(this, this.markers.SpawnLocation.x, this.markers.SpawnLocation.y, texture, this.spriteDepth)
+    //     // Origin doesn't work, just push them up manually
+    //     sprite.sprite.setPosition(this.markers.SpawnLocation.x, this.markers.SpawnLocation.y - sprite.sprite.height / 2)
+    //     SceneUtil.switchCameraFollow(this, sprite.sprite)
+    //     this.moveSpriteToTable(sprite, npcType)
+    // }
+
+    // moveSpriteToTable(sprite: NPC.Sprite, type: NPCs): void {
+    //     sprite.moveSpriteToTable()
+    //     sprite.spriteEvents.once(NPC.Events.NPC_REACHED_TABLE, () => {
+    //         let tableDialogue = this.getNPCDialogue(type).table
+    //         this.time.delayedCall(TABLE_DIALOGUE_DELAY, () => {
+    //             let dialogueEventEmitter = new Phaser.Events.EventEmitter()
+    //             SceneUtil.getGUIScene(this).dialogue.start(this, tableDialogue, dialogueEventEmitter, this.data, () => {
+    //                 this.moveFoodToTable(sprite, type)
+    //             })
+    //         })
+    //     })
+    // }
+
+    // moveFoodToTable(sprite: NPC.Sprite, type: NPCs): void {
+    //     sprite.moveFoodToTable()
+    //     sprite.spriteEvents.once(NPC.Events.FOOD_REACHED_TABLE, () => {
+    //         this.eatFood(sprite, type)
+    //     })
+    // }
+
+    eatFood(): void {
+        let type = NPC_ORDER[this.currentOrderIndex]
+        let sprite = this.npcSprites[this.currentOrderIndex]
         SceneUtil.fadeOut(this, () => {
             this.time.delayedCall(FOOD_EATING_DELAY, () => {
                 let foodDialogue = this.getNPCDialogue(type).food
@@ -207,7 +258,8 @@ export class Scene extends Phaser.Scene {
                     } else {
                         sprite.food.setVisible(false)
                         SceneUtil.fadeIn(this, () => {
-                            this.moveSpriteToStart(sprite)
+                            this.currentOrderIndex++
+                            this.startNextNPCTableDialogue()
                         })
                     }
                 })
@@ -215,18 +267,18 @@ export class Scene extends Phaser.Scene {
         })
     }
 
-    moveSpriteToStart(sprite: NPC.Sprite) {
-        this.time.delayedCall(MOVE_TO_START_DELAY, () => {
-            sprite.moveSpriteToStart(this.npcsCurrentlyAtStart * START_OFFSET)
-            sprite.spriteEvents.once(NPC.Events.NPC_REACHED_START, () => {
-                this.time.delayedCall(NPC_SWITCH_DELAY, () => {
-                    this.npcsCurrentlyAtStart++
-                    this.currentOrderIndex++
-                    this.startNextNPC()
-                })
-            })
-        })
-    }
+    // moveSpriteToStart(sprite: NPC.Sprite) {
+    //     this.time.delayedCall(MOVE_TO_START_DELAY, () => {
+    //         sprite.moveSpriteToStart(this.npcsCurrentlyAtStart * START_OFFSET)
+    //         sprite.spriteEvents.once(NPC.Events.NPC_REACHED_START, () => {
+    //             this.time.delayedCall(NPC_SWITCH_DELAY, () => {
+    //                 this.npcsCurrentlyAtStart++
+    //                 this.currentOrderIndex++
+    //                 this.startNextNPC()
+    //             })
+    //         })
+    //     })
+    // }
 
     endGame() {
         this.time.delayedCall(END_DIALOGUE_DELAY, () => {
@@ -236,8 +288,5 @@ export class Scene extends Phaser.Scene {
                 SceneUtil.fadeSceneTransition(this, SceneEnums.Name.Menu)
             })
         })
-    }
-
-    update() {
     }
 }

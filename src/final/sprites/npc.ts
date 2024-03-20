@@ -1,8 +1,9 @@
 import { FinalScene } from "../scenes";
 import { FoodTexture } from "../../shared/textures";
 
-const WALK_TO_TABLE_DURATION = 5000
-const FOOD_TO_TABLE_DURATION = 1000
+const OFFSET = 50
+const SPEED = 50
+const FOOD_MOVE_DURATION = 1000
 const FOOD_SCALE = 0.8
 
 export type Texture = {
@@ -49,12 +50,12 @@ export class Sprite {
 
         this.sprite.setPosition(startPosition.x, this.sprite.y)
         let path = new Phaser.Curves.Path(startPosition.x, this.sprite.y)
-            .lineTo(endPosition.x, this.sprite.y)
+            .lineTo(endPosition.x - OFFSET * this.scene.currentOrderIndex, this.sprite.y)
         this.sprite.setPath(path)
 
         this.sprite.startFollow({
             // length of path / speed
-            duration: WALK_TO_TABLE_DURATION,
+            duration: path.getLength() / SPEED * 1000,
             onComplete: () => {
                 this.texture.idleRightAnimation(this.sprite)
                 this.spriteEvents.emit(Events.NPC_REACHED_TABLE)
@@ -68,40 +69,38 @@ export class Sprite {
     }
 
     moveFoodToTable() {
-        let startPosition = this.scene.markers.EndLocation
         let endPosition = this.scene.markers.FoodLocation
 
-        this.food.setPosition(startPosition.x, this.food.y)
-        let path = new Phaser.Curves.Path(startPosition.x, this.food.y)
-            .quadraticBezierTo(endPosition.x, endPosition.y - this.food.displayHeight / 2, startPosition.x, endPosition.y - this.food.displayHeight / 2)
+        let path = new Phaser.Curves.Path(this.food.x, this.food.y)
+            .quadraticBezierTo(endPosition.x, endPosition.y - this.food.displayHeight / 2, this.food.x, endPosition.y - this.food.displayHeight / 2)
         this.food.setPath(path)
 
         this.food.startFollow({
-            duration: FOOD_TO_TABLE_DURATION,
+            duration: FOOD_MOVE_DURATION,
             onComplete: () => {
                 this.spriteEvents.emit(Events.FOOD_REACHED_TABLE)
             }
         })
     }
 
-    moveSpriteToStart(xOffset: number) {
-        let startPosition = this.scene.markers.EndLocation
-        let endPosition = this.scene.markers.SpawnLocation
+    // moveSpriteToStart(xOffset: number) {
+    //     let startPosition = this.scene.markers.EndLocation
+    //     let endPosition = this.scene.markers.SpawnLocation
 
-        this.sprite.setPosition(startPosition.x, this.sprite.y)
-        let path = new Phaser.Curves.Path(startPosition.x, this.sprite.y)
-            .lineTo(endPosition.x + xOffset, this.sprite.y)
-        this.sprite.setPath(path)
+    //     this.sprite.setPosition(startPosition.x, this.sprite.y)
+    //     let path = new Phaser.Curves.Path(startPosition.x, this.sprite.y)
+    //         .lineTo(endPosition.x + xOffset, this.sprite.y)
+    //     this.sprite.setPath(path)
 
-        this.sprite.startFollow({
-            // length of path / speed
-            duration: WALK_TO_TABLE_DURATION,
-            onComplete: () => {
-                this.texture.idleFrontAnimation(this.sprite)
-                this.spriteEvents.emit(Events.NPC_REACHED_START)
-            }
-        })
+    //     this.sprite.startFollow({
+    //         // length of path / speed
+    //         duration: WALK_TO_TABLE_DURATION,
+    //         onComplete: () => {
+    //             this.texture.idleFrontAnimation(this.sprite)
+    //             this.spriteEvents.emit(Events.NPC_REACHED_START)
+    //         }
+    //     })
 
-        this.texture.moveLeftAnimation(this.sprite)
-    }
+    //     this.texture.moveLeftAnimation(this.sprite)
+    // }
 }

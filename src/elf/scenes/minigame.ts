@@ -105,13 +105,13 @@ export class ElfMinigameScene extends Phaser.Scene {
         npc.sprite.setDepth(playerSpriteDepth)
 
         let torch1 = this.add
-            .sprite(this.markers.Torch1.x, this.markers.Torch1.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch1)
+            .sprite(this.markers.Torch2.x, this.markers.Torch2.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch1)
             .setDepth(playerSpriteDepth)
         let torch2 = this.add
-            .sprite(this.markers.Torch2.x, this.markers.Torch2.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch2)
+            .sprite(this.markers.Torch3.x, this.markers.Torch3.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch2)
             .setDepth(playerSpriteDepth)
         let torch3 = this.add
-            .sprite(this.markers.Torch3.x, this.markers.Torch3.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch3)
+            .sprite(this.markers.Torch4.x, this.markers.Torch4.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch3)
             .setDepth(playerSpriteDepth)
         // let torch4 = this.add
         //     .sprite(this.markers.Torch4.x, this.markers.Torch4.y, TorchesTexture.TextureKey, TorchesTexture.Frames.Torch4)

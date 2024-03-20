@@ -1,6 +1,6 @@
 import { GrillSpot } from "."
 import { OrcMinigameScene } from "../../scenes"
-import { GrillFoodTexture } from "../../textures/grillfood"
+import { GrillFoodTexture } from "../../textures/"
 
 /*
 Show E to interact when hovering over a flippable item

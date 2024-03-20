@@ -4,8 +4,7 @@ import { CutsceneTexture, GoblinTexture } from "./textures";
 
 export function preloadGoblin(scene: Phaser.Scene) {
     SceneUtil.preloadTilemap(scene, SceneEnums.Tilemap.GoblinMinigameLevel1, "goblin/map1.tmj", "goblin/goblin.png")
-    SceneUtil.preloadTilemap(scene, SceneEnums.Tilemap.GoblinMinigameLevel2, "goblin/map2.tmj", "goblin/goblin.png")
-    SceneUtil.preloadTilemap(scene, SceneEnums.Tilemap.GoblinMinigameLevel3, "goblin/map3.tmj", "goblin/goblin.png")
+    SceneUtil.preloadTilemap(scene, SceneEnums.Tilemap.GoblinLootroom, "goblin/lootroom.tmj", "elf/2.png", "goblin/goblin.png")
     SceneUtil.preloadTilemap(scene, SceneEnums.Tilemap.GoblinPostMinigame, "goblin/cutscene.tmj", "elf/2.png", "goblin/cutscene.png")
 
     GoblinTexture.preload(scene)
