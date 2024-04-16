@@ -7,16 +7,16 @@ import { GameData, SceneEnums } from "../repository";
  * @param map The map reference
  * @param player The player reference
  */
-export function scaleAndConfigureCamera(scene: Phaser.Scene, map: Phaser.Tilemaps.Tilemap, player?: Phaser.GameObjects.GameObject) {
+export function scaleAndConfigureCamera(scene: Phaser.Scene, map: Phaser.Tilemaps.Tilemap, player?: Phaser.GameObjects.GameObject, zoomFactor: number = 1) {
     const camera = scene.cameras.main;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
     if (player)
         switchCameraFollow(scene, player)
     // Set the zoom based on the smallest dimension
     if (scene.scale.height > scene.scale.width) {
-        camera.setZoom(scene.scale.width / map.widthInPixels)
+        camera.setZoom(scene.scale.width / map.widthInPixels * zoomFactor)
     } else[
-        camera.setZoom(scene.scale.height / map.heightInPixels)
+        camera.setZoom(scene.scale.height / map.heightInPixels * zoomFactor)
     ]
 }
 

@@ -12,11 +12,25 @@ const GOBLIN_MAX_ANGULAR_VELOCITY = 300
 const GOBLIN_MAX_SPLINE_OFFSET_Y = 100
 const ORC_MINECART_OFFSET = 20
 const ORC_MINECART_SPEED = 300
+const SCREEN_SHAKE_FACTOR = 0.00065
+const ZOOM_FACTOR = 1.3
+const RED_SHIFT_MATRIX = [
+    2.5, 0, 0, 0, 0,
+    0, 0.6, 0, 0, 0,
+    0, 0, 0.6, 0, 0,
+    0, 0, 0, 1, 0
+]
+const IDENTITY_MATRIX = [
+    1, 0, 0, 0, 0,
+    0, 1, 0, 0, 0,
+    0, 0, 1, 0, 0,
+    0, 0, 0, 1, 0
+]
 
 const GOBLIN_SPAWN_DELAY = 2000
 const GOBLIN_SPAWN_INTERVAL = 70
 const PLAYER_ENTER_PAUSE = 1000
-const ORC_RAM_PAUSE = 1000
+const ORC_RAM_PAUSE = 1300
 const END_SCENE_DELAY = 1500
 
 type GoblinPostMinigameMarkers = {
@@ -27,8 +41,11 @@ type GoblinPostMinigameMarkers = {
 
 export class GoblinPostMinigameScene extends Phaser.Scene {
     markers!: GoblinPostMinigameMarkers
+    cameraColorMatrix!: Phaser.FX.ColorMatrix
+    music!: Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound | Phaser.Sound.NoAudioSound
     player!: Phaser.GameObjects.PathFollower
     playerMinecart!: Phaser.GameObjects.PathFollower
+    orc!: Phaser.GameObjects.PathFollower
     goblins!: Phaser.GameObjects.PathFollower[]
     goblinsPaused!: boolean
     depth!: number
@@ -47,13 +64,9 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
 
         this.sprites.initialize(map)
 
-        let music = this.sound.add(SceneEnums.Music.GoblinAlerted)
+        this.music = this.sound.add(SceneEnums.Music.GoblinAlerted)
         this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
-            music.stop()
-        })
-        music.play("", {
-            loop: true,
-            rate: 1.5
+            this.music.stop()
         })
 
         this.playerMinecart = this.add.follower(new Phaser.Curves.Path(), this.markers.MinecartStartPosition.x, this.markers.MinecartStartPosition.y, CutsceneTexture.TextureKey, CutsceneTexture.Frames.Minecart)
@@ -68,7 +81,18 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
         this.elapsedDt = -GOBLIN_SPAWN_DELAY
         this.playerMinecartInMotion = false
 
+        this.cameraColorMatrix = this.cameras.main.postFX!.addColorMatrix()
         SceneUtil.scaleAndConfigureCamera(this, map)
+
+        this.time.delayedCall(GOBLIN_SPAWN_DELAY, () => {
+            this.cameras.main.shake(1000000, SCREEN_SHAKE_FACTOR)
+            this.cameraColorMatrix.multiply(RED_SHIFT_MATRIX)
+            SceneUtil.scaleAndConfigureCamera(this, map, this.player, ZOOM_FACTOR)
+            this.music.play("", {
+                loop: true,
+                rate: 1.5
+            })
+        })
 
         this.player.startFollow({
             duration: playerPathInitial.getLength() / PLAYER_SPEED * 1000,
@@ -77,7 +101,7 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
             },
             onComplete: () => {
                 this.player.play(PlayerTexture.Animations.IdleFront)
-                this.setGoblinPause(true)
+                this.setGamePause(true)
                 this.time.delayedCall(PLAYER_ENTER_PAUSE, () => {
                     this.createAndStartOrc()
                 })
@@ -102,16 +126,24 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
         })
     }
 
-    setGoblinPause(pause: boolean) {
+    setGamePause(pause: boolean) {
         this.goblinsPaused = pause
         for (let goblin of this.goblins) {
             if (pause) {
                 (goblin.body as Phaser.Physics.Arcade.Body).setAngularVelocity(0);
                 goblin.setAngle(0)
                 goblin.pauseFollow()
+                this.cameras.main.shakeEffect.reset()
+                this.cameraColorMatrix.set(IDENTITY_MATRIX)
+                SceneUtil.scaleAndConfigureCamera(this, this.sprites.map!)
+                this.music.pause()
             } else {
                 (goblin.body as Phaser.Physics.Arcade.Body).setAngularVelocity(Phaser.Math.Between(0, GOBLIN_MAX_ANGULAR_VELOCITY))
                 goblin.resumeFollow()
+                this.cameras.main.shake(1000000, SCREEN_SHAKE_FACTOR)
+                this.cameraColorMatrix.multiply(RED_SHIFT_MATRIX)
+                SceneUtil.scaleAndConfigureCamera(this, this.sprites.map!, this.orc, ZOOM_FACTOR)
+                this.music.resume()
             }
         }
     }
@@ -121,12 +153,12 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
             .lineTo(this.markers.MinecartStartPosition.x, this.markers.MinecartStartPosition.y)
         let minecart = this.add.follower(orcPath, orcPath.startPoint.x, orcPath.startPoint.y, CutsceneTexture.TextureKey, CutsceneTexture.Frames.Minecart)
             .setDepth(this.depth - 1)
-        let orc = this.add.follower(orcPath, orcPath.startPoint.x, orcPath.startPoint.y - ORC_MINECART_OFFSET, OrcTexture.TextureKey)
+        this.orc = this.add.follower(orcPath, orcPath.startPoint.x, orcPath.startPoint.y - ORC_MINECART_OFFSET, OrcTexture.TextureKey)
             .setDepth(this.depth - 1)
-        orc.startFollow({
+        this.orc.startFollow({
             duration: orcPath.getLength() / ORC_MINECART_SPEED * 1000,
             onStart: () => {
-                orc.play(OrcTexture.Animations.IdleFrontNormal)
+                this.orc.play(OrcTexture.Animations.IdleFrontNormal)
             }
         })
         minecart.startFollow({
@@ -139,7 +171,7 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
             },
             onComplete: () => {
                 this.time.delayedCall(ORC_RAM_PAUSE, () => {
-                    this.setGoblinPause(false)
+                    this.setGamePause(false)
                     this.endGame()
                 })
             }
