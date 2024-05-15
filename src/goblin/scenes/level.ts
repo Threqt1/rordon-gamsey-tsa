@@ -65,17 +65,6 @@ export class Scene extends Phaser.Scene {
         this.sprites.initialize(map)
 
         /* SPRITES LOADING */
-        this.npcs = this.parseAndCreateNPCs(this.markers)
-        this.player = new Player(this, 0, 0)
-        this.sprites.controllables.push(this.player)
-        this.sprites.physicsBodies.add(this.player.sprite)
-        this.sprites.interactingBodies.add(this.player.sprite)
-
-        for (let npc of this.npcs) {
-            npc.makeCollisionsWithPlayer(this.player)
-        }
-
-        this.updateTeleportAndSpawn()
 
         // If theres an objective marker, add that too
         if (this.markers.objective !== undefined) {
@@ -83,6 +72,18 @@ export class Scene extends Phaser.Scene {
             this.sprites.addInteractables(objective)
             this.sprites.physicsBodies.add(objective.sprite)
         }
+
+        this.npcs = this.parseAndCreateNPCs(this.markers)
+        this.player = new Player(this, 0, 0)
+        this.sprites.physicsBodies.add(this.player.sprite)
+        this.sprites.controllables.push(this.player)
+        this.sprites.interactingBodies.add(this.player.sprite)
+
+        for (let npc of this.npcs) {
+            npc.makeCollisionsWithPlayer(this.player)
+        }
+
+        this.updateTeleportAndSpawn()
 
         // Make the bonfire, if any
         if (this.markers.bonfire !== undefined) {

@@ -4,6 +4,7 @@ export enum Events {
 }
 
 let Base: DialogueSystem.Dialogue = {
+    getName(_) { return "CARETAKER" },
     getOptionText() { return "" },
     getContentText() {
         return [

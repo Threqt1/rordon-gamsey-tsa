@@ -4,6 +4,7 @@ export enum Events {
 }
 
 let Base: DialogueSystem.Dialogue = {
+    getName(_) { return "ESTEL" },
     getOptionText() { return "" },
     getContentText() {
         return [

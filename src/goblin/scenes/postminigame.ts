@@ -8,16 +8,16 @@ const PLAYER_SPEED = 60
 const PLAYER_MINECART_OFFSET = 5
 const MAX_GOBLINS = 50
 const GOBLIN_SPEED = 80
-const GOBLIN_MAX_ANGULAR_VELOCITY = 300
+const GOBLIN_MAX_ANGULAR_VELOCITY = 275
 const GOBLIN_MAX_SPLINE_OFFSET_Y = 100
 const ORC_MINECART_OFFSET = 20
-const ORC_MINECART_SPEED = 300
+const ORC_MINECART_SPEED = 400
 const SCREEN_SHAKE_FACTOR = 0.00065
-const ZOOM_FACTOR = 1.3
+const ZOOM_FACTOR = 1.4
 const RED_SHIFT_MATRIX = [
-    2.5, 0, 0, 0, 0,
-    0, 0.6, 0, 0, 0,
-    0, 0, 0.6, 0, 0,
+    3, 0, 0, 0.2, 0,
+    0, 1, 0, 0, 0,
+    0, 0, 1, 0, 0,
     0, 0, 0, 1, 0
 ]
 const IDENTITY_MATRIX = [
@@ -29,9 +29,9 @@ const IDENTITY_MATRIX = [
 
 const GOBLIN_SPAWN_DELAY = 2000
 const GOBLIN_SPAWN_INTERVAL = 70
-const PLAYER_ENTER_PAUSE = 1000
-const ORC_RAM_PAUSE = 1300
-const END_SCENE_DELAY = 1500
+const PLAYER_ENTER_PAUSE = 100
+const ORC_RAM_PAUSE = 1000
+const END_SCENE_DELAY = 1350
 
 type GoblinPostMinigameMarkers = {
     CaveExit: SceneUtil.PointObject
@@ -82,6 +82,7 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
         this.playerMinecartInMotion = false
 
         this.cameraColorMatrix = this.cameras.main.postFX!.addColorMatrix()
+        this.cameras.main.postFX!.addVignette(0.5, 0.5, 0.6, 0.5)
         SceneUtil.scaleAndConfigureCamera(this, map)
 
         this.time.delayedCall(GOBLIN_SPAWN_DELAY, () => {

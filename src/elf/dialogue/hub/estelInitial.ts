@@ -4,6 +4,7 @@ export enum Events {
 }
 
 let Base: DialogueSystem.Dialogue = {
+    getName(_) { return "ESTEL" },
     getOptionText() { return "" },
     getContentText() {
         return [
@@ -16,6 +17,7 @@ let Base: DialogueSystem.Dialogue = {
 }
 
 let Option1: DialogueSystem.Dialogue = {
+    getName(_) { return "ESTEL" },
     getOptionText() { return "I want to defeat Gamsey!" },
     getContentText() {
         return [
@@ -28,6 +30,7 @@ let Option1: DialogueSystem.Dialogue = {
 }
 
 let Option2: DialogueSystem.Dialogue = {
+    getName(_) { return "ESTEL" },
     getOptionText() { return "How?" },
     getContentText() {
         return [
@@ -41,6 +44,7 @@ let Option2: DialogueSystem.Dialogue = {
 }
 
 let Option3: DialogueSystem.Dialogue = {
+    getName(_) { return "ESTEL" },
     getOptionText() { return "Where are the other elves?" },
     getContentText() {
         return [

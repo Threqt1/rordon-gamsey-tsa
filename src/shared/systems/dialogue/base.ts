@@ -14,6 +14,7 @@ export type Dialogue = {
      * @param registry The current game data manager
      * @param eventEmitter The dialogue's event emitter
      */
+    getName: (registry: Phaser.Data.DataManager) => string
     dialogueFinished?: (registry: Phaser.Data.DataManager, eventEmitter: Phaser.Events.EventEmitter) => void
     /**
      * Ran when the dialogue has been started
@@ -35,6 +36,7 @@ export enum WalkerState {
  */
 export class Walker {
     currentDialogue!: Dialogue
+    currentName!: string
     currentContent!: string[]
     currentContentPosition!: number
     currentOptions!: Dialogue[]
@@ -66,6 +68,7 @@ export class Walker {
      */
     switchToNewBlock(dialogue: Dialogue): void {
         this.currentDialogue = dialogue
+        this.currentName = this.currentDialogue.getName(this.registry)
         this.currentContent = this.currentDialogue.getContentText(this.registry)
         this.currentContentPosition = 0
         this.currentOptions = this.getAvaliableOptions();

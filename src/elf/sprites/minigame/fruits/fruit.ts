@@ -58,6 +58,7 @@ const CHUNK_SPEED = 30
  * Size of the slash
  */
 const SLASH_SCALE = 1;
+const INTERACTION_PROMPT_SCALE = 1.5
 
 export abstract class BaseFruit implements Fruit {
     slicePattern: SpriteUtil.Direction[]
@@ -140,7 +141,7 @@ export abstract class BaseFruit implements Fruit {
      */
     progressSlicePattern(): void {
         // Update to appropriate key picture
-        this.interactionPrompt.setFrame(KeyboardTexture.KeyPictures[InteractionKeybinds[this.slicePattern[this.currentPatternLocation]]])
+        this.interactionPrompt.setFrame(KeyboardTexture.KeyPictures[InteractionKeybinds[this.slicePattern[this.currentPatternLocation]]]).setScale(INTERACTION_PROMPT_SCALE)
 
         // Set new textures
         let newTextures = this.sliceTextures[this.currentPatternLocation]

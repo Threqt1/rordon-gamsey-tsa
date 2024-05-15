@@ -27,9 +27,9 @@ export class BaseDialogue implements SpritesPlugin.Controllable {
     controllable: boolean
     endCallback?: (() => void)
 
-    constructor(scene: Phaser.Scene, width: number, height: number) {
+    constructor(scene: Phaser.Scene) {
         this.baseScene = scene
-        this.dialogueSprite = new DialogueSystem.DialogueSprite(scene, width, height)
+        this.dialogueSprite = new DialogueSystem.DialogueSprite(scene)
         this.dialogueSprite.setVisible(false)
         this.input = new InputSystem.System(scene, Keybinds)
         this.dialogueWalker = new DialogueSystem.Walker()
@@ -77,6 +77,7 @@ export class BaseDialogue implements SpritesPlugin.Controllable {
      * Display the current dialogue based on the dialogue walker's state
      */
     displayCurrentDialogue(): void {
+        this.dialogueSprite.setName(this.dialogueWalker.currentName)
         if (this.dialogueWalker.state === DialogueSystem.WalkerState.CONTENT) {
             this.dialogueSprite.setText(this.dialogueWalker.getCurrentContent())
         } else if (this.dialogueWalker.state === DialogueSystem.WalkerState.OPTIONS) {

@@ -13,7 +13,7 @@ export function scaleAndConfigureCamera(scene: Phaser.Scene, map: Phaser.Tilemap
     if (player)
         switchCameraFollow(scene, player)
     // Set the zoom based on the smallest dimension
-    if (scene.scale.height > scene.scale.width) {
+    if (scene.scale.height < scene.scale.width) {
         camera.setZoom(scene.scale.width / map.widthInPixels * zoomFactor)
     } else[
         camera.setZoom(scene.scale.height / map.heightInPixels * zoomFactor)

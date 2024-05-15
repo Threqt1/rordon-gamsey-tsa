@@ -13,6 +13,6 @@ export class GUIScene extends Phaser.Scene {
 
     create() {
         this.sprites.initialize()
-        this.dialogue = new BaseDialogue(this, this.scale.width, this.scale.height)
+        this.dialogue = new BaseDialogue(this)
     }
 }

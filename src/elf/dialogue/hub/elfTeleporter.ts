@@ -4,6 +4,7 @@ export enum Events {
 }
 
 let Base: DialogueSystem.Dialogue = {
+    getName(_) { return "CARETAKER" },
     getOptionText() { return "" },
     getContentText() {
         return [
@@ -16,6 +17,7 @@ let Base: DialogueSystem.Dialogue = {
 }
 
 let Option1: DialogueSystem.Dialogue = {
+    getName(_) { return "CARETAKER" },
     getOptionText() { return "What is this \"trial\"?" },
     getContentText() {
         return [
@@ -28,6 +30,7 @@ let Option1: DialogueSystem.Dialogue = {
 }
 
 let Option2: DialogueSystem.Dialogue = {
+    getName(_) { return "CARETAKER" },
     getOptionText() { return "Let's go" },
     getContentText() {
         return [

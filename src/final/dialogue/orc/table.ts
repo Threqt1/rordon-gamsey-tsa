@@ -4,6 +4,7 @@ export enum Events {
 }
 
 let Base: DialogueSystem.Dialogue = {
+    getName(_) { return "ORC CHEF" },
     getOptionText() { return "" },
     getContentText() {
         return [
