@@ -13,7 +13,7 @@ const TEXT_FONT_SIZE = 35
 
 const NAME_OFFSET_X_PCT = 10
 const NAME_OFFSET_Y_PCT = 18
-const NAME_FONT_SIZE = 30
+const NAME_FONT_SIZE = 28
 
 const NEXT_FONT_SIZE = 28
 const NEXT_OFFSET_X_PCT = 20
@@ -39,24 +39,21 @@ export class DialogueSprite {
         let leftX = SceneUtil.pct(scene.cameras.main.width, DIALOGUE_BOX_X_PCT)
         let leftY = SceneUtil.pct(scene.cameras.main.height, 100 - DIALOGUE_BOX_BOTTOM_PCT)
         this.boxLeft = scene.add.sprite(leftX, leftY, DialogueTexture.Frames.Left)
-            .setOrigin(1, 1)
+            .setOrigin(0, 1)
             .setScale(DIALOGUE_BOX_SCALE)
             .setDepth(2)
-        this.boxLeft.setX(this.boxLeft.x + this.boxLeft.displayWidth)
-        this.boxMiddle = scene.add.sprite(this.boxLeft.x, leftY, DialogueTexture.Frames.Middle)
-            .setOrigin(0.5, 1)
+        this.boxMiddle = scene.add.sprite(this.boxLeft.x + this.boxLeft.displayWidth, leftY, DialogueTexture.Frames.Middle)
+            .setOrigin(0, 1)
             .setScale(1, DIALOGUE_BOX_SCALE)
             .setDepth(1)
-        this.boxMiddle.setX(this.boxMiddle.x + this.boxMiddle.displayWidth / 2)
         let rightX = SceneUtil.pct(scene.cameras.main.width, 100 - DIALOGUE_BOX_X_PCT)
         let rightY = this.boxMiddle.y - this.boxMiddle.displayHeight
         this.boxRight = scene.add.sprite(rightX, rightY, DialogueTexture.Frames.Right)
-            .setOrigin(0, 0)
+            .setOrigin(1, 0)
             .setScale(DIALOGUE_BOX_SCALE)
             .setDepth(2)
-        this.boxRight.setX(this.boxRight.x - this.boxRight.displayWidth)
-        let remainingX = (this.boxRight.x) - (this.boxLeft.x)
-        this.boxMiddle.setScale(remainingX / this.boxMiddle.displayWidth + 1, DIALOGUE_BOX_SCALE)
+        let remainingX = (this.boxRight.x - this.boxRight.displayWidth) - (this.boxLeft.x + this.boxLeft.displayWidth)
+        this.boxMiddle.setScale(remainingX / this.boxMiddle.displayWidth + 0.5, DIALOGUE_BOX_SCALE)
 
         this.dialogueBox.addMultiple([this.boxLeft, this.boxMiddle, this.boxRight])
 
@@ -101,6 +98,18 @@ export class DialogueSprite {
                 fontSize: NEXT_FONT_SIZE,
             }
         }).setDepth(3)
+
+        let textX = this.boxLeft.x + this.boxLeft.displayWidth + SceneUtil.pct(this.boxMiddle.displayWidth, TEXT_OFFSET_X_PCT)
+        let textY = this.boxMiddle.y - this.boxMiddle.displayHeight + SceneUtil.pct(this.boxMiddle.displayHeight, TEXT_OFFSET_Y_PCT)
+        this.dialogueText.setPosition(textX, textY)
+
+        let nameX = this.boxLeft.x + SceneUtil.pct(this.boxLeft.displayWidth, NAME_OFFSET_X_PCT)
+        let nameY = this.boxLeft.y - this.boxLeft.displayHeight + SceneUtil.pct(this.boxLeft.displayHeight, NAME_OFFSET_Y_PCT)
+        this.nameText.setPosition(nameX, nameY)
+
+        let nextX = this.boxRight.x - this.boxRight.displayWidth + SceneUtil.pct(this.boxRight.displayWidth, NEXT_OFFSET_X_PCT)
+        let nextY = this.boxRight.y + SceneUtil.pct(this.boxRight.displayHeight, NEXT_OFFSET_Y_PCT)
+        this.nextText.setPosition(nextX, nextY)
     }
 
     updatePositions() {
@@ -112,27 +121,17 @@ export class DialogueSprite {
         let rightX = center + this.boxMiddle.displayWidth / 2
         this.boxRight.setX(rightX)
 
-        let textX = leftX + SceneUtil.pct(this.boxMiddle.displayWidth, TEXT_OFFSET_X_PCT)
-        let textY = this.boxMiddle.y - this.boxMiddle.displayHeight + SceneUtil.pct(this.boxMiddle.displayHeight, TEXT_OFFSET_Y_PCT)
-        this.dialogueText.setPosition(textX, textY)
 
-        let nameX = this.boxLeft.x - this.boxLeft.displayWidth + SceneUtil.pct(this.boxLeft.displayWidth, NAME_OFFSET_X_PCT)
-        let nameY = this.boxLeft.y - this.boxLeft.displayHeight + SceneUtil.pct(this.boxLeft.displayHeight, NAME_OFFSET_Y_PCT)
-        this.nameText.setPosition(nameX, nameY)
-
-        let nextX = this.boxRight.x + SceneUtil.pct(this.boxRight.displayWidth, NEXT_OFFSET_X_PCT)
-        let nextY = this.boxRight.y + SceneUtil.pct(this.boxRight.displayHeight, NEXT_OFFSET_Y_PCT)
-        this.nextText.setPosition(nextX, nextY)
     }
 
     setText(text: string) {
         this.dialogueText.setText(text)
-        this.updatePositions()
+        //this.updatePositions()
     }
 
     setName(name: string) {
         this.nameText.setText(name)
-        this.updatePositions()
+        //this.updatePositions()
     }
 
     setVisible(visible: boolean) {
