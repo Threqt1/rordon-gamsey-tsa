@@ -14,6 +14,7 @@ const ORC_MINECART_OFFSET = 20
 const ORC_MINECART_SPEED = 400
 const SCREEN_SHAKE_FACTOR = 0.00065
 const ZOOM_FACTOR = 1.4
+
 const RED_SHIFT_MATRIX = [
     3, 0, 0, 0.2, 0,
     0, 1, 0, 0, 0,
@@ -30,7 +31,7 @@ const IDENTITY_MATRIX = [
 const GOBLIN_SPAWN_DELAY = 2000
 const GOBLIN_SPAWN_INTERVAL = 70
 const PLAYER_ENTER_PAUSE = 100
-const ORC_RAM_PAUSE = 1000
+const ORC_RAM_PAUSE = 1500
 const END_SCENE_DELAY = 1350
 
 type GoblinPostMinigameMarkers = {
@@ -82,7 +83,13 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
         this.playerMinecartInMotion = false
 
         this.cameraColorMatrix = this.cameras.main.postFX!.addColorMatrix()
-        this.cameras.main.postFX!.addVignette(0.5, 0.5, 0.6, 0.5)
+        let vignette = this.cameras.main.postFX!.addVignette(0.5, 0.5, 1, 0)
+        this.tweens.add({
+            targets: [vignette],
+            strength: 0.48,
+            radius: 0.67,
+            duration: GOBLIN_SPAWN_DELAY,
+        })
         SceneUtil.scaleAndConfigureCamera(this, map)
 
         this.time.delayedCall(GOBLIN_SPAWN_DELAY, () => {
@@ -216,7 +223,7 @@ export class GoblinPostMinigameScene extends Phaser.Scene {
 
     endGame() {
         this.time.delayedCall(END_SCENE_DELAY, () => {
-            SceneUtil.fadeSceneTransition(this, SceneEnums.Name.OrcHub)
+            SceneUtil.fadeSceneTransition(this, SceneEnums.Name.OrcHub, 400)
         })
     }
-}
+} 

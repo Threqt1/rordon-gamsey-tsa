@@ -160,12 +160,12 @@ const DURATION = 500;
  * @param scene The scene to fade out the camera on
  * @param callback Code to run when the fade out is complete
  */
-export function fadeOut(scene: Phaser.Scene, callback?: () => void): void {
+export function fadeOut(scene: Phaser.Scene, callback?: () => void, duration?: number): void {
     if (!scene.cameras.main) {
         if (callback) callback()
         return
     }
-    scene.cameras.main.fadeOut(DURATION, 0, 0, 0)
+    scene.cameras.main.fadeOut(duration ? duration : DURATION, 0, 0, 0)
     scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
         if (callback != undefined) callback()
     })
@@ -176,12 +176,12 @@ export function fadeOut(scene: Phaser.Scene, callback?: () => void): void {
  * @param scene The scene to fade in the camera on
  * @param callback Code to run when the fade in is complete
  */
-export function fadeIn(scene: Phaser.Scene, callback?: () => void): void {
+export function fadeIn(scene: Phaser.Scene, callback?: () => void, duration?: number): void {
     if (!scene.cameras.main) {
         if (callback) callback()
         return
     }
-    scene.cameras.main.fadeIn(DURATION, 0, 0, 0)
+    scene.cameras.main.fadeIn(duration ? duration : DURATION, 0, 0, 0)
     scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
         if (callback != undefined) callback()
     })
@@ -192,14 +192,14 @@ export function fadeIn(scene: Phaser.Scene, callback?: () => void): void {
  * @param scene The current scene
  * @param nextScene The next scene's name
  */
-export function fadeSceneTransition(scene: Phaser.Scene, nextScene: SceneEnums.Name): void {
+export function fadeSceneTransition(scene: Phaser.Scene, nextScene: SceneEnums.Name, duration?: number): void {
     fadeOut(scene, () => {
         scene.scene.start(nextScene)
         scene.scene.moveAbove(nextScene, SceneEnums.Name.GUI)
         scene.scene.get(nextScene).events.once(Phaser.Scenes.Events.CREATE, () => {
-            fadeIn(scene.scene.get(nextScene))
+            fadeIn(scene.scene.get(nextScene), undefined, duration)
         })
-    })
+    }, duration)
 }
 
 /**
