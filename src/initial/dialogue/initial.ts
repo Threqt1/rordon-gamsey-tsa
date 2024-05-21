@@ -16,7 +16,7 @@ let Base: DialogueSystem.Dialogue = {
             "A place where three races lived in harmony... until Rordon Gamsey appeared.",
             "The vile dragon conquered Elysian in his quests for dishes to satisfy him.",
             "Ervin - Elysian's master chef - attempted to rise to this challenge...",
-            "But was soundly defeated by Ramsey's unparalleled picky eating...",
+            "But was soundly defeated by Gamsey's unparalleled picky eating...",
             "Now, Elysian's only hope - Ervin's son - must search far and wide...",
             "FOR A DISH TO SATIATE RORDON GAMSEY!!!",
         ]
