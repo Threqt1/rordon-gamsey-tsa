@@ -55,7 +55,7 @@ export class MenuScene extends Phaser.Scene {
         startSprite.on("pointerup", () => {
             if (!switching) {
                 switching = true
-                SceneUtil.fadeSceneTransition(this, SceneEnums.Name.Initial)
+                SceneUtil.fadeSceneTransition(this, SceneEnums.Name.OrcMinigame)
             }
         })
     }

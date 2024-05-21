@@ -59,7 +59,7 @@ export class BaseDialogue implements SpritesPlugin.Controllable {
         this.endCallback = endCallback
 
         this.dialogueWalker.startWithNewDialogue(dialogue, emitter, registry)
-        this.dialogueSprite.setVisible(true)
+        this.dialogueSprite.setVisible(true, timeout ? true : false)
         if (timeout) {
             this.controllable = false
             this.baseScene.time.delayedCall(timeout, () => {

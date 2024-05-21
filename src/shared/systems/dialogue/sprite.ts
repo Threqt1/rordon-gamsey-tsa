@@ -134,10 +134,10 @@ export class DialogueSprite {
         //this.updatePositions()
     }
 
-    setVisible(visible: boolean) {
+    setVisible(visible: boolean, skippable?: boolean) {
         this.dialogueText.setVisible(visible)
         this.nameText.setVisible(visible)
-        this.nextText.setVisible(visible)
+        this.nextText.setVisible(visible ? skippable ? false : true : visible)
         this.dialogueBox.setVisible(visible)
     }
 }
